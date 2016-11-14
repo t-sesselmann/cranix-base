@@ -4,7 +4,7 @@
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 SUBDIRS         = setup
-TOPACKAGE       = Makefile RELEASE VERSION docs system setup
+TOPACKAGE       = Makefile plugins sbin  setup  templates
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -16,13 +16,12 @@ install:
 	for i in $(REQPACKAGES); do \
 	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
 	done  
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make install; \
-	    cd .. ;\
-	done
-	install -m 755 sbin/*  $(DESTDIR)/usr/sbin/
-	install -m 644 schoolserver $(DESTDIR)/etc/sysconfig/
+	mkdir -p $(SHARE)/{setup,templates,tools} $(DESTDIR)/usr/sbin/ $(DESTDIR)/etc/sysconfig/ /var/adm/fillup-templates/
+	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
+	install -m 755 tools/*      $(SHARE)/tools/
+	rsync -a   templates/       $(SHARE)/templates/
+	rsync -a   setup/           $(SHARE)/setup/
+	install -m 644 schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 
 dist:
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
