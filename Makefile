@@ -16,12 +16,11 @@ install:
 	for i in $(REQPACKAGES); do \
 	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
 	done  
-	mkdir -p $(SHARE)/{setup,templates,tools} $(DESTDIR)/usr/sbin/ $(DESTDIR)/etc/sysconfig/ /var/adm/fillup-templates/
+	mkdir -p $(SHARE)/{setup,templates,tools} $(DESTDIR)/usr/sbin/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	install -m 755 tools/*      $(SHARE)/tools/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
-	install -m 644 schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 
 dist:
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
