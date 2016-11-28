@@ -3,6 +3,7 @@
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
 
+. /etc/sysconfig/schoolserver
 
 surname=''
 givenname=''
@@ -133,9 +134,13 @@ gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
 
 #create home diredtory and set permission
 mkdir -p $unixhome
-chown -R $uidnumber:$gidnumber $unixhome
-#chown -R $uid:$role $unixhome
-chmod 711 $unixhome
+if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" ]; then
+	chown -R $uidnumber:TEACHERS $unixhome
+	chmod 771 $unixhome
+else
+	chown -R $uidnumber:$gidnumber $unixhome
+	chmod 711 $unixhome
+fi
 
 ##create profile diredtory and set permission
 #if [[ ! -d "/home/profiles/" ]]; then
