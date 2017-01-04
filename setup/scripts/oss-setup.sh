@@ -177,9 +177,9 @@ function SetupInitialAccounts (){
     /usr/sbin/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
 
     ########################################################################
-    log " - Create primary group type and add base role to primary group"
-    samba-tool group add "primary" --description="Primary group for role"
-    samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
+    #log " - Create primary group type and add base role to primary group"
+    #samba-tool group add "primary" --description="Primary group for role"
+    #samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
 
     ########################################################################
     log " - sysadmin primary group add to administrator group"
