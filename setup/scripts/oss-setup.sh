@@ -8,14 +8,12 @@ sysconfig="/etc/sysconfig/schoolserver"
 logdate=`date "+%y.%m.%d.%H-%M-%S"`
 logfile="/var/log/oss-setup.$logdate.log"
 passwd=""
-netbiosname=""
 windomain=""
 HOME_BASE="/home";
 
 # input variable
 passwdf=""
 all="no"
-#presetup="no"
 samba="no"
 #dhcp="no"
 #mail="no"
@@ -34,7 +32,6 @@ function usage (){
 	echo "Optional parameters :"
 	echo "          -h,   --help              Display the help."
 	echo "                --all               Setup all services and create the initial groups and user accounts."
-#	echo "                --presetup          Pre Setup OSS server."
 	echo "                --samba             Setup the AD-DC samba server."
 	echo "                --dhcp              Setup the DHCP server"
 	echo "                --mail              Setup the mail server"
@@ -67,18 +64,10 @@ function InitGlobalVariable (){
     log "   passwd = $passwd"
 
     ########################################################################
-    log " - Set netbiosname variable"
-    if [ $SCHOOL_NETBIOSNAME} ]
-    then
-        netbiosname=$SCHOOL_NETBIOSNAME
-    fi
-    netbiosname=`echo "$netbiosname" | tr "[:upper:]" "[:lower:]"`
-    log "   netbiosname = $netbiosname"
-
-    ########################################################################
     log " - Set windomain variable"
     windomain=`echo "$SCHOOL_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
+    sed -i s/^SCHOOL_WORKGROUP=.*/SCHOOL_WORKGROUP=\"$windomain\"/ $sysconfig
 
     log "End InitGlobalVariable"
 }
@@ -126,11 +115,28 @@ function SetupSamba (){
     mv /etc/krb5.conf /etc/krb5.conf.$logdate
     cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
 
+    ########################################################################
+    log " - Tell nsswitch to use winbind."
+    cp /usr/share/oss/setup/templates/nsswitch.conf /etc/nsswitch.conf
+
+    ########################################################################
+    log " - Use our enhanced samba.service file."
+    cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
+
     log "End SetupSamba"
 }
 
 function SetupDHCP (){
     log "Start SetupDHCP"
+    sed    "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"                   /usr/share/oss/setup/templates/dhcpd.conf.ini > /usr/share/oss/templates/dhcpd.conf 
+    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"         /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_ANON_DHCP_RANGE#/${SCHOOL_ANON_DHCP_RANGE}/g" /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
+    cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
+    mkdir -p /etc/dhcpd.d/
+    sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/' /etc/sysconfig/dhcpd
+    systemctl enable dhcp-server
+    systemctl start  dhcp-server
     log "End SetupDHCP"
 }
 
@@ -282,9 +288,6 @@ while [ "$1" != "" ]; do
 	--all )
 				all="yes"
 	;;
-#	--presetup )
-#				presetup="yes"
-#	;;
 	--samba )
 				samba="yes"
         ;;
@@ -320,9 +323,6 @@ while [ "$1" != "" ]; do
 done
 
 InitGlobalVariable
-#if [ "$all" = "yes" ] || [ "$presetup" = "yes" ]; then
-#    PreSetup
-#fi
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ]; then
     SetupSamba
 fi
