@@ -17,7 +17,7 @@ install:
 	done  
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins} $(DESTDIR)/usr/sbin/ $(DESTDIR)/var/adm/fillup-templates/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
-	install -m 755 tools/*      $(SHARE)/tools/
+#	install -m 755 tools/*      $(SHARE)/tools/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
