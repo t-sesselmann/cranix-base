@@ -101,9 +101,8 @@ done
 skel="/etc/skel"
 
 winprofile="\\\\schooladmin\\profiles\\$uid"
-unixprofile="/home/profiles/$uid"
 winhome="\\\\schooladmin\\$uid"
-unixhome="/home/$role/$uid"
+unixhome=${SCHOOL_HOME_BASE}/$uid
 
 echo "uid:       $uid"
 echo "password:  $password"
@@ -129,25 +128,16 @@ samba-tool user add "$uid" "$password" \
 uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`
 gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
 
-#echo "uidnumber:   $uidnumber"
-#echo "gidnumber:   $gidnumber"
 
 #create home diredtory and set permission
 mkdir -p $unixhome
-if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" ]; then
+if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
 	chown -R $uidnumber:TEACHERS $unixhome
-	chmod 771 $unixhome
+	chmod 0770 $unixhome
 else
 	chown -R $uidnumber:$gidnumber $unixhome
-	chmod 711 $unixhome
+	chmod 0700 $unixhome
 fi
-
-##create profile diredtory and set permission
-#if [[ ! -d "/home/profiles/" ]]; then
-#    mkdir /home/profiles/
-#    chmod 770 /home/profiles/
-#    chown root:users /home/profiles/
-#fi
 
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
@@ -162,12 +152,6 @@ if [ "$groups" ]; then
 	fi
     done
 fi
-
-#create logon script
-cp /usr/share/oss/setup/templates/login-$role.bat.ini /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-chmod 755 /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-chown $uid:root /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-
 
 
 # passowrd options:
