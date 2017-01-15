@@ -3,7 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-TOPACKAGE       = Makefile schoolserver plugins sbin  setup  templates
+TOPACKAGE       = Makefile schoolserver plugins sbin  setup  templates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
