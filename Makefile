@@ -37,7 +37,7 @@ dist:
 	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
 	if [ -d /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE) ] ; then \
 	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); osc up; cd $(HERE);\
-	    cp $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
+	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
 	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
 	    osc vc; \
 	    osc ci -m "New Build Version"; \
