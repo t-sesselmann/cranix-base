@@ -96,10 +96,11 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/schooladmin/"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/"          /etc/samba/smb.conf
-    sed -i "s/#WORKGROUP#/$windomain/"          /etc/samba/smb.conf
-    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/" /etc/samba/smb.conf
+    sed    "s/#NETBIOSNAME#/schooladmin/g"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
+    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
+    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
+    sed -i "s/#HOMEBASE#/$SCHOOL_HOME_BASE/g"    /etc/samba/smb.conf
 
     ########################################################################
     log " - Config resolv.conf"
