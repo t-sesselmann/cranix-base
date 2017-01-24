@@ -132,6 +132,7 @@ function SetupDHCP (){
     sed    "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"                   /usr/share/oss/setup/templates/dhcpd.conf.ini > /usr/share/oss/templates/dhcpd.conf 
     sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"         /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_ANON_DHCP_RANGE#/${SCHOOL_ANON_DHCP_RANGE}/g" /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"                 /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
     mkdir -p /etc/dhcpd.d/
