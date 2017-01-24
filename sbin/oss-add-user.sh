@@ -163,12 +163,6 @@ if [ "$groups" ]; then
     done
 fi
 
-#create logon script
-cp /usr/share/oss/setup/templates/login-$role.bat.ini /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-chmod 755 /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-chown $uid:root /var/lib/samba/sysvol/$SCHOOL_DOMAIN/scripts/$uid.bat
-
-
 
 # passowrd options:
 #+  --must-change-at-next-login # Force password to be changed on next login
