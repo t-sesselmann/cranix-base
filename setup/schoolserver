@@ -105,6 +105,11 @@ SCHOOL_BACKUP_WITH_HARDLINK="no"
 ## Description: Configuration of the OSS: Settings
 ########################################################################
 
+## Type:        string readonly
+## Default:     "172.16.1.1 172.16.1.25"
+# IP-network for new and not registered clients.
+SCHOOL_ANON_DHCP_NET="172.28.1.0/24"
+
 ## Type:	string readonly
 ## Default:	"172.16.1.1 172.16.1.25"
 # IP-address range for new and not registered clients.
@@ -127,11 +132,6 @@ SCHOOL_ISGATE="yes"
 
 ## Type:	yesno readonly
 ## Default:	no
-# This variable shows if the OSS is conected via a ppp  device to the internet.
-SCHOOL_ISPPP="no"
-
-## Type:	yesno readonly
-## Default:	no
 # Is this a demo version.
 SCHOOL_IS_DEMO="no"
 
@@ -146,9 +146,14 @@ SCHOOL_MAILSERVER="172.28.0.3"
 SCHOOL_NAME="EXTIS"
 
 ## Type:	string readonly
-## Default:	"255.255.0.0"
+## Default:	"16"
 # Network Mask of the internal network.
 SCHOOL_NETMASK="16"
+
+## Type:	string readonly
+## Default:	"255.255.0.0"
+# Network Mask of the internal network.
+SCHOOL_NETMASK_STRING="255.255.0.0"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.0"
@@ -229,11 +234,6 @@ SCHOOL_IS_TERMINALSERVER="yes"
 ## Default:	EXTIS
 # The windows domain name of the school.
 SCHOOL_WORKGROUP="EXTIS"
-
-## Type:	string readonly
-## Default:	pdc-server
-# The windows netbios name of the OSS.
-SCHOOL_NETBIOSNAME="pdc-server"
 
 ## Type:	string readonly
 ## Default:	"DE"
@@ -337,11 +337,6 @@ SCHOOL_USE_CTOOL="yes"
 
 ## Type:	yesno
 ## Default:     yes	
-# If this variable is set to yes, mobile room support is enabled.
-SCHOOL_USE_MOBILE_ROOMS="yes"
-
-## Type:	yesno
-## Default:     yes	
 # If this variable is set to yes, students may login on more than one workstation.
 SCHOOL_ALLOW_STUDENTS_MULTIPLE_LOGIN="no"
 
@@ -390,11 +385,6 @@ SCHOOL_MINIMAL_PASSWORD_LENGTH="8"
 ## Default:     yes
 # Should the quality of the user passwort be checked for setting it? The minimal and maximal will be checked everytime.
 SCHOOL_CHECK_PASSWORD_QUALITY="yes"
-
-## Type:        yesno
-## Default:     no
-# Enable/Disable avahi printer configuration
-SCHOOL_ENABLE_AVAHI_PRINTER_CONFIG="no"
 
 ## Type:	string(telex,simple)
 ## Default:	telex
