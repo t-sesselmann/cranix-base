@@ -337,4 +337,5 @@ if [ "$all" = "yes" ] || [ "$postsetup" = "yes" ]; then
     PostSetup
 fi
 
-exit 1
+chmod 600 $logfile
+exit 0
