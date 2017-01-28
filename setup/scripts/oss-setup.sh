@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 #
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
@@ -9,13 +9,12 @@ logdate=`date "+%y.%m.%d.%H-%M-%S"`
 logfile="/var/log/oss-setup.$logdate.log"
 passwd=""
 windomain=""
-HOME_BASE="/home";
 
 # input variable
 passwdf=""
 all="no"
 samba="no"
-#dhcp="no"
+dhcp="no"
 #mail="no"
 #proxy="no"
 accounts="no"
@@ -59,9 +58,11 @@ function InitGlobalVariable (){
     . $sysconfig
 
     ########################################################################
-    log " - Read password file"
-    passwd=`cat $passwdf`
-    log "   passwd = $passwd"
+    if [ "$passwdf" ]; then
+        log " - Read password file"
+        passwd=`cat $passwdf`
+        log "   passwd = $passwd"
+    fi
 
     ########################################################################
     log " - Set windomain variable"
@@ -100,7 +101,7 @@ function SetupSamba (){
     sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
-    sed -i "s/#HOMEBASE#/$SCHOOL_HOME_BASE/g"    /etc/samba/smb.conf
+    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"    /etc/samba/smb.conf
 
     ########################################################################
     log " - Config resolv.conf"
@@ -123,6 +124,10 @@ function SetupSamba (){
     ########################################################################
     log " - Use our enhanced samba.service file."
     cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
+
+    ########################################################################
+    log " - Create linked groups directory "
+    mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
 
     log "End SetupSamba"
 }
@@ -157,21 +162,21 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base directory"
-    mkdir -m 770 -p $HOME_BASE/all
-    mkdir -m 755 -p $HOME_BASE/archiv
-    mkdir -m 755 -p $HOME_BASE/groups
-    mkdir -m 775 -p $HOME_BASE/software
+    mkdir -m 770 -p $SCHOOL_HOME_BASE/all
+    mkdir -m 755 -p $SCHOOL_HOME_BASE/archiv
+    mkdir -m 755 -p $SCHOOL_HOME_BASE/groups
+    mkdir -m 775 -p $SCHOOL_HOME_BASE/software
     mkdir -m 755 -p /mnt/backup
     if [ $SCHOOL_TEACHER_OBSERV_HOME = 'yes' ]; then
-	mkdir -m 750 -p $HOME_BASE/classes
+	mkdir -m 750 -p $SCHOOL_HOME_BASE/classes
     fi
 
     if [ $SCHOOL_TYPE = 'primary' ]; then
-	chmod 1777 $HOME_BASE/all
+	chmod 1777 $SCHOOL_HOME_BASE/all
     else
-	chmod 1770 $HOME_BASE/all
+	chmod 1770 $SCHOOL_HOME_BASE/all
     fi
-    chmod 1775 $HOME_BASE/software
+    chmod 1775 $SCHOOL_HOME_BASE/software
     
 
     ########################################################################
@@ -214,28 +219,16 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base directory rights"
-    setfacl -m m::rwx               $HOME_BASE/all
-    setfacl -m g:$teachers_gn:rwx       $HOME_BASE/all
-    setfacl -m g:$students_gn:rwx       $HOME_BASE/all
-    setfacl -m g:$administration_gn:rwx $HOME_BASE/all
-    setfacl -m g:$sysadmins_gn:rwx      $HOME_BASE/all
+    setfacl -m m::rwx                   $SCHOOL_HOME_BASE/all
+    setfacl -m g:$teachers_gn:rwx       $SCHOOL_HOME_BASE/all
+    setfacl -m g:$students_gn:rwx       $SCHOOL_HOME_BASE/all
+    setfacl -m g:$administration_gn:rwx $SCHOOL_HOME_BASE/all
+    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/all
 
-    chgrp        $teachers_gn           $HOME_BASE/software
-    setfacl -m g:$students_gn:rx        $HOME_BASE/software
-    setfacl -m g:$administration_gn:rx  $HOME_BASE/software
-    setfacl -m g:$sysadmins_gn:rwx      $HOME_BASE/software
-
-    chgrp   $templates_gn         $HOME_BASE/templates
-    chgrp   $students_gn          $HOME_BASE/students
-    chgrp   $teachers_gn          $HOME_BASE/teachers
-    chgrp   $administration_gn    $HOME_BASE/administration
-    chgrp   $workstations_gn      $HOME_BASE/workstations
-
-    setfacl    -m g:$teachers_gn:rx $HOME_BASE/workstations
-    setfacl    -m g:$teachers_gn:rx $HOME_BASE/groups/STUDENTS
-    setfacl -d -m g:$teachers_gn:rx $HOME_BASE/groups/STUDENTS
-
-    rm -rf $HOME_BASE/groups/{WORKSTATIONS,STUDENTS,TEMPLATES}
+    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
+    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
+    setfacl -m g:$administration_gn:rx  $SCHOOL_HOME_BASE/software
+    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/software
 
     ########################################################################
     log " - Create itool directory and right "
@@ -343,4 +336,5 @@ if [ "$all" = "yes" ] || [ "$postsetup" = "yes" ]; then
     PostSetup
 fi
 
-exit 1
+chmod 600 $logfile
+exit 0
