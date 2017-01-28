@@ -136,9 +136,8 @@ function SetupDHCP (){
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
     mkdir -p /etc/dhcpd.d/
-    sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/' /etc/sysconfig/dhcpd
-    systemctl enable dhcp-server
-    systemctl start  dhcp-server
+    systemctl enable dhcpd
+    systemctl start  dhcpd
     log "End SetupDHCP"
 }
 
