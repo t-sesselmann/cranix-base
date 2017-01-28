@@ -113,7 +113,7 @@ echo "unixhome:  $unixhome"
 echo "profile:   $profile"
 echo "role:      $role"
 
-samba-tool user add "$uid" "$password" \
+samba-tool user create "$uid" "$password" \
 				--username="$uid" \
 				--uid="$uid" \
 				--password="$password" \
@@ -138,6 +138,10 @@ else
 	chown -R $uidnumber:$gidnumber $unixhome
 	chmod 0700 $unixhome
 fi
+
+#Create profiles directory
+mkdir -m 700 -p ${SCHOOL_HOME_BASE}/profiles/$uid
+chown $uidnumber  ${SCHOOL_HOME_BASE}/profiles/$uid
 
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
