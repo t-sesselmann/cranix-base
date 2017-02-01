@@ -16,7 +16,8 @@ all="no"
 samba="no"
 dhcp="no"
 #mail="no"
-#proxy="no"
+proxy="no"
+postsetup="no"
 accounts="no"
 verbose="no"
 
@@ -36,6 +37,7 @@ function usage (){
 	echo "                --mail              Setup the mail server"
 	echo "                --proxy             Setup the proxy server"
 	echo "                --accounts          Create the initial groups and user accounts"
+	echo "                --postsetup         Make additional setups."
 	echo "                --verbose           Verbose"
 	echo "Ex.: ./oss-setup.sh --passwdf=/tmp/oss_passwd --all"
 	exit $1
@@ -141,9 +143,8 @@ function SetupDHCP (){
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
     mkdir -p /etc/dhcpd.d/
-    sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/' /etc/sysconfig/dhcpd
-    systemctl enable dhcp-server
-    systemctl start  dhcp-server
+    systemctl enable dhcpd
+    systemctl start  dhcpd
     log "End SetupDHCP"
 }
 
@@ -245,14 +246,12 @@ function SetupInitialAccounts (){
     setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
     setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
 
-
+    
     log "End SetupInitialAccounts"
 }
 
 function PostSetup (){
     log "Start PostSetup"
-
-
     log "End PostSetup"
 }
 
@@ -297,6 +296,9 @@ while [ "$1" != "" ]; do
         ;;
 	--accounts )
                                 accounts="yes"
+        ;;
+	--postsetup )
+                                postsetup="yes"
         ;;
 	--verbose )
                                 verbose="yes"
