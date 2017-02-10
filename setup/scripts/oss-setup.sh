@@ -252,6 +252,31 @@ function SetupInitialAccounts (){
 
 function PostSetup (){
     log "Start PostSetup"
+
+    log "Start and setup mysql"
+    systemctl start  mysql
+    systemctl enable mysql
+    sleep 5
+    SERVER_NETWORK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $1 }' )
+    SERVER_NETMASK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $2 }' )
+    ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
+    ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
+    sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g" /opt/oss/datas/oss-objects.sql
+    sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss/datas/oss-objects.sql
+    sed -i "s/#ANON_NETWORK#/${SERVER_NETWORK}/g" /opt/oss/datas/oss-objects.sql
+    sed -i "s/#ANON_NETMASK#/${SERVER_NETMASK}/g" /opt/oss/datas/oss-objects.sql
+    mysql < /opt/oss/datas/oss-objects.sql
+
+    log "Make mysql secure"
+    cd /root
+    password=`mktemp XXXXXXXXXX`
+    mysqladmin -u root password $password
+echo "[client]
+host=localhost
+user=root
+password=$password" > /root/.my.cnf
+chmod 600 /root/.my.cnf
+
     log "End PostSetup"
 }
 
