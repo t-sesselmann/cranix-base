@@ -263,8 +263,8 @@ function PostSetup (){
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
     sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g" /opt/oss/datas/oss-objects.sql
     sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss/datas/oss-objects.sql
-    sed -i "s/#ANON_NETWORK#/${SERVER_NETWORK}/g" /opt/oss/datas/oss-objects.sql
-    sed -i "s/#ANON_NETMASK#/${SERVER_NETMASK}/g" /opt/oss/datas/oss-objects.sql
+    sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss/datas/oss-objects.sql
+    sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss/datas/oss-objects.sql
     mysql < /opt/oss/datas/oss-objects.sql
 
     log "Make mysql secure"
