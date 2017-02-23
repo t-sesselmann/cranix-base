@@ -10,7 +10,7 @@ rm -f $SCHOOL_HOME_BASE/groups/LINKED/$user/*
 
 for i in  $( groups $user )
 do
-    g=${i/$SCHOOL_DOMAIN\\/}
+    g=${i/$SCHOOL_WORKGROUP\\/}
     if [ $i != $g -a -d $SCHOOL_HOME_BASE/groups/$g ]
     then
         ln -s $SCHOOL_HOME_BASE/groups/$g $SCHOOL_HOME_BASE/groups/LINKED/$user/$g
