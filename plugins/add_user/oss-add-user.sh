@@ -20,6 +20,17 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi
 
+abort() {
+        TASK=$( uuidgen -t )
+	mkdir -p /var/adm/oss/opentasks/
+        echo "add_user" > /var/adm/oss/opentasks/$TASK
+        echo "uid:       $uid" >> /var/adm/oss/opentasks/$TASK
+        echo "password:  $password" >> /var/adm/oss/opentasks/$TASK
+        echo "surname:   $surname" >> /var/adm/oss/opentasks/$TASK
+        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
+        echo "role:      $role" >> /var/adm/oss/opentasks/$TASK
+        exit 1
+}
 
 surname=''
 givenname=''
@@ -91,6 +102,10 @@ samba-tool user create "$uid" "$password" \
 				--unix-home="$unixhome" \
 				--profile-path="$winprofile" \
 				--script-path="$uid.bat" $ADDPARAM
+
+if [ $? != 0 ]; then
+   abort
+fi
 
 uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`
 gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`

@@ -28,6 +28,17 @@ rpassword='no'
 mpassword='no'
 groups=""
 
+abort() {
+        TASK=$( uuidgen -t )
+	mkdir -p /var/adm/oss/opentasks/
+        echo "delete_user" > /var/adm/oss/opentasks/$TASK
+        echo "uid:       $uid" >> /var/adm/oss/opentasks/$TASK
+        echo "password:  $password" >> /var/adm/oss/opentasks/$TASK
+        echo "surname:   $surname" >> /var/adm/oss/opentasks/$TASK
+        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
+        echo "role:      $role" >> /var/adm/oss/opentasks/$TASK
+        exit 1
+}
 
 while read a
 do
@@ -66,6 +77,9 @@ fi
 # delete user
 samba-tool user delete "$uid"
 
+if [ $? != 0 ]; then
+   abort
+fi
 
 #delete home dir and profile dirs
 if [ -d ${SCHOOL_HOME_BASE}/$uid ]; then
