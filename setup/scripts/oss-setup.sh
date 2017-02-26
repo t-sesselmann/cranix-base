@@ -266,7 +266,6 @@ function PostSetup (){
     sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss-java/data/oss-objects.sql
     sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss-java/data/oss-objects.sql
     mysql < /opt/oss-java/data/oss-objects.sql
-    echo "grant all on OSS.* to 'claxss'@'localhost'  identified by 'cl8x77'" | mysql
 
     log "Make mysql secure"
     cd /root
@@ -278,6 +277,12 @@ user=root
 password=$password" > /root/.my.cnf
 chmod 600 /root/.my.cnf
 
+    echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
+    grep -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
+
+    log "Create profile directory"
+    mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
+    chgrp "Domain Users" "$SCHOOL_HOME_BASE/profiles/"
 
     log "End PostSetup"
 }

@@ -12,16 +12,17 @@ U=$3
 IP=$4
 ARCH=$5
 MACH=$6
+REALM=$7
 . /etc/sysconfig/schoolserver
 for i in /usr/share/oss/plugins/shares/$SHARE/$TASK/*
 do
    test ! -e $i && continue
    if [ "$SCHOOL_DEBUG" = "yes" ]
    then
-      echo "$(date +%Y-%m-%d-%H:%M:%S) $i $U $IP $ARCH $MACH" >> /var/log/oss-share_plugin_handler.log
-      $i $U $IP $ARCH $MACH >> /var/log/oss-share_plugin_handler.log  2>&1
+      echo "$(date +%Y-%m-%d-%H:%M:%S) $i $U $IP $ARCH $MACH $REALM" >> /var/log/oss-share_plugin_handler.log
+      $i $U $IP $ARCH $MACH $REALM >> /var/log/oss-share_plugin_handler.log  2>&1
    else
-      $i $U $IP $ARCH $MACH
+      $i $U $IP $ARCH $MACH $REALM
    fi
 done
 
