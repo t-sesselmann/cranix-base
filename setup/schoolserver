@@ -16,7 +16,7 @@ SCHOOL_BACKUP="no"
 ## Type:        string
 ## Default:     1234567
 # On which day make backup from the OSS.
-SCHOOL_BACKUP_DAYS="1234567"
+SCHOOL_BACKUP_DAYS="123456"
 
 ## Type:	yesno
 ## Default:	no
@@ -100,31 +100,25 @@ SCHOOL_BACKUP_WARNING_LIMIT="80"
 # and SCHOOL_BACKUP_INC_DIR are the same.
 SCHOOL_BACKUP_WITH_HARDLINK="no"
 
-
 ########################################################################
-## Path:        Network/Server/Basis
-## Description: Configuration of the OSS: Basis
+## Path:        Network/Server/Basic
+## Description: Configuration of the OSS: Settings
 ########################################################################
 
-## Type:	string
-## Default:	Extis School
-# The name of the school.
-SCHOOL_NAME="Extis School"
+## Type:        string readonly
+## Default:     "172.16.1.1 172.16.1.25"
+# IP-network for new and not registered clients.
+SCHOOL_ANON_DHCP_NET="172.28.1.0/24"
 
 ## Type:	string readonly
 ## Default:	"172.16.1.1 172.16.1.25"
 # IP-address range for new and not registered clients.
-SCHOOL_ANON_DHCP_RANGE="172.16.1.1 172.16.1.25"
-
-## Type:	string readonly
-## Default:	
-# DNS Domain of the school.
-SCHOOL_DOMAIN="EXTIS-School"
+SCHOOL_ANON_DHCP_RANGE="172.28.1.0 172.28.1.31"
 
 ## Type:	string readonly
 ## Default:	172.16.2.0
 # The network address of the first school room.
-SCHOOL_FIRST_ROOM_NET="172.16.2.0"
+SCHOOL_FIRST_ROOM_NET="172.28.2.0"
 
 ## Type:	string readonly
 ## Default:	"/home"
@@ -138,78 +132,78 @@ SCHOOL_ISGATE="yes"
 
 ## Type:	yesno readonly
 ## Default:	no
-# This variable shows if the OSS is conected via a ppp  device to the internet.
-SCHOOL_ISPPP="no"
-
-## Type:	yesno readonly
-## Default:	no
 # Is this a demo version.
 SCHOOL_IS_DEMO="no"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.3"
 # IP-address of the mail server and groupware of the OSS.
-SCHOOL_MAILSERVER="172.16.0.3"
+SCHOOL_MAILSERVER="172.28.0.3"
+
+## Type:        string readonly
+## Default:     Extis
+# The name of the school.
+SCHOOL_NAME="EXTIS"
+
+## Type:	string readonly
+## Default:	"16"
+# Network Mask of the internal network.
+SCHOOL_NETMASK="16"
 
 ## Type:	string readonly
 ## Default:	"255.255.0.0"
 # Network Mask of the internal network.
-SCHOOL_NETMASK="255.255.0.0"
+SCHOOL_NETMASK_STRING="255.255.0.0"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.0"
 # Network Address of the internal network.
-SCHOOL_NETWORK="172.16.0.0"
+SCHOOL_NETWORK="172.28.0.0"
 
 ## Type:	string readonly
 ## Default:	
 # The default gateway for the internal net, not for the server.
-SCHOOL_NET_GATEWAY="172.16.0.2"
+SCHOOL_NET_GATEWAY="172.28.0.2"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.4"
 # IP-address of the print server of the OSS.
-SCHOOL_PRINTSERVER="172.16.0.4"
+SCHOOL_PRINTSERVER="172.28.0.4"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.5"
 # IP-address of the proxy server of the OSS.
-SCHOOL_PROXY="172.16.0.5"
+SCHOOL_PROXY="172.28.0.5"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.6"
 # IP-address of the backup server of the OSS.
-SCHOOL_BACKUP_SERVER="172.16.0.6"
+SCHOOL_BACKUP_SERVER="172.28.0.6"
 
 ## Type:	integer readonly
 ## Default:	32
 # The (appr.) number of the school rooms.
 SCHOOL_ROOM_NR="32"
 
-## Type:	integer,4,8,16,32,64,128,256 readonly
-## Default:	64
-# The maximum number of the workstations in the rooms.
-SCHOOL_WORKSTATIONS_IN_ROOM="64"
-
 ## Type:	string readonly
 ## Default:	"172.16.0.2"
 # IP-address of the admin server of the OSS.
-SCHOOL_SERVER="172.16.0.2"
+SCHOOL_SERVER="172.28.0.2"
 
 ## Type:	string readonly
 ## Default:	
 # The default gateway of the server.
-SCHOOL_SERVER_EXT_GW="192.168.1.1"
+SCHOOL_SERVER_EXT_GW="192.168.0.1"
 
 ## Type:	string readonly
 ## Default:	
 # The external ip address of the server.
-SCHOOL_SERVER_EXT_IP="192.168.1.100"
+SCHOOL_SERVER_EXT_IP="192.168.0.2"
 
 ## Type:	string readonly
 ## Default:	
 # The netmask of the external ip address of the server.
-SCHOOL_SERVER_EXT_NETMASK="255.255.255.0"
+SCHOOL_SERVER_EXT_NETMASK="24"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.0/24"
@@ -226,15 +220,10 @@ SCHOOL_USE_DHCP="yes"
 # Teachers have read rights in the home directories of  the students.
 SCHOOL_TEACHER_OBSERV_HOME="no"
 
-## Type:	yesno readonly
-## Default:	no
-# The eGroupware groupware will be used.
-SCHOOL_USE_EGROUPWARE="no"
-
-## Type:	yesno readonly
-## Default:	"no"	
-# The OSS uses the Time for Kids web filter programm.
-SCHOOL_USE_TFK="no"
+## Type:        string(primary)
+## Default:     gymnasium
+# The type of the school.
+SCHOOL_TYPE="real"
 
 ## Type:	yesno readonly
 ## Default:	"yes"	
@@ -244,27 +233,7 @@ SCHOOL_IS_TERMINALSERVER="yes"
 ## Type:	string readonly
 ## Default:	EXTIS
 # The windows domain name of the school.
-SCHOOL_WORKGROUP="EXTIS-School"
-
-## Type:	string readonly
-## Default:	pdc-server
-# The windows netbios name of the OSS.
-SCHOOL_NETBIOSNAME="pdc-server"
-
-## Type:	string(primary,secondary,real,gymnasium,work,other) readonly
-## Default:	gymnasium
-# The type of the school.
-SCHOOL_TYPE=""
-
-## Type:	string readonly
-## Default:	"5 6 7 8 9 10 11 -12"
-# Classes in the school.
-SCHOOL_NCLASSES="5 6 7 8 9 10 11 -12"
-
-## Type:	string readonly
-## Default:	"A B C D"
-# Parallel classes in the school.
-SCHOOL_ACLASSES="A B C D"
+SCHOOL_WORKGROUP="EXTIS"
 
 ## Type:	string readonly
 ## Default:	"DE"
@@ -275,6 +244,11 @@ SCHOOL_LANGUAGE="DE"
 ## Default:	"DE"
 # Default country code.
 SCHOOL_CCODE="DE"
+
+## Type:        string readonly
+## Default:     
+# DNS Domain of the school.
+SCHOOL_DOMAIN="extis.eu"
 
 ########################################################################
 ## Path:        Network/Server/Settings
@@ -294,7 +268,7 @@ SCHOOL_IMPORT_FILE_FORMAT="CSV"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-SCHOOL_MONITOR_SERVICES="amavis,apcupsd,cups,dhcpd,mysql,named,nmb,postfix,smb,squid"
+SCHOOL_MONITOR_SERVICES="amavis,apcupsd,cups,dhcpd,ldap,named,postfix,samba,squid"
 
 ## Type:	yesno
 ## Default:	no
@@ -304,12 +278,12 @@ SCHOOL_ALLOW_MULTIPLE_ALIASES="no"
 ## Type:	integer
 ## Default:	100
 # The default file system quota for students in MB.
-SCHOOL_FILE_QUOTA="100"
+SCHOOL_FILE_QUOTA="250"
 
 ## Type:	integer
 ## Default:	500
 # The default file system quota for teachers in MB.
-SCHOOL_FILE_TEACHER_QUOTA="500"
+SCHOOL_FILE_TEACHER_QUOTA="1000"
 
 ## Type:	string
 ## Default:	
@@ -336,13 +310,8 @@ SCHOOL_MAIL_QUOTA="5"
 # The default mail quota for teachers in MB.
 SCHOOL_MAIL_TEACHER_QUOTA="25"
 
-## Type:	yesno
-## Default:	yes
-# The sending of external mails is denied for students.
-SCHOOL_NO_EXTERN_MAIL="yes"
-
-## Type:	string
-## Default:	
+## Type:        string
+## Default:     
 # The registration code of the OSS.
 SCHOOL_REG_CODE="NOT YET REGISTERED"
 
@@ -365,11 +334,6 @@ SCHOOL_SUPPORT_MAIL_ADDRESS="oss-support@extis.de"
 ## Default:     yes	
 # The OSS uses the clone tool for the installation of clients.
 SCHOOL_USE_CTOOL="yes"
-
-## Type:	yesno
-## Default:     yes	
-# If this variable is set to yes, mobile room support is enabled.
-SCHOOL_USE_MOBILE_ROOMS="yes"
 
 ## Type:	yesno
 ## Default:     yes	
@@ -410,7 +374,7 @@ SCHOOL_MAY_NOT_CHANGE_PASSWORD="no"
 ## Type:        integer(10:16)
 ## Default:     10
 # Maximal lenght of password. Should not be graeter then 16 if you are using Office365.
-SCHOOL_MAXIMAL_PASSWORD_LENGTH="8"
+SCHOOL_MAXIMAL_PASSWORD_LENGTH="10"
 
 ## Type:        integer(8:16)
 ## Default:     8
@@ -421,11 +385,6 @@ SCHOOL_MINIMAL_PASSWORD_LENGTH="8"
 ## Default:     yes
 # Should the quality of the user passwort be checked for setting it? The minimal and maximal will be checked everytime.
 SCHOOL_CHECK_PASSWORD_QUALITY="yes"
-
-## Type:        yesno
-## Default:     no
-# Enable/Disable avahi printer configuration
-SCHOOL_ENABLE_AVAHI_PRINTER_CONFIG="no"
 
 ## Type:	string(telex,simple)
 ## Default:	telex
@@ -440,4 +399,5 @@ SCHOOL_SEARCH_FOR_DELETE="all groups"
 ## Type:        string
 ## Default:     
 # External software package url.
-SCHOOL_EXT_PKG_URL="http://repo.openschoolserver.net/cgi-bin/swpkg2.pl"
+SCHOOL_EXT_PKG_URL="http://repo.openschoolserver.net/cgi-bin/swpkg3.pl"
+

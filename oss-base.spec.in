@@ -1,0 +1,77 @@
+#
+# spec file for package oss-base
+#
+# Copyright (c) 2017 Peter Varkoly, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. 
+
+# Please submit bugfixes or comments via http://oss.cephalix.eu/
+#
+
+Name:           oss-base
+Version:       	@VERSION@ 
+Release:        @RELEASE@ 
+License:        Commercial
+Summary:        Base package for the OSS
+Url:            http://oss.cephalix.eu/
+Group:          Productivity/
+Source:         %{name}.tar.bz2
+BuildArch:      noarch
+Requires:       rsync
+Requires:       samba
+BuildRequires:  rsync
+#PreReq:
+#Provides:
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+
+%prep
+%setup -q  -n %{name}
+
+%build
+
+%install
+make install DESTDIR=%{buildroot} %{?_smp_mflags}
+
+%post
+if [ -e /etc/sysconfig/schoolserver ]; then
+	if [ ${1:-0} -gt 1 ]; then
+		echo "Executing Update Scripts"
+		mkdir -p /var/adm/oss
+		mkdir -p /var/log/oss-update
+		UV=$( echo %{version} | sed -r 's/(...)../\1/' )
+		for i in /usr/share/oss/setup/update-$UV-*
+		do
+		    if [ -e $i ]; then
+			b=$(basename $i)
+			$i &> /var/log/oss-update/$b
+		    fi
+		done
+	else
+		rsync -av /usr/share/oss/software/oss/ /home/software/oss/
+	fi
+fi
+
+%postun
+
+%files
+%defattr(-,root,root)
+%dir /etc/YaST2
+/etc/YaST2/oss-firstboot.xml
+/usr/share/oss/
+/usr/sbin/oss*
+/var/adm/fillup-templates/sysconfig.schoolserver
+%doc README.md
+
+%description
+This package contains the basic utilitis to setup configure and manipulate
+the Open School Server.
+
+Authors:
+--------
+        peter@varkoly.de
+
+ChangeLog:
+---------
+

@@ -97,20 +97,11 @@ samba-tool group add "$name" --description="$description" $params
 
 
 #create diredtory and set permission
-nameUP=`echo "$name" | tr "[:lower:]" "[:upper:]"`
-gdir="/home/groups/$nameUP"
-gdirbase="/home/$name"
+. /etc/sysconfig/schoolserver
+nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
+gdir=${SCHOOL_HOME_BASE}/groups/${nameLo}
 gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 
-mkdir -p $gdir
+mkdir -p -m 3770 $gdir
 chgrp $gidnumber $gdir
-#chgrp $name $gdir
 setfacl -d -m g::rwx $gdir
-chmod 771 $gdir
-
-if [ "$type" = "primary" ] || [ "$type" = "guest" ]; then
-    mkdir -p $gdirbase
-    chown -R root:$gidnumber $gdirbase
-#    chown -R root:$name $gdirbase
-    chmod 755 $gdirbase
-fi

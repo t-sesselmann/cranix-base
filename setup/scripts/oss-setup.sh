@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 #
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
@@ -8,18 +8,16 @@ sysconfig="/etc/sysconfig/schoolserver"
 logdate=`date "+%y.%m.%d.%H-%M-%S"`
 logfile="/var/log/oss-setup.$logdate.log"
 passwd=""
-netbiosname=""
 windomain=""
-HOME_BASE="/home";
 
 # input variable
 passwdf=""
 all="no"
-#presetup="no"
 samba="no"
-#dhcp="no"
+dhcp="no"
 #mail="no"
-#proxy="no"
+proxy="no"
+postsetup="no"
 accounts="no"
 verbose="no"
 
@@ -34,12 +32,12 @@ function usage (){
 	echo "Optional parameters :"
 	echo "          -h,   --help              Display the help."
 	echo "                --all               Setup all services and create the initial groups and user accounts."
-#	echo "                --presetup          Pre Setup OSS server."
 	echo "                --samba             Setup the AD-DC samba server."
 	echo "                --dhcp              Setup the DHCP server"
 	echo "                --mail              Setup the mail server"
 	echo "                --proxy             Setup the proxy server"
 	echo "                --accounts          Create the initial groups and user accounts"
+	echo "                --postsetup         Make additional setups."
 	echo "                --verbose           Verbose"
 	echo "Ex.: ./oss-setup.sh --passwdf=/tmp/oss_passwd --all"
 	exit $1
@@ -62,23 +60,17 @@ function InitGlobalVariable (){
     . $sysconfig
 
     ########################################################################
-    log " - Read password file"
-    passwd=`cat $passwdf`
-    log "   passwd = $passwd"
-
-    ########################################################################
-    log " - Set netbiosname variable"
-    if [ $SCHOOL_NETBIOSNAME} ]
-    then
-        netbiosname=$SCHOOL_NETBIOSNAME
+    if [ "$passwdf" ]; then
+        log " - Read password file"
+        passwd=`cat $passwdf`
+        log "   passwd = $passwd"
     fi
-    netbiosname=`echo "$netbiosname" | tr "[:upper:]" "[:lower:]"`
-    log "   netbiosname = $netbiosname"
 
     ########################################################################
     log " - Set windomain variable"
     windomain=`echo "$SCHOOL_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
+    sed -i s/^SCHOOL_WORKGROUP=.*/SCHOOL_WORKGROUP=\"$windomain\"/ $sysconfig
 
     log "End InitGlobalVariable"
 }
@@ -107,10 +99,11 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/schooladmin/"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/"          /etc/samba/smb.conf
-    sed -i "s/#WORKGROUP#/$windomain/"          /etc/samba/smb.conf
-    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/" /etc/samba/smb.conf
+    sed    "s/#NETBIOSNAME#/schooladmin/g"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
+    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
+    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
+    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"    /etc/samba/smb.conf
 
     ########################################################################
     log " - Config resolv.conf"
@@ -126,11 +119,32 @@ function SetupSamba (){
     mv /etc/krb5.conf /etc/krb5.conf.$logdate
     cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
 
+    ########################################################################
+    log " - Tell nsswitch to use winbind."
+    cp /usr/share/oss/setup/templates/nsswitch.conf /etc/nsswitch.conf
+
+    ########################################################################
+    log " - Use our enhanced samba.service file."
+    cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
+
+    ########################################################################
+    log " - Create linked groups directory "
+    mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
+
     log "End SetupSamba"
 }
 
 function SetupDHCP (){
     log "Start SetupDHCP"
+    sed    "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"                   /usr/share/oss/setup/templates/dhcpd.conf.ini > /usr/share/oss/templates/dhcpd.conf 
+    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"         /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_ANON_DHCP_RANGE#/${SCHOOL_ANON_DHCP_RANGE}/g" /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"                 /usr/share/oss/templates/dhcpd.conf
+    sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
+    cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
+    mkdir -p /etc/dhcpd.d/
+    systemctl enable dhcpd
+    systemctl start  dhcpd
     log "End SetupDHCP"
 }
 
@@ -150,21 +164,21 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base directory"
-    mkdir -m 770 -p $HOME_BASE/all
-    mkdir -m 755 -p $HOME_BASE/archiv
-    mkdir -m 755 -p $HOME_BASE/groups
-    mkdir -m 775 -p $HOME_BASE/software
+    mkdir -m 770 -p $SCHOOL_HOME_BASE/all
+    mkdir -m 755 -p $SCHOOL_HOME_BASE/archiv
+    mkdir -m 755 -p $SCHOOL_HOME_BASE/groups
+    mkdir -m 775 -p $SCHOOL_HOME_BASE/software
     mkdir -m 755 -p /mnt/backup
     if [ $SCHOOL_TEACHER_OBSERV_HOME = 'yes' ]; then
-	mkdir -m 750 -p $HOME_BASE/classes
+	mkdir -m 750 -p $SCHOOL_HOME_BASE/classes
     fi
 
     if [ $SCHOOL_TYPE = 'primary' ]; then
-	chmod 1777 $HOME_BASE/all
+	chmod 1777 $SCHOOL_HOME_BASE/all
     else
-	chmod 1770 $HOME_BASE/all
+	chmod 1770 $SCHOOL_HOME_BASE/all
     fi
-    chmod 1775 $HOME_BASE/software
+    chmod 1775 $SCHOOL_HOME_BASE/software
     
 
     ########################################################################
@@ -177,9 +191,9 @@ function SetupInitialAccounts (){
     /usr/sbin/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
 
     ########################################################################
-    log " - Create primary group type and add base role to primary group"
-    samba-tool group add "primary" --description="Primary group for role"
-    samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
+    #log " - Create primary group type and add base role to primary group"
+    #samba-tool group add "primary" --description="Primary group for role"
+    #samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
 
     ########################################################################
     log " - sysadmin primary group add to administrator group"
@@ -207,28 +221,16 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base directory rights"
-    setfacl -m m::rwx               $HOME_BASE/all
-    setfacl -m g:$teachers_gn:rwx       $HOME_BASE/all
-    setfacl -m g:$students_gn:rwx       $HOME_BASE/all
-    setfacl -m g:$administration_gn:rwx $HOME_BASE/all
-    setfacl -m g:$sysadmins_gn:rwx      $HOME_BASE/all
+    setfacl -m m::rwx                   $SCHOOL_HOME_BASE/all
+    setfacl -m g:$teachers_gn:rwx       $SCHOOL_HOME_BASE/all
+    setfacl -m g:$students_gn:rwx       $SCHOOL_HOME_BASE/all
+    setfacl -m g:$administration_gn:rwx $SCHOOL_HOME_BASE/all
+    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/all
 
-    chgrp        $teachers_gn           $HOME_BASE/software
-    setfacl -m g:$students_gn:rx        $HOME_BASE/software
-    setfacl -m g:$administration_gn:rx  $HOME_BASE/software
-    setfacl -m g:$sysadmins_gn:rwx      $HOME_BASE/software
-
-    chgrp   $templates_gn         $HOME_BASE/templates
-    chgrp   $students_gn          $HOME_BASE/students
-    chgrp   $teachers_gn          $HOME_BASE/teachers
-    chgrp   $administration_gn    $HOME_BASE/administration
-    chgrp   $workstations_gn      $HOME_BASE/workstations
-
-    setfacl    -m g:$teachers_gn:rx $HOME_BASE/workstations
-    setfacl    -m g:$teachers_gn:rx $HOME_BASE/groups/STUDENTS
-    setfacl -d -m g:$teachers_gn:rx $HOME_BASE/groups/STUDENTS
-
-    rm -rf $HOME_BASE/groups/{WORKSTATIONS,STUDENTS,TEMPLATES}
+    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
+    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
+    setfacl -m g:$administration_gn:rx  $SCHOOL_HOME_BASE/software
+    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/software
 
     ########################################################################
     log " - Create itool directory and right "
@@ -244,13 +246,43 @@ function SetupInitialAccounts (){
     setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
     setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
 
-
+    
     log "End SetupInitialAccounts"
 }
 
 function PostSetup (){
     log "Start PostSetup"
 
+    log "Start and setup mysql"
+    systemctl start  mysql
+    systemctl enable mysql
+    sleep 5
+    SERVER_NETWORK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $1 }' )
+    SERVER_NETMASK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $2 }' )
+    ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
+    ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
+    sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss-java/data/oss-objects.sql
+    mysql < /opt/oss-java/data/oss-objects.sql
+
+    log "Make mysql secure"
+    cd /root
+    password=`mktemp XXXXXXXXXX`
+    mysqladmin -u root password $password
+echo "[client]
+host=localhost
+user=root
+password=$password" > /root/.my.cnf
+chmod 600 /root/.my.cnf
+
+    echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
+    grep -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
+
+    log "Create profile directory"
+    mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
+    chgrp "Domain Users" "$SCHOOL_HOME_BASE/profiles/"
 
     log "End PostSetup"
 }
@@ -282,9 +314,6 @@ while [ "$1" != "" ]; do
 	--all )
 				all="yes"
 	;;
-#	--presetup )
-#				presetup="yes"
-#	;;
 	--samba )
 				samba="yes"
         ;;
@@ -299,6 +328,9 @@ while [ "$1" != "" ]; do
         ;;
 	--accounts )
                                 accounts="yes"
+        ;;
+	--postsetup )
+                                postsetup="yes"
         ;;
 	--verbose )
                                 verbose="yes"
@@ -320,9 +352,6 @@ while [ "$1" != "" ]; do
 done
 
 InitGlobalVariable
-#if [ "$all" = "yes" ] || [ "$presetup" = "yes" ]; then
-#    PreSetup
-#fi
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ]; then
     SetupSamba
 fi
@@ -342,4 +371,5 @@ if [ "$all" = "yes" ] || [ "$postsetup" = "yes" ]; then
     PostSetup
 fi
 
-exit 1
+chmod 600 $logfile
+exit 0

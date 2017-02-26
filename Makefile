@@ -3,7 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-TOPACKAGE       = Makefile schoolserver plugins sbin  setup  templates
+TOPACKAGE       = Makefile plugins sbin  setup  templates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -15,13 +15,16 @@ install:
 	for i in $(REQPACKAGES); do \
 	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
 	done  
-	mkdir -p $(SHARE)/{setup,templates,tools,plugins} $(DESTDIR)/usr/sbin/ $(DESTDIR)/var/adm/fillup-templates/
+	mkdir -p $(SHARE)/{setup,templates,tools,plugins}
+	mkdir -p $(DESTDIR)/usr/sbin/ 
+	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
+	mkdir -p $(DESTDIR)//etc/YaST2/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
-	install -m 755 tools/*      $(SHARE)/tools/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
-	install -m 644 schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
+	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
+	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 
 dist:
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
@@ -35,10 +38,10 @@ dist:
 	rm -rf $(PACKAGE)
 	sed    's/@VERSION@/$(VERSION)/'  $(PACKAGE).spec.in > $(PACKAGE).spec
 	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
-	if [ -d /data1/OSC/home\:openschoolserver/$(PACKAGE) ] ; then \
-	    cd /data1/OSC/home\:openschoolserver/$(PACKAGE); osc up; cd $(HERE);\
-	    cp $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:openschoolserver/$(PACKAGE); \
-	    cd /data1/OSC/home\:openschoolserver/$(PACKAGE); \
+	if [ -d /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE) ] ; then \
+	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); osc up; cd $(HERE);\
+	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
+	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
 	    osc vc; \
 	    osc ci -m "New Build Version"; \
 	fi
