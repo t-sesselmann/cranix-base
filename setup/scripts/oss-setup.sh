@@ -142,7 +142,7 @@ function SetupDHCP (){
     sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"                 /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
-    mkdir -p /etc/dhcpd.d/
+    sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'	    /etc/sysconfig/dhcpd
     systemctl enable dhcpd
     systemctl start  dhcpd
     log "End SetupDHCP"
@@ -278,7 +278,7 @@ password=$password" > /root/.my.cnf
 chmod 600 /root/.my.cnf
 
     echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
-    grep -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
 
     log "Create profile directory"
     mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
