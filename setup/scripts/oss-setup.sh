@@ -95,15 +95,16 @@ function SetupSamba (){
 
     ########################################################################
     log " - Install domain provision"
-    samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --ldapadminpass="$passwd" --use-rfc2307 --use-xattrs=yes
+    samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --ldapadminpass="$passwd" --use-rfc2307 --use-xattrs=yes --host-ip="$SCHOOL_SERVER"
 
     ########################################################################
     log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/schooladmin/g"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
+    sed    "s/#NETBIOSNAME#/admin/g"             /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
     sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
-    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"    /etc/samba/smb.conf
+    sed -i "s/#IPADD#/$SCHOOL_SERVER/g"          /etc/samba/smb.conf
+    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf
 
     ########################################################################
     log " - Config resolv.conf"
@@ -284,7 +285,19 @@ chmod 600 /root/.my.cnf
     mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
     chgrp "Domain Users" "$SCHOOL_HOME_BASE/profiles/"
 
+    log "Create Certificates"
+    /usr/share/oss/tools/create_server_certificates.sh -N CA
+    /usr/share/oss/tools/create_server_certificates.sh -N admin
+    /usr/share/oss/tools/create_server_certificates.sh -N schoolserver
+
+    log "Adapt Apache configuration"
+    sed "s/#DOMAIN#/$SCHOOL_DOMAIN/" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
+    sed "s/#DOMAIN#/$SCHOOL_DOMAIN/" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
+    sed -i 's/^APACHE_MODULES=.*/APACHE_MODULES="actions alias auth_basic authn_file authz_host authz_groupfile authz_core authz_user autoindex cgi dir env expires include log_config mime negotiation setenvif ssl socache_shmcb userdir reqtimeout php5 rewrite authn_core proxy proxy_http proxy_connect"/' /etc/sysconfig/apache2
+    sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
+    systemctl enable apache2
     log "End PostSetup"
+
 }
 
 
