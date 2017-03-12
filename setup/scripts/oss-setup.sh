@@ -103,7 +103,7 @@ function SetupSamba (){
     sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
-    sed -i "s/#IPADD#/$SCHOOL_SERVER/g"          /etc/samba/smb.conf
+    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"          /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf
 
     ########################################################################
@@ -296,6 +296,9 @@ chmod 600 /root/.my.cnf
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
+
+    log "Setup SuSEFirewall2"
+    #TODO
 
     log "End PostSetup"
 
