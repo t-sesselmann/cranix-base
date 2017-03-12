@@ -2,7 +2,7 @@
 # Bitte diese Datei nicht ändern
 # Kérem ne változtassa meg ezt a fájlt
 <VirtualHost 127.0.0.1:80>
-        ServerAdmin     admin
+        ServerAdmin     admin@#DOMAIN#
         DocumentRoot    /srv/www/admin
         ServerName      localhost
         ProxyRequests     Off
@@ -13,18 +13,18 @@
 </VirtualHost>
 
 <VirtualHost admin:80>
-        ServerAdmin     admin
+        ServerAdmin     admin@#DOMAIN#
         DocumentRoot    /srv/www/admin
-        ServerName      schooladmin.#DOMAIN#
+        ServerName      admin.#DOMAIN#
 #        Include         /etc/apache2/vhosts.d/admin/*.conf
 #        Include         /etc/apache2/vhosts.d/*.group
 
 </VirtualHost>
 
 <VirtualHost admin:443>
-        ServerAdmin     admin
+        ServerAdmin     admin@#DOMAIN#
         DocumentRoot    /srv/www/admin
-        ServerName      schooladmin.#DOMAIN#
+        ServerName      admin.#DOMAIN#
         ErrorLog        /var/log/apache2/admin-error_log
         TransferLog     /var/log/apache2/admin-access_log
 #       Include         /etc/apache2/vhosts.d/admin-ssl/*.conf
