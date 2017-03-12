@@ -15,7 +15,7 @@
 <VirtualHost admin:80>
         ServerAdmin     admin
         DocumentRoot    /srv/www/admin
-        ServerName      schooladmin.super.schule.org
+        ServerName      schooladmin.#DOMAIN#
 #        Include         /etc/apache2/vhosts.d/admin/*.conf
 #        Include         /etc/apache2/vhosts.d/*.group
 
@@ -24,7 +24,7 @@
 <VirtualHost admin:443>
         ServerAdmin     admin
         DocumentRoot    /srv/www/admin
-        ServerName      schooladmin.super.schule.org
+        ServerName      schooladmin.#DOMAIN#
         ErrorLog        /var/log/apache2/admin-error_log
         TransferLog     /var/log/apache2/admin-access_log
 #       Include         /etc/apache2/vhosts.d/admin-ssl/*.conf
@@ -52,8 +52,8 @@
                 SSLEngine on
                 SSLProtocol All -SSLv2 -SSLv3
                 SSLCACertificateFile    /etc/ssl/servercerts/cacert.pem
-                SSLCertificateFile      /etc/ssl/servercerts/certs/schooladmin.super.schule.org.cert.pem
-                SSLCertificateKeyFile   /etc/ssl/servercerts/certs/schooladmin.super.schule.org.key.pem
+                SSLCertificateFile      /etc/ssl/servercerts/certs/schooladmin.#DOMAIN#.cert.pem
+                SSLCertificateKeyFile   /etc/ssl/servercerts/certs/schooladmin.#DOMAIN#.key.pem
         #        SSLCertificateChainFile /etc/apache2/ssl.crt/sub.class2.server.ca.pem
 
                 SSLVerifyClient         none
