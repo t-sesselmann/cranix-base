@@ -93,6 +93,16 @@ function SetupSamba (){
     cp -r /etc/samba/ /etc/samba-backup-$logdate
     rm -r /etc/samba/*
 
+    #######################################################################
+    log " - Turn off not used network devices."
+    . /etc/sysconfig/SuSEfirewall2
+    if [ "$FW_DEV_EXT" ]; then
+       ifdown $FW_DEV_EXT
+    fi
+    ifconfig "$FW_DEV_INT:mail" down
+    ifconfig "$FW_DEV_INT:print" down
+    ifconfig "$FW_DEV_INT:proxy" down
+
     ########################################################################
     log " - Install domain provision"
     samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --ldapadminpass="$passwd" --use-rfc2307 --use-xattrs=yes --host-ip="$SCHOOL_SERVER"
