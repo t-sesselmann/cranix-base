@@ -19,8 +19,8 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi 
 
-surname=''
-givenname=''
+sureName=''
+givenName=''
 role=''
 uid=''
 password=''
@@ -32,11 +32,11 @@ abort() {
         TASK=$( uuidgen -t )
 	mkdir -p /var/adm/oss/opentasks/
         echo "delete_user" > /var/adm/oss/opentasks/$TASK
-        echo "uid:       $uid" >> /var/adm/oss/opentasks/$TASK
-        echo "password:  $password" >> /var/adm/oss/opentasks/$TASK
-        echo "surname:   $surname" >> /var/adm/oss/opentasks/$TASK
-        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
-        echo "role:      $role" >> /var/adm/oss/opentasks/$TASK
+        echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
+        echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+        echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+        echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
+        echo "role: $role" >> /var/adm/oss/opentasks/$TASK
         exit 1
 }
 
@@ -45,11 +45,11 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    surname)
-      surname="${c}"
+    sureName)
+      sureName="${c}"
     ;;
-    givenname)
-      givenname="${c}"
+    givenName)
+      givenName="${c}"
     ;;
     uid)
       uid="${c}"

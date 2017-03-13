@@ -21,8 +21,8 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
 fi
 
 
-surname=''
-givenname=''
+sureName=''
+givenName=''
 role=''
 uid=''
 password=''
@@ -33,11 +33,12 @@ groups=""
 abort() {
 	TASK=$( uuidgen -t )
 	echo "modify_user" > /var/adm/oss/opentasks/$TASK
-	echo "uid:       $uid" >> /var/adm/oss/opentasks/$TASK
-	echo "password:  $password" >> /var/adm/oss/opentasks/$TASK
-	echo "surname:   $surname" >> /var/adm/oss/opentasks/$TASK
-	echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
-	echo "role:      $role" >> /var/adm/oss/opentasks/$TASK
+	echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
+	echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+	echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
+	echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+	echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
+	echo "role: $role" >> /var/adm/oss/opentasks/$TASK
 	exit 1
 }
 
@@ -46,11 +47,11 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    surname)
-      surname="${c}"
+    sureName)
+      sureName="${c}"
     ;;
-    givenname)
-      givenname="${c}"
+    givenName)
+      givenName="${c}"
     ;;
     uid)
       uid="${c}"
@@ -79,7 +80,7 @@ fi
 DN=$( /usr/bin/ldbsearch  -H /var/lib/samba/private/sam.ldb uid=$uid dn | grep dn: | sed 's/dn: //' )
 b=${DN/CN=Users,*/}
 BASE=${DN/$b/}
-NEWDN="CN=$givenname $surname,$BASE"
+NEWDN="CN=$givenName $sureName,$BASE"
 /usr/bin/ldbrename -H /var/lib/samba/private/sam.ldb "$DN" "$NEWDN"
 if [ $? != 0 ]; then
    abort
@@ -87,8 +88,8 @@ fi
 
 FILE=$( mktemp /tmp/modify-user-XXXXXXXX )
 echo "dn: $NEWDN
-givenName: $givenname
-sn: $surname" > $FILE
+givenName: $givenName
+sn: $sureName" > $FILE
 
 ldbmodify  -H /var/lib/samba/private/sam.ldb $FILE
 if [ $? != 0 ]; then

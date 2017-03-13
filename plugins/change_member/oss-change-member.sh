@@ -21,7 +21,7 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
 fi
 
 
-changetype=""
+changeType=""
 group=""
 user=""
 
@@ -30,17 +30,17 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    changetype)
-      surname="${c}"
+    changeType)
+      changeType="${c}"
     ;;
     group)
-      surname="${c}"
+      group="${c}"
     ;;
     user)
-      surname="${c}"
+      user="${c}"
     ;;
   esac
 done
 
-samba-tool group $changetype $group $user
+samba-tool group $changeType $group $user
 

@@ -20,6 +20,20 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi
 
+abort() {
+        TASK=$( uuidgen -t )
+        mkdir -p /var/adm/oss/opentasks/
+        echo "add_group" > /var/adm/oss/opentasks/$TASK
+        echo "name: $name" >> /var/adm/oss/opentasks/$TASK
+        echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+        echo "description: $description" >> /var/adm/oss/opentasks/$TASK
+        echo "type: $type" >> /var/adm/oss/opentasks/$TASK
+	if [ "$mail" ]; then
+		echo "mail: $mail" >> /var/adm/oss/opentasks/$TASK
+	fi
+        exit 1
+}
+
 
 name=''
 description=''
@@ -59,6 +73,9 @@ fi
 
 samba-tool group add "$name" --description="$description" $params
 
+if [ $? != 0 ]; then
+   abort
+fi
 
 #create diredtory and set permission
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`

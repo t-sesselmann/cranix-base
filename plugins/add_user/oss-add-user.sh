@@ -24,16 +24,16 @@ abort() {
         TASK=$( uuidgen -t )
 	mkdir -p /var/adm/oss/opentasks/
         echo "add_user" > /var/adm/oss/opentasks/$TASK
-        echo "uid:       $uid" >> /var/adm/oss/opentasks/$TASK
-        echo "password:  $password" >> /var/adm/oss/opentasks/$TASK
-        echo "surname:   $surname" >> /var/adm/oss/opentasks/$TASK
-        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
-        echo "role:      $role" >> /var/adm/oss/opentasks/$TASK
+        echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
+        echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+        echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+        echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
+        echo "role: $role" >> /var/adm/oss/opentasks/$TASK
         exit 1
 }
 
-surname=''
-givenname=''
+sureName=''
+givenName=''
 role=''
 uid=''
 password=''
@@ -47,11 +47,11 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    surname)
-      surname="${c}"
+    sureName)
+      sureName="${c}"
     ;;
-    givenname)
-      givenname="${c}"
+    givenName)
+      givenName="${c}"
     ;;
     uid)
       uid="${c}"
@@ -80,8 +80,8 @@ unixhome=${SCHOOL_HOME_BASE}/$uid
 
 echo "uid:       $uid"
 echo "password:  $password"
-echo "surname:   $surname"
-echo "givenname: $givenname"
+echo "sureName:   $sureName"
+echo "givenName: $givenName"
 echo "winhome:   $winhome"
 echo "unixhome:  $unixhome"
 echo "profile:   $profile"
@@ -95,8 +95,8 @@ samba-tool user create "$uid" "$password" \
 				--username="$uid" \
 				--uid="$uid" \
 				--password="$password" \
-				--surname="$surname" \
-				--given-name="$givenname" \
+				--surname="$sureName" \
+				--given-name="$givenName" \
 				--home-drive="Z:" \
 				--home-directory="$winhome" \
 				--unix-home="$unixhome" \
@@ -114,11 +114,11 @@ gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
 #create home diredtory and set permission
 mkdir -p $unixhome
 if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
-	chown -R $uidnumber:TEACHERS $unixhome
-	chmod 0770 $unixhome
+	chown -R $uidnumber:TEACHERS "$unixhome"
+	chmod 0770 "$unixhome"
 else
-	chown -R $uidnumber:$gidnumber $unixhome
-	chmod 0700 $unixhome
+	chown -R $uidnumber:$gidnumber "$unixhome"
+	chmod 0700 "$unixhome"
 fi
 
 #Create profiles directory
