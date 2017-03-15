@@ -276,6 +276,11 @@ function PostSetup (){
     sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss-java/data/oss-objects.sql
     sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss-java/data/oss-objects.sql
     sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g" /opt/oss-java/data/oss-objects.sql
     mysql < /opt/oss-java/data/oss-objects.sql
 
     log "Make mysql secure"
