@@ -142,6 +142,14 @@ function SetupSamba (){
     log " - Create linked groups directory "
     mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
 
+    ########################################################################
+    log " - Create dns entries "
+    samba-tool dns add localhost $SCHOOL_DOMAIN mailserver   A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN schoolserver A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN proxy        A $SCHOOL_PROXY         -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
+    
     log "End SetupSamba"
 }
 
