@@ -29,6 +29,8 @@ abort() {
         echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
         echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
+        echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
+        echo "msQuota: $msQuota" >> /var/adm/oss/opentasks/$TASK
         exit 1
 }
 
@@ -39,6 +41,8 @@ uid=''
 password=''
 rpassword='no'
 mpassword='no'
+fsQuota=0
+msQuota=0
 groups=""
 
 
@@ -65,6 +69,12 @@ do
     ;;
     mpassword)
       mpassword="${c}"
+    ;;
+    fsQuota)
+      fsQuota="${c}"
+    ;;
+    msQuota)
+      msQuota="${c}"
     ;;
   esac
 done
@@ -131,4 +141,10 @@ samba-tool group addmembers "$role" "$uid"
 if [ "$sysadmin" = ",sysadmins" ]; then
    samba-tool group addmembers "sysadmins" "$uid"
 fi
+
+bsoft=$((fsQuota*1024*1024))
+bhard=$((bsoft+bsoft/10))
+xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
+
+#TODO hande mailsystem quota
 

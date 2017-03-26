@@ -1,0 +1,9 @@
+#!/bin/bash
+# Copyright 2017 Peter Varkoly <peter@varkoly.de>
+
+. /etc/sysconfig/schoolserver
+
+xfs_quota -x -c 'report -u -N' /home | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
+TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
+

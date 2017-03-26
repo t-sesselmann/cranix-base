@@ -29,6 +29,8 @@ password=''
 rpassword='no'
 mpassword='no'
 groups=""
+fsQuota=0
+msQuota=0
 
 abort() {
 	TASK=$( uuidgen -t )
@@ -39,6 +41,8 @@ abort() {
 	echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
 	echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
 	echo "role: $role" >> /var/adm/oss/opentasks/$TASK
+	echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
+        echo "msQuota: $msQuota" >> /var/adm/oss/opentasks/$TASK
 	exit 1
 }
 
@@ -65,6 +69,12 @@ do
     ;;
     mpassword)
       mpassword="${c}"
+    ;;
+    fsQuota)
+      fsQuota="${c}"
+    ;;
+    msQuota)
+      msQuota="${c}"
     ;;
   esac
 done
@@ -98,3 +108,8 @@ if [ $? != 0 ]; then
 fi
 rm -f $FILE
 
+bsoft=$((fsQuota*1024*1024))
+bhard=$((bsoft+bsoft/10))
+xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
+
+#TODO hande mailsystem quota

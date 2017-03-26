@@ -59,6 +59,8 @@ fi
 %defattr(-,root,root)
 %dir /etc/YaST2
 /etc/YaST2/oss-firstboot.xml
+%dir /etc/cron.hourly
+/etc/cron.hourly/oss.*
 /usr/share/oss/
 /usr/sbin/oss*
 /var/adm/fillup-templates/sysconfig.schoolserver

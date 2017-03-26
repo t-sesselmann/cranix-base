@@ -3,7 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-TOPACKAGE       = Makefile plugins sbin  setup tools templates README.md
+TOPACKAGE       = Makefile etc plugins sbin  setup tools templates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -24,6 +24,7 @@ install:
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   tools/           $(SHARE)/tools/
+	rsync -a   etc/             $(SHARE)/etc/
 	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 
