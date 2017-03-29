@@ -20,11 +20,11 @@ install:
 	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
 	mkdir -p $(DESTDIR)/etc/YaST2/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
+	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   tools/           $(SHARE)/tools/
-	rsync -a   etc/             $(SHARE)/etc/
 	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 
