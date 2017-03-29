@@ -18,7 +18,7 @@ install:
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins}
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
-	mkdir -p $(DESTDIR)//etc/YaST2/
+	mkdir -p $(DESTDIR)/etc/YaST2/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
@@ -34,7 +34,7 @@ dist:
 	for i in $(TOPACKAGE); do \
 	    cp -rp $$i $(PACKAGE); \
 	done
-	find $(PACKAGE) > files;
+	find $(PACKAGE) -type f > files;
 	tar jcpf $(PACKAGE).tar.bz2 -T files;
 	rm files
 	rm -rf $(PACKAGE)
