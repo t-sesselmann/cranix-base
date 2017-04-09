@@ -1,0 +1,20 @@
+## Path:           Network/Samba
+## Description:    Samba process options
+## Type:           string
+## Default:        "-D"
+## ServiceRestart:·nmb
+NMBDOPTIONS="-D  -s /etc/samba/smb-printserver.conf -l /var/log/samba/printserver/"
+## Type:           string
+## Default:        "-D"
+## ServiceRestart:·smb
+SMBDOPTIONS="-D -s /etc/samba/smb-printserver.conf -l /var/log/samba/printserver/"
+## Path:           Network/Samba
+## Description:    Samba process options
+## Type:           string
+## Default:        "-D"
+## ServiceRestart:·winbind
+WINBINDOPTIONS="-D"
+
+
+SAMBAOPTIONS="-D -s /etc/samba/smb-printserver.conf -l /var/log/samba/printserver/"
+

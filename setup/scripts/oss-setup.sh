@@ -149,6 +149,19 @@ function SetupSamba (){
     samba-tool dns add localhost $SCHOOL_DOMAIN proxy        A $SCHOOL_PROXY         -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
+
+    ########################################################################
+    log " - Setup printserver "
+    cp /usr/share/oss/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
+    cp /usr/share/oss/setup/templates/samba-printserver /etc/sysconfig/
+    mkdir -p /var/lib/samba/printserver/private
+    mkdir -p /var/log/samba/printserver/
+    sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.init /etc/samba/smb-printserver.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
+    sed -i "s/#IPADDR#/$SCHOOL_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    systemctl enable samba-printserver
+    systemctl start  samba-printserver
     
     log "End SetupSamba"
 }
@@ -272,6 +285,7 @@ function SetupInitialAccounts (){
 function PostSetup (){
     log "Start PostSetup"
 
+    ########################################################################
     log "Start and setup mysql"
     systemctl start  mysql
     systemctl enable mysql
@@ -291,6 +305,7 @@ function PostSetup (){
     sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g" /opt/oss-java/data/oss-objects.sql
     mysql < /opt/oss-java/data/oss-objects.sql
 
+    ########################################################################
     log "Make mysql secure"
     cd /root
     password=`mktemp XXXXXXXXXX`
@@ -304,24 +319,30 @@ chmod 600 /root/.my.cnf
     echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
     sed -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
 
+    ########################################################################
     log "Create profile directory"
     mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
     chgrp "Domain Users" "$SCHOOL_HOME_BASE/profiles/"
 
+    ########################################################################
     log "Create Certificates"
     /usr/share/oss/tools/create_server_certificates.sh -N CA
     /usr/share/oss/tools/create_server_certificates.sh -N admin
     /usr/share/oss/tools/create_server_certificates.sh -N schoolserver
 
+    ########################################################################
     log "Adapt Apache configuration"
-    systemctl enable apache2
     sed -i 's/^APACHE_MODULES=.*/APACHE_MODULES="actions alias auth_basic authn_file authz_host authz_groupfile authz_core authz_user autoindex cgi dir env expires include log_config mime negotiation setenvif ssl socache_shmcb userdir reqtimeout php5 rewrite authn_core proxy proxy_http proxy_connect"/' /etc/sysconfig/apache2
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
+    systemctl enable apache2
+    systemctl start  apache2
 
+    ########################################################################
     log "Setup SuSEFirewall2"
-    #TODO
+    sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'           /etc/sysconfig/SuSEfirewall2
+    sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="yes"/' /etc/sysconfig/SuSEfirewall2
 
     log "End PostSetup"
 
