@@ -23,7 +23,7 @@ fi
 
 changeType=""
 group=""
-user=""
+users=""
 
 while read a
 do
@@ -36,11 +36,11 @@ do
     group)
       group="${c}"
     ;;
-    user)
-      user="${c}"
+    users)
+      users="${c}"
     ;;
   esac
 done
 
-samba-tool group $changeType $group $user
+samba-tool group $changeType $group $users
 
