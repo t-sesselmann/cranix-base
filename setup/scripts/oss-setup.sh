@@ -53,6 +53,12 @@ function log() {
 }
 
 function InitGlobalVariable (){
+    ########################################################################
+    log "Setup ntp"
+    mv /etc/ntp.conf /etc/ntp.conf.backup
+    cp /usr/share/oss/setup/templates/ntp.conf /etc/ntp.conf
+    systemctl start ntpd
+    systemctl enable ntpd
     log "Start InitGlobalVariable"
 
     ########################################################################
@@ -156,7 +162,7 @@ function SetupSamba (){
     cp /usr/share/oss/setup/templates/samba-printserver /etc/sysconfig/
     mkdir -p /var/lib/samba/printserver/private
     mkdir -p /var/log/samba/printserver/
-    sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.init /etc/samba/smb-printserver.conf
+    sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$SCHOOL_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
