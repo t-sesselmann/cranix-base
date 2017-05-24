@@ -14,6 +14,7 @@ Name:           oss-base
 Version:       	@VERSION@ 
 Release:        @RELEASE@ 
 License:        Commercial
+Vendor:		Dipl.Ing. Peter Varkoly <peter@varkoly.de>
 Summary:        Base package for the OSS
 Url:            http://oss.cephalix.eu/
 Group:          Productivity/
