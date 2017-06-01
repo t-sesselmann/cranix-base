@@ -62,6 +62,8 @@ fi
 /etc/YaST2/oss-firstboot.xml
 %dir /etc/cron.hourly
 /etc/cron.hourly/oss.*
+%dir /etc/skel/Desktop
+/etc/skel/Desktop/*
 /usr/share/oss/
 /usr/sbin/oss*
 /var/adm/fillup-templates/sysconfig.schoolserver
