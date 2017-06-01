@@ -351,6 +351,10 @@ chmod 600 /root/.my.cnf
     sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'           /etc/sysconfig/SuSEfirewall2
     sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="yes"/' /etc/sysconfig/SuSEfirewall2
 
+    ########################################################################
+    log "Configure salt"
+    sed -i 's/#auto_accept: False/auto_accept: True/'  /etc/salt/master
+
     log "End PostSetup"
 
 }

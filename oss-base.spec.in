@@ -64,6 +64,10 @@ fi
 /etc/cron.hourly/oss.*
 %dir /etc/skel/Desktop
 /etc/skel/Desktop/*
+%dir /srv/salt/tools
+%dir /srv/salt/reactor
+/srv/salt/tools/*
+/srv/salt/reactor/*
 /usr/share/oss/
 /usr/sbin/oss*
 /var/adm/fillup-templates/sysconfig.schoolserver
