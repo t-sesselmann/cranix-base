@@ -63,6 +63,8 @@ fi
 %dir /etc/cron.hourly
 /etc/cron.hourly/oss.*
 %dir /etc/skel/Desktop
+/etc/salt/master.d/reactor.conf
+/etc/salt/minion
 /etc/skel/Desktop/*
 %dir /srv/salt/tools
 %dir /srv/salt/reactor
