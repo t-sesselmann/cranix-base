@@ -285,6 +285,9 @@ function SetupInitialAccounts (){
     setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
     setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
 
+    ########################################################################
+    log "Make administrator passwort do not expire"
+    pdbedit -u Administrator -c "[X]"
     
     log "End SetupInitialAccounts"
 }
