@@ -58,6 +58,10 @@ fi
 
 %files
 %defattr(-,root,root)
+%dir /etc/salt
+%dir /etc/salt/master.d
+%dir /etc/skel/Desktop
+%dir /srv/salt
 %dir    /etc/YaST2
 %config /etc/YaST2/oss-firstboot.xml
 %dir    /etc/cron.hourly
