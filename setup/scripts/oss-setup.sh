@@ -358,6 +358,11 @@ chmod 600 /root/.my.cnf
     log "Configure salt"
     sed -i 's/#auto_accept: False/auto_accept: True/'  /etc/salt/master
 
+    ########################################################################
+    log "Prepare roots desktop"
+    mkdir -p /root/Desktop/
+    cp /etc/skel/Desktop/* /root/Desktop/
+
     log "End PostSetup"
 
 }
