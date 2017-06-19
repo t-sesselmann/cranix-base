@@ -168,6 +168,11 @@ function SetupSamba (){
     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
+
+    #########################################################################
+    log " - Some additional samba settings -"
+    samba-tool domain passwordsettings set --complexity=off
+    samba-tool domain passwordsettings set --max-pwd-age=365
     
     log "End SetupSamba"
 }
@@ -285,12 +290,24 @@ function SetupInitialAccounts (){
     setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
     setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
 
+    ########################################################################
+    log "Make administrator passwort do not expire"
+    pdbedit -u Administrator -c "[X]"
     
     log "End SetupInitialAccounts"
 }
 
 function PostSetup (){
     log "Start PostSetup"
+
+    ########################################################################
+    log "Setup ssh key"
+    cd /root
+    /bin/mkdir .ssh
+    /usr/bin/ssh-keygen -t dsa -N '' -f .ssh/id_dsa
+    cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys
+    /bin/chmod 600 /root/.ssh/authorized_keys
+    echo 'stricthostkeychecking no' > /root/.ssh/config
 
     ########################################################################
     log "Start and setup mysql"
@@ -350,6 +367,15 @@ chmod 600 /root/.my.cnf
     log "Setup SuSEFirewall2"
     sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'           /etc/sysconfig/SuSEfirewall2
     sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="yes"/' /etc/sysconfig/SuSEfirewall2
+
+    ########################################################################
+    log "Configure salt"
+    sed -i 's/#auto_accept: False/auto_accept: True/'  /etc/salt/master
+
+    ########################################################################
+    log "Prepare roots desktop"
+    mkdir -p /root/Desktop/
+    cp /etc/skel/Desktop/* /root/Desktop/
 
     log "End PostSetup"
 

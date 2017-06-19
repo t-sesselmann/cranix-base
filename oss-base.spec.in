@@ -58,10 +58,21 @@ fi
 
 %files
 %defattr(-,root,root)
-%dir /etc/YaST2
-/etc/YaST2/oss-firstboot.xml
-%dir /etc/cron.hourly
-/etc/cron.hourly/oss.*
+%dir /etc/salt
+%dir /etc/salt/master.d
+%dir /etc/skel/Desktop
+%dir /srv/salt
+%dir    /etc/YaST2
+%config /etc/YaST2/oss-firstboot.xml
+%dir    /etc/cron.hourly
+%config /etc/cron.hourly/oss.*
+%config /etc/salt/master.d/reactor.conf
+%config /etc/salt/minion
+%config /etc/skel/Desktop/*
+%dir /srv/salt/tools
+%dir /srv/salt/reactor
+/srv/salt/tools/*
+/srv/salt/reactor/*
 /usr/share/oss/
 /usr/sbin/oss*
 /var/adm/fillup-templates/sysconfig.schoolserver

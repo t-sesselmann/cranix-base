@@ -3,7 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-TOPACKAGE       = Makefile etc plugins sbin  setup tools templates README.md
+TOPACKAGE       = Makefile etc plugins sbin  setup srv tools templates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -21,6 +21,7 @@ install:
 	mkdir -p $(DESTDIR)/etc/YaST2/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
+	rsync -a   srv/             $(DESTDIR)/srv/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
