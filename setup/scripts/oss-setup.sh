@@ -168,6 +168,11 @@ function SetupSamba (){
     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
+
+    #########################################################################
+    log " - Some additional samba settings -"
+    samba-tool domain passwordsettings set --complexity=off
+    samba-tool domain passwordsettings set --max-pwd-age=365
     
     log "End SetupSamba"
 }
