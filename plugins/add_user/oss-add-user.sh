@@ -142,9 +142,17 @@ if [ "$sysadmin" = ",sysadmins" ]; then
    samba-tool group addmembers "sysadmins" "$uid"
 fi
 
+#Set default quota
+if [ -z "$fsQuota" ]; then
+        fsQuota=$SCHOOL_FILE_QUOTA
+        if [ $role = "teachers" ]; then
+                fsQuota=$SCHOOL_FILE_TEACHER_QUOTA
+        fi
+fi
+
 bsoft=$((fsQuota*1024*1024))
 bhard=$((bsoft+bsoft/10))
-xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
+xfs_quota -x -c "limit -u bsoft=$bsoft bhard=$bhard $uid" /home
 
 #TODO hande mailsystem quota
 

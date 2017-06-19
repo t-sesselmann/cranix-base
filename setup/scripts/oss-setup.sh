@@ -296,6 +296,15 @@ function PostSetup (){
     log "Start PostSetup"
 
     ########################################################################
+    log "Setup ssh key"
+    cd /root
+    /bin/mkdir .ssh
+    /usr/bin/ssh-keygen -t dsa -N '' -f .ssh/id_dsa
+    cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys
+    /bin/chmod 600 /root/.ssh/authorized_keys
+    echo 'stricthostkeychecking no' > /root/.ssh/config
+
+    ########################################################################
     log "Start and setup mysql"
     systemctl start  mysql
     systemctl enable mysql
