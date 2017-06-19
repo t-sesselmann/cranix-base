@@ -142,6 +142,11 @@ if [ "$sysadmin" = ",sysadmins" ]; then
    samba-tool group addmembers "sysadmins" "$uid"
 fi
 
+#Workstation users password should not expire
+if [ "$role" = "workstations" ]; then
+	pdbedit -u $uid -c "[X]"
+fi
+
 #Set default quota
 if [ -z "$fsQuota" ]; then
         fsQuota=$SCHOOL_FILE_QUOTA
