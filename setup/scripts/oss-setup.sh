@@ -365,8 +365,8 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Setup SuSEFirewall2"
-    sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'           /etc/sysconfig/SuSEfirewall2
-    sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="yes"/' /etc/sysconfig/SuSEfirewall2
+    sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
+    sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
 
     ########################################################################
     log "Configure salt"
