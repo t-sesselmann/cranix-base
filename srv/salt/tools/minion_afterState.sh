@@ -8,5 +8,5 @@ MINION=$1
 
 TMPF=$( mktemp /tmp/saltXXXXXXXX )
 echo $MINION > $TMPF
-/usr/share/oss/plugins/plugin_handler.sh minion_started $TMPF
+/usr/share/oss/plugins/plugin_handler.sh minion_afterState $TMPF
 
