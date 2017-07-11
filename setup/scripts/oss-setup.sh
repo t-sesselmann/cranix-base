@@ -227,12 +227,12 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base role"
-    /usr/sbin/oss-add-group.sh --name="sysadmins"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"
-    /usr/sbin/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
-    /usr/sbin/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
-    /usr/sbin/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"
-    /usr/sbin/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
-    /usr/sbin/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="sysadmins"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
 
     ########################################################################
     #log " - Create primary group type and add base role to primary group"
@@ -245,14 +245,14 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create admin user"
-    /usr/sbin/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
 
     ########################################################################
     log " - Create base template users"
-    /usr/sbin/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups=""
-    /usr/sbin/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups=""
-    /usr/sbin/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups=""
-    /usr/sbin/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups=""
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups=""
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups=""
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
 
     sysadmins_gn=`wbinfo -n sysadmins | awk '{print "wbinfo -S "$1}'| bash`
     students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
