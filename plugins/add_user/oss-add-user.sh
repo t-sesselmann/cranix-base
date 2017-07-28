@@ -101,6 +101,10 @@ if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
 fi
 
+if [ "$role" = "workstations" ]; then
+    samba-tool domain passwordsettings set --complexity=off
+fi
+
 samba-tool user create "$uid" "$password" \
 				--username="$uid" \
 				--uid="$uid" \
@@ -114,7 +118,13 @@ samba-tool user create "$uid" "$password" \
 				--script-path="$uid.bat" $ADDPARAM
 
 if [ $? != 0 ]; then
+   if [ "$role" = "workstations" ]; then
+       samba-tool domain passwordsettings set --complexity=on
+   fi
    abort
+fi
+if [ "$role" = "workstations" ]; then
+    samba-tool domain passwordsettings set --complexity=on
 fi
 
 uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`

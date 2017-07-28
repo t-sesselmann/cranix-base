@@ -171,7 +171,6 @@ function SetupSamba (){
 
     #########################################################################
     log " - Some additional samba settings -"
-    samba-tool domain passwordsettings set --complexity=off
     samba-tool domain passwordsettings set --max-pwd-age=365
     
     log "End SetupSamba"

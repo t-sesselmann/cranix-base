@@ -5,7 +5,12 @@
 
 . /etc/sysconfig/schoolserver
 what=$1
-conf=$2
+conf=$( mktemp /tmp/ossplugin-XXXXXXXXXX )
+
+while read a
+do
+    echo $a >> $conf
+done
 
 if test -z "$what"
 then
@@ -31,4 +36,4 @@ then
  done
 fi 
 
-rm $conf
+rm $conf &> /dev/null

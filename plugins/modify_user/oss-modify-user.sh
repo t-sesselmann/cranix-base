@@ -79,9 +79,16 @@ do
   esac
 done
 
+#Set fsquota
+#TODO Support ext3
+bsoft=$((fsQuota*1024*1024))
+bhard=$((bsoft+bsoft/10))
+xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
+
+#TODO hande mailsystem quota
+
 role=${role/,*/} #Remove sysadmins
 sysadmin=${sysadmin/$role/}
-
 
 if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
@@ -98,7 +105,11 @@ fi
 
 FILE=$( mktemp /tmp/modify-user-XXXXXXXX )
 echo "dn: $NEWDN
+changetype: modify
+replace: givenName
 givenName: $givenName
+-
+replace: sn
 sn: $sureName" > $FILE
 
 ldbmodify  -H /var/lib/samba/private/sam.ldb $FILE
@@ -108,8 +119,4 @@ if [ $? != 0 ]; then
 fi
 rm -f $FILE
 
-bsoft=$((fsQuota*1024*1024))
-bhard=$((bsoft+bsoft/10))
-xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
 
-#TODO hande mailsystem quota
