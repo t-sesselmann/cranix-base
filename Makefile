@@ -19,6 +19,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
 	mkdir -p $(DESTDIR)/etc/YaST2/
+	mkdir -P $(DESTDIR)/usr/lib/systemd/system/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   srv/             $(DESTDIR)/srv/
@@ -28,6 +29,7 @@ install:
 	rsync -a   tools/           $(SHARE)/tools/
 	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
+	install -m 644 setup/oss_salt_event_watcher.service $(DESTDIR)/usr/lib/systemd/system/
 
 dist:
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   

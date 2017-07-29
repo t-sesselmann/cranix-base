@@ -68,20 +68,10 @@ SCHOOL_BACKUP_LDAP="yes"
 # Make backup from mail system.
 SCHOOL_BACKUP_MAIL="yes"
 
-## Type:    yesno
-## Default: yes
-# Make backup from moodle.
-SCHOOL_BACKUP_MOODLE="yes"
-
-## Type:    yesno
-## Default: yes
-# Make backup from joomla.
-SCHOOL_BACKUP_JOOMLA="yes"
-
 ## Type:        string
 ## Default:
-# Shell command to execute before the backup is started.
-SCHOOL_BACKUP_START_CMD="mount -o rw,acl backup:/backup /mnt/backup"
+# Shell command to execut the backup is started.
+SCHOOL_BACKUP_SlmdTART_CM@="mount -o rw,acl backup:/backup /mnt/backup"
 
 ## Type:        string
 ## Default:
