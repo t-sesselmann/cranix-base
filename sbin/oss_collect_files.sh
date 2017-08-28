@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+#
 
 FROM=""
 TO=""

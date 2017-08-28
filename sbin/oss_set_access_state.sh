@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Copyright (c) 2005 Peter Varkoly Fuerth, Germany.  All rights reserved.
 # Copyright (c) 2002 SuSE Linux AG Nuernberg, Germany.  All rights reserved.
 #

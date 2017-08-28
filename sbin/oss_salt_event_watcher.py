@@ -1,4 +1,7 @@
 #!/usr/bin/python
+#
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+#
 import fnmatch
 
 import salt.config

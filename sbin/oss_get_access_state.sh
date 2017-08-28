@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Copyright (c) 2009 Peter Varkoly Fuerth, Germany.  All rights reserved.
 #
 # $Id: oss_get_access_status,v 2.1 2007/05/09 21:24:06 pv Exp $
