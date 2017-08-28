@@ -186,8 +186,10 @@ function SetupDHCP (){
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
     sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'	    /etc/sysconfig/dhcpd
-    systemctl enable dhcpd
-    systemctl start  dhcpd
+    if [ $SCHOOL_USE_DHCP = "yes" ]; then
+        systemctl enable dhcpd
+        systemctl start  dhcpd
+    fi
     log "End SetupDHCP"
 }
 
@@ -364,8 +366,12 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Setup SuSEFirewall2"
-    sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
-    sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
+    if [ $SCHOOL_ISGATE = "yes" ]; then
+        sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
+        sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
+    else
+        systemctl disable SuSEfirewall2
+    fi
 
     ########################################################################
     log "Prepare roots desktop"
