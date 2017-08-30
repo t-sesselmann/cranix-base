@@ -65,7 +65,7 @@ fi
 %config /etc/YaST2/oss-firstboot.xml
 %dir    /etc/cron.hourly
 /etc/cron.hourly/oss.*
-%attr(-,root,root,0755) /etc/cron.daily/oss-backup
+/etc/cron.daily/oss*
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
 /usr/share/oss/
