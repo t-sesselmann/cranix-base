@@ -61,17 +61,12 @@ fi
 %dir /etc/salt
 %dir /etc/salt/master.d
 %dir /etc/skel/Desktop
-%dir /srv/salt
 %dir    /etc/YaST2
 %config /etc/YaST2/oss-firstboot.xml
 %dir    /etc/cron.hourly
 %config /etc/cron.hourly/oss.*
 %config /etc/salt/master.d/oss.conf
-%config /etc/salt/minion
 %config /etc/skel/Desktop/*
-%dir /srv/salt/tools
-/srv/salt/tools/*
-/srv/salt/reactor/*
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
