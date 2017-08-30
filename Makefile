@@ -19,7 +19,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
 	mkdir -p $(DESTDIR)/etc/YaST2/
-	mkdir -P $(DESTDIR)/usr/lib/systemd/system/
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   srv/             $(DESTDIR)/srv/
