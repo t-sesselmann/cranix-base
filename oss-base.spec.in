@@ -66,11 +66,10 @@ fi
 %config /etc/YaST2/oss-firstboot.xml
 %dir    /etc/cron.hourly
 %config /etc/cron.hourly/oss.*
-%config /etc/salt/master.d/reactor.conf
+%config /etc/salt/master.d/oss.conf
 %config /etc/salt/minion
 %config /etc/skel/Desktop/*
 %dir /srv/salt/tools
-%dir /srv/salt/reactor
 /srv/salt/tools/*
 /srv/salt/reactor/*
 /usr/share/oss/
