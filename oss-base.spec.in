@@ -24,8 +24,10 @@ Requires:       rsync
 Requires:       samba
 BuildRequires:  rsync
 #PreReq:
-#Provides:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+
+Provides:	openschool-base
+Obsoletes:	openschool-base
 
 %prep
 %setup -q  -n %{name}
