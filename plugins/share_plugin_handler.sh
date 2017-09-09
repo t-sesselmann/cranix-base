@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Handler to execute scripts bey making or closing connection to a share.
 # To activate the handler you have to insert following line into the share definition
 # root preexec  = /usr/share/oss/plugins/share_plugin_handler.sh open  %S %u %I %a %m 

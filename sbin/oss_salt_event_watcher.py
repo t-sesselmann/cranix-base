@@ -3,6 +3,7 @@
 # Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 #
 import fnmatch
+import subprocess
 
 import salt.config
 import salt.utils.event
@@ -22,8 +23,7 @@ while True:
 
     if fnmatch.fnmatch(ret['tag'], 'salt/minion/*/start'):
        #We can have a look at starting minions
-	print(ret['data'])
-        do_something_with_job_return(ret['data'])
+	subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
     if fnmatch.fnmatch(ret['tag'], 'salt/presence/change'):
        #We can have a look at loosing minions
 	print(ret['data'])

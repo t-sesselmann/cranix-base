@@ -387,7 +387,6 @@ chmod 600 /root/.my.cnf
     do
     	systemctl enable $i
     done
-    #TODO Enable dhcp-server only if requrired
     
     log "End PostSetup"
 

@@ -1,7 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2012-2015 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
-# (c) 2011 EXTIS GmbH
-# Revision: $Rev: 1618 $
+# Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
 . /etc/sysconfig/schoolserver
 what=$1
