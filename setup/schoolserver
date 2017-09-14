@@ -200,6 +200,11 @@ SCHOOL_SERVER_NET="172.16.0.0/24"
 # The OSS is the DHCP server in the internal network.
 SCHOOL_USE_DHCP="yes"
 
+## Type:        string readonly
+## Default:     schooladmin
+# The windows netbios name of the OSS.
+SCHOOL_NETBIOSNAME="schooladmin"
+
 ## Type:	yesno
 ## Default:	no
 # Teachers have read rights in the home directories of  the students.

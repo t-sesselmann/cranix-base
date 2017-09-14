@@ -115,11 +115,12 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/admin/g"             /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
+    #TODO schooladmin must be configurable
+    sed    "s/#NETBIOSNAME#/schooladmin/g"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
     sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
-    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"          /etc/samba/smb.conf
+    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"         /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf
 
     ########################################################################

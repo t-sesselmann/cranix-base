@@ -100,8 +100,8 @@ done
 
 skel="/etc/skel"
 
-winprofile="\\\\schooladmin\\profiles\\$uid"
-winhome="\\\\schooladmin\\$uid"
+winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
+winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
 unixhome=${SCHOOL_HOME_BASE}/$uid
 
 echo "uid:       $uid"
