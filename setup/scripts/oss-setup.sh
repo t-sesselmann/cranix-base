@@ -115,10 +115,9 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup smb.conf file"
-    #TODO schooladmin must be configurable
-    sed    "s/#NETBIOSNAME#/schooladmin/g"       /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"          /etc/samba/smb.conf
-    sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb.conf
+    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"   /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
+    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"                /etc/samba/smb.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"                /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
     sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"         /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf
@@ -156,6 +155,8 @@ function SetupSamba (){
     samba-tool dns add localhost $SCHOOL_DOMAIN proxy        A $SCHOOL_PROXY         -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN install      A $SCHOOL_SERVER        -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN timeserver   A $SCHOOL_SERVER        -U Administrator%"$passwd"
 
     ########################################################################
     log " - Setup printserver "
@@ -248,6 +249,7 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create admin user"
     /usr/share/oss/setup/scripts/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
+    samba-tool group addmembers "Domain Admins" admin
 
     ########################################################################
     log " - Create base template users"
@@ -255,6 +257,19 @@ function SetupInitialAccounts (){
     /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups=""
     /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups=""
     /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
+
+    ########################################################################
+    log " - Create internal users"
+    cephalixpw=`mktemp XXXXXXXXXX`
+    samba-tool user create cephalix "$cephalixpw"
+    samba-tool group addmembers "Domain Admins" cephalix
+    sed -i s/CEPHALIXPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
+    samba-tool user setexpiry --noexpiry cephalix
+    samba-tool domain passwordsettings set --complexity=off
+    samba-tool user create register register
+    samba-tool user setexpiry --noexpiry register
+    samba-tool group addmembers "Administrators" register
+    samba-tool domain passwordsettings set --complexity=on
 
     sysadmins_gn=`wbinfo -n sysadmins | awk '{print "wbinfo -S "$1}'| bash`
     students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
