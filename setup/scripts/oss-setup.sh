@@ -339,6 +339,7 @@ function PostSetup (){
     sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss-java/data/oss-objects.sql
     sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss-java/data/oss-objects.sql
     sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /opt/oss-java/data/oss-objects.sql
     sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g" /opt/oss-java/data/oss-objects.sql
     sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g" /opt/oss-java/data/oss-objects.sql
     sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g" /opt/oss-java/data/oss-objects.sql
@@ -359,6 +360,7 @@ chmod 600 /root/.my.cnf
 
     echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
     sed -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/oss-java/conf/oss-api.properties
 
     ########################################################################
     log "Create profile directory"
