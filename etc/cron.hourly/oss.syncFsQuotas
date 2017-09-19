@@ -3,7 +3,20 @@
 
 . /etc/sysconfig/schoolserver
 
-xfs_quota -x -c 'report -u -N' /home | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
+EXT3=$( mount | grep "on /home type ext3" )
+if [ "$EXT3" ]; then
+	DEV=$(mount | grep "/home " | gawk '{ print $1 }')
+	export HOME="/root"
+	(
+		for u in $( echo "select uid from Users" | mysql OSS )
+		do
+			echo -n "$u "
+			quota -wl $u | grep $DEV |  gawk  '{ print $2 " " $3 }' | sed s/\*//
+		done
+	) | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
+else
+	xfs_quota -x -c 'report -u -N' /home | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
+fi
 TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
 curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
 

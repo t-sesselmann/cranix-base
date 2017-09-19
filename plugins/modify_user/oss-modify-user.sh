@@ -80,10 +80,7 @@ do
 done
 
 #Set fsquota
-#TODO Support ext3
-bsoft=$((fsQuota*1024*1024))
-bhard=$((bsoft+bsoft/10))
-xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $uid" /home
+/usr/sbin/oss_set_quota.sh $uid $fsQuota
 
 #TODO hande mailsystem quota
 
