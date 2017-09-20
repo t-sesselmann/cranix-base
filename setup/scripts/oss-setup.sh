@@ -243,13 +243,13 @@ function SetupInitialAccounts (){
     #samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
 
     ########################################################################
-    log " - sysadmin primary group add to administrator group"
-    samba-tool group addmembers "sysadmins" "administrator"
+    log " - sysadmin primary group add to Domain Admins group"
+    samba-tool group addmembers "Domain Admins" "sysadmins"
 
     ########################################################################
-    log " - Create admin user"
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
-    samba-tool group addmembers "Domain Admins" admin
+    #log " - Create admin user"
+    #/usr/share/oss/setup/scripts/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
+    #samba-tool group addmembers "Domain Admins" admin
 
     ########################################################################
     log " - Create base template users"

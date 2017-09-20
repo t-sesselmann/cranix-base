@@ -203,7 +203,7 @@ SCHOOL_USE_DHCP="yes"
 ## Type:        string readonly
 ## Default:     schooladmin
 # The windows netbios name of the OSS.
-SCHOOL_NETBIOSNAME="schooladmin"
+SCHOOL_NETBIOSNAME="admin"
 
 ## Type:	yesno
 ## Default:	no

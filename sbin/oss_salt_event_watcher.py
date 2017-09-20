@@ -22,9 +22,9 @@ while True:
         continue
 
     if fnmatch.fnmatch(ret['tag'], 'salt/minion/*/start'):
-       #We can have a look at starting minions
-	subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
+       #Start the plugins
+       subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
     if fnmatch.fnmatch(ret['tag'], 'salt/presence/change'):
-       #We can have a look at loosing minions
-	print(ret['data'])
+       #At the moment nothing to do
+       print(ret['data'])
 
