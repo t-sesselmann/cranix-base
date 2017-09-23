@@ -143,6 +143,7 @@ function SetupSamba (){
     ########################################################################
     log " - Use our enhanced samba.service file."
     cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
+    ln -s /root/ /home/administrator
 
     ########################################################################
     log " - Create linked groups directory "
