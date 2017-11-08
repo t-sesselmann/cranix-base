@@ -339,16 +339,18 @@ function PostSetup (){
     SERVER_NETMASK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $2 }' )
     ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
-    sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"     /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"     /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g" /opt/oss-java/data/oss-objects.sql
-    sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g" /opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g"		/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"			/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"			/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"	/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"		/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g"	/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g"			/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"	/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g"	/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		/opt/oss-java/data/oss-objects.sql
+    sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		/opt/oss-java/data/oss-objects.sql
     mysql < /opt/oss-java/data/oss-objects.sql
 
     ########################################################################
