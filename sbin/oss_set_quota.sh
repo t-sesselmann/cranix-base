@@ -9,5 +9,5 @@ if [ "$EXT3" ]; then
 else
 	bsoft=$((quota*1024*1024))
 	bhard=$((bsoft+bsoft/10))
-	xfs_quota -x -c "limit -u bsoft=$bsof bhard=$bhard $user" /home
+	xfs_quota -x -c "limit -u bsoft=$bsoft bhard=$bhard $user" /home
 fi
