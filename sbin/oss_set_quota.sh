@@ -3,7 +3,7 @@ user=$1
 quota=$2
 
 EXT3=$( mount | grep "on /home type ext3" )
-if [ -z "$EXT3" ]; then
+if [ "$EXT3" ]; then
 	fquota=$((quota*1024))
 	/usr/sbin/setquota -u $user $fquota $fquota 0 0 /home
 else
