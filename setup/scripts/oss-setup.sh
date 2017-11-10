@@ -385,6 +385,10 @@ chmod 600 /root/.my.cnf
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
+    if [ $SCHOOL_ISGATE = "yes" ]; then
+       sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
+       sed -i 's/ Listen 443/ Listen 443\n            Listen 444/' /etc/apache2/listen.conf
+    fi
     systemctl enable apache2
     systemctl start  apache2
 
