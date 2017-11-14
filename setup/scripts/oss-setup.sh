@@ -265,11 +265,11 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create internal users"
     cephalixpw=`mktemp XXXXXXXXXX`
+    samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
     sed -i s/CEPHALIXPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
     samba-tool user setexpiry --noexpiry cephalix
-    samba-tool domain passwordsettings set --complexity=off
     samba-tool user create register register
     samba-tool user setexpiry --noexpiry register
     samba-tool group addmembers "Administrators" register
