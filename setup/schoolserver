@@ -23,6 +23,11 @@ SCHOOL_BACKUP_DAYS="123456"
 # Set this variable to yes if your backup medium can not save file access control lists (ACLs).
 SCHOOL_BACKUP_CAN_NOT_SAVE_ACL="no"
 
+## Type:        yesno
+## Default:     no
+# Set this variable to yes if your backup medium can not save file owner and rights.
+SCHOOL_BACKUP_CAN_NOT_SAVE_OWNER="no"
+
 ## Type:        string
 ## Default:
 # Space separated list of custom scripts with full path which will be executed just before the command in SCHOOL_BACKUP_STOP_CMD.
