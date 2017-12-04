@@ -68,7 +68,6 @@ fi
 %dir    /etc/cron.hourly
 /etc/cron.hourly/oss.*
 /etc/cron.daily/oss*
-%config /etc/squid/squid.conf.in
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
 /usr/share/oss/
