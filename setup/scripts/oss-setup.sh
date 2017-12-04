@@ -206,9 +206,6 @@ function SetupMail (){
 
 function SetupProxy (){
     log "Start SetupProxy"
-	cp /etc/squid/squid.conf.in      /etc/squid/squid.conf
-	cp /etc/squid/squidguard.conf.in /etc/squid/squidigurd.conf
-        systemctl enable squid
     log "End SetupProxy"
 }
 
