@@ -111,7 +111,7 @@ function SetupSamba (){
 
     ########################################################################
     log " - Install domain provision"
-    samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --ldapadminpass="$passwd" --use-rfc2307 --use-xattrs=yes --host-ip="$SCHOOL_SERVER"
+    samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --use-rfc2307 --host-ip="$SCHOOL_SERVER"
 
     ########################################################################
     log " - Setup smb.conf file"
