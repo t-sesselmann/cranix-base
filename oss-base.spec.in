@@ -21,7 +21,7 @@ Group:          Productivity/
 Source:         %{name}.tar.bz2
 BuildArch:      noarch
 Requires:       rsync
-Requires:       samba
+Requires:       samba-ad
 BuildRequires:  rsync
 #PreReq:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
