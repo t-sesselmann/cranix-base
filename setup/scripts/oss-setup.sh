@@ -19,7 +19,7 @@ dhcp="no"
 proxy="no"
 postsetup="no"
 accounts="no"
-verbose="no"
+verbose="yes"
 
 
 function usage (){
@@ -95,7 +95,9 @@ function SetupSamba (){
     fi
 
     ########################################################################
-    log " - Remove old samba config"
+    log " - Clean up befor samba config"
+    mkdir -p /etc/samba-backup-$logdate 
+    mv /etc/krb5.conf /etc/krb5.conf.$logdate
     cp -r /etc/samba/ /etc/samba-backup-$logdate
     rm -r /etc/samba/*
 
@@ -115,12 +117,12 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"   /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf 
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"                /etc/samba/smb.conf
-    sed -i "s/#WORKGROUP#/$windomain/g"                /etc/samba/smb.conf
-    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf
-    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"         /etc/samba/smb.conf
-    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf
+    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"   /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf-new
+    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"                /etc/samba/smb.conf-new
+    sed -i "s/#WORKGROUP#/$windomain/g"                /etc/samba/smb.conf-new
+    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf-new
+    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"         /etc/samba/smb.conf-new
+    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf-new
 
     ########################################################################
     log " - Config resolv.conf"
@@ -133,7 +135,6 @@ function SetupSamba (){
 
     ########################################################################
     log " - Setup samba private krbconf to kerberos conf"
-    mv /etc/krb5.conf /etc/krb5.conf.$logdate
     cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
 
     ########################################################################
@@ -265,6 +266,7 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create internal users"
     cephalixpw=`mktemp XXXXXXXXXX`
+    samba-tool user setexpiry --noexpiry Administrator
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
@@ -311,10 +313,6 @@ function SetupInitialAccounts (){
     setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
     setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
 
-    ########################################################################
-    log "Make administrator passwort do not expire"
-    pdbedit -u Administrator -c "[X]"
-    
     log "End SetupInitialAccounts"
 }
 
