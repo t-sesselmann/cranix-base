@@ -76,7 +76,7 @@ SCHOOL_BACKUP_MAIL="yes"
 ## Type:        string
 ## Default:
 # Shell command to execut the backup is started.
-SCHOOL_BACKUP_SlmdTART_CM@="mount -o rw,acl backup:/backup /mnt/backup"
+SCHOOL_BACKUP_START_CMD="mount -o rw,acl backup:/backup /mnt/backup"
 
 ## Type:        string
 ## Default:
