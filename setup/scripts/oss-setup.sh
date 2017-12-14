@@ -155,7 +155,8 @@ function SetupSamba (){
     samba-tool dns add localhost $SCHOOL_DOMAIN mailserver   A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN schoolserver A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN proxy        A $SCHOOL_PROXY         -U Administrator%"$passwd"
-    samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
+    #TODO at the moment do not work
+    #samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN install      A $SCHOOL_SERVER        -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN timeserver   A $SCHOOL_SERVER        -U Administrator%"$passwd"
@@ -172,14 +173,19 @@ function SetupSamba (){
     sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$SCHOOL_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
-    systemctl enable samba-printserver
-    systemctl start  samba-printserver
+    #TODO at the moment do not work
+    #net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    #systemctl enable samba-printserver
+    #systemctl start  samba-printserver
 
     #########################################################################
     log " - Some additional samba settings -"
     samba-tool domain passwordsettings set --max-pwd-age=365
-    
+
+    for i in /usr/share/oss/templates/login-*
+    do
+	sed -i "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g"	/opt/oss-java/data/oss-objects.sql
+    done
     log "End SetupSamba"
 }
 

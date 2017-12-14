@@ -7,7 +7,7 @@ m=$4
 R=$5
 
 
-role=$( echo "select role from Users where uid='admin'" | mysql -u claxss -pcl8x77 OSS  | tail -n 1 )
+role=$( oss_api_text.sh GET users/byUid/$U/role )
 mkdir -p /var/lib/samba/sysvol/$R/scripts
 setfacl -m g:users:rx /var/lib/samba/sysvol/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/
