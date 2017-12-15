@@ -189,6 +189,11 @@ function SetupSamba (){
     sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"          /etc/samba/smb.conf
 
+    ########################################################################
+    log " - Setup ntp signd directory rights."
+    chown root:ntp /var/lib/samba/ntp_signd/
+    chmod 750      /var/lib/samba/ntp_signd/
+
     log "End SetupSamba"
 }
 
