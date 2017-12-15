@@ -116,15 +116,6 @@ function SetupSamba (){
     samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --use-rfc2307 --host-ip="$SCHOOL_SERVER"
 
     ########################################################################
-    log " - Setup smb.conf file"
-    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"   /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf-new
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"                /etc/samba/smb.conf-new
-    sed -i "s/#WORKGROUP#/$windomain/g"                /etc/samba/smb.conf-new
-    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g" /etc/samba/smb.conf-new
-    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"         /etc/samba/smb.conf-new
-    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"      /etc/samba/smb.conf-new
-
-    ########################################################################
     log " - Config resolv.conf"
     sed -i "s/nameserver .*/nameserver $SCHOOL_SERVER/" /etc/resolv.conf
 
@@ -182,10 +173,22 @@ function SetupSamba (){
     log " - Some additional samba settings -"
     samba-tool domain passwordsettings set --max-pwd-age=365
 
-    for i in /usr/share/oss/templates/login-*
+    for i in /usr/share/oss/templates/login-*.ini
     do
-	sed -i "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g"	/opt/oss-java/data/oss-objects.sql
+	b=$( basename $i .ini )
+	sed "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g" $i > /usr/share/oss/templates/$b
     done
+
+    ########################################################################
+    log " - Setup our smb.conf file"
+    cp /etc/samba/smb.conf /etc/samba/smb.conf-orig
+    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf
+    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"              /etc/samba/smb.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"              /etc/samba/smb.conf
+    sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g"     /etc/samba/smb.conf
+    sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"             /etc/samba/smb.conf
+    sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"          /etc/samba/smb.conf
+
     log "End SetupSamba"
 }
 
