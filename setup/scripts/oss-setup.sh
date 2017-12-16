@@ -159,15 +159,14 @@ function SetupSamba (){
     log " - Setup printserver "
     cp /usr/share/oss/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
     cp /usr/share/oss/setup/templates/samba-printserver /etc/sysconfig/
-    mkdir -p /var/lib/samba/printserver/private
+    mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
     mkdir -p /var/log/samba/printserver/
     sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$SCHOOL_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
-    #TODO at the moment do not work
-    #net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
-    #systemctl enable samba-printserver
-    #systemctl start  samba-printserver
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    systemctl enable samba-printserver
+    systemctl start  samba-printserver
 
     #########################################################################
     log " - Some additional samba settings -"
