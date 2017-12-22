@@ -363,7 +363,7 @@ function PostSetup (){
     sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		/opt/oss-java/data/school-INSERT.sql
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		/opt/oss-java/data/school-INSERT.sql
     mysql < /opt/oss-java/data/oss-objects.sql
-    mysql < /opt/oss-java/data/school-INSERT.sql
+    mysql OSS < /opt/oss-java/data/school-INSERT.sql
 
 
     ########################################################################
