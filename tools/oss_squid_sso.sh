@@ -5,5 +5,11 @@ TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/oss-java/conf/oss-api
 while true
 do
         read IP
-        curl -X GET --header 'Content-Type: application/json' --header 'Accept: text/plain' $DATA --header 'Authorization: Bearer '${TOKEN} "http://localhost:9080/api/devices/loggedIn/$IP"
+        user=$( curl -sX GET --header 'Content-Type: application/json' --header 'Accept: text/plain' $DATA --header 'Authorization: Bearer '${TOKEN} "http://localhost:9080/api/devices/loggedIn/$IP" )
+	if [ "$UID" ];
+	then
+		echo "OK user=\"$user\""
+	else
+		echo "ERROR"
+	fi
 done
