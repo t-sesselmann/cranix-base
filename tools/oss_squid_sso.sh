@@ -10,6 +10,6 @@ do
 	then
 		echo "OK user=\"$user\""
 	else
-		echo "ERROR"
+		echo "ERR user=\"No user logged in\""
 	fi
 done
