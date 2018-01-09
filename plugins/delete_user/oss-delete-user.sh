@@ -19,7 +19,7 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi 
 
-sureName=''
+surName=''
 givenName=''
 role=''
 uid=''
@@ -34,7 +34,7 @@ abort() {
         echo "delete_user" > /var/adm/oss/opentasks/$TASK
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
-        echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+        echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
         echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
         exit 1
@@ -45,8 +45,8 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    sureName)
-      sureName="${c}"
+    surName)
+      surName="${c}"
     ;;
     givenName)
       givenName="${c}"

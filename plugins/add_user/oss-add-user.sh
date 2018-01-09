@@ -26,7 +26,7 @@ abort() {
         echo "add_user" > /var/adm/oss/opentasks/$TASK
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
-        echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+        echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
         echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
         echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
@@ -34,7 +34,7 @@ abort() {
         exit 1
 }
 
-sureName=''
+surName=''
 givenName=''
 role=''
 uid=''
@@ -51,8 +51,8 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    sureName)
-      sureName="${c}"
+    surName)
+      surName="${c}"
     ;;
     givenName)
       givenName="${c}"
@@ -90,11 +90,11 @@ unixhome=${SCHOOL_HOME_BASE}/$uid
 
 echo "uid:       $uid"
 echo "password:  $password"
-echo "sureName:   $sureName"
+echo "surName:   $surName"
 echo "givenName: $givenName"
 echo "winhome:   $winhome"
 echo "unixhome:  $unixhome"
-echo "profile:   $profile"
+echo "profile:   $winprofile"
 echo "role:      $role"
 
 if [ $mpassword != "no" ]; then
@@ -109,7 +109,7 @@ samba-tool user create "$uid" "$password" \
 				--username="$uid" \
 				--uid="$uid" \
 				--password="$password" \
-				--surname="$sureName" \
+				--surname="$surName" \
 				--given-name="$givenName" \
 				--home-drive="Z:" \
 				--home-directory="$winhome" \

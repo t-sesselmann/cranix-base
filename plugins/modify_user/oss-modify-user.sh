@@ -21,7 +21,7 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
 fi
 
 
-sureName=''
+surName=''
 givenName=''
 role=''
 uid=''
@@ -38,7 +38,7 @@ abort() {
 	echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
 	echo "password: $password" >> /var/adm/oss/opentasks/$TASK
 	echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
-	echo "sureName: $sureName" >> /var/adm/oss/opentasks/$TASK
+	echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
 	echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
 	echo "role: $role" >> /var/adm/oss/opentasks/$TASK
 	echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
@@ -51,8 +51,8 @@ do
   b=${a/:*/}
   c=${a/$b: /}
   case $b in
-    sureName)
-      sureName="${c}"
+    surName)
+      surName="${c}"
     ;;
     givenName)
       givenName="${c}"
@@ -94,7 +94,7 @@ fi
 DN=$( /usr/bin/ldbsearch  -H /var/lib/samba/private/sam.ldb uid=$uid dn | grep dn: | sed 's/dn: //' )
 b=${DN/CN=Users,*/}
 BASE=${DN/$b/}
-NEWDN="CN=$givenName $sureName,$BASE"
+NEWDN="CN=$givenName $surName,$BASE"
 /usr/bin/ldbrename -H /var/lib/samba/private/sam.ldb "$DN" "$NEWDN"
 if [ $? != 0 ]; then
    abort
@@ -107,7 +107,7 @@ replace: givenName
 givenName: $givenName
 -
 replace: sn
-sn: $sureName" > $FILE
+sn: $surName" > $FILE
 
 ldbmodify  -H /var/lib/samba/private/sam.ldb $FILE
 if [ $? != 0 ]; then
