@@ -22,9 +22,15 @@ while True:
         continue
 
     if fnmatch.fnmatch(ret['tag'], 'salt/minion/*/start'):
+       #Log the event. TODO make it configurable
+       print ret
+
        #Start the plugins
        subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
+
     if fnmatch.fnmatch(ret['tag'], 'salt/presence/change'):
-       #At the moment nothing to do
+       # Log the event. TODO make it configurable
        print(ret['data'])
+
+       #At the moment nothing to do
 
