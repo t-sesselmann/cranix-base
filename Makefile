@@ -26,6 +26,7 @@ install:
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   tools/           $(SHARE)/tools/
+	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
 	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_salt_event_watcher.service $(DESTDIR)/usr/lib/systemd/system/

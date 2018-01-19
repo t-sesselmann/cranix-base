@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
 #
 import fnmatch
 import subprocess

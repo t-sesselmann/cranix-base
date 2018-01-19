@@ -18,7 +18,7 @@ type=rpm-md
 keeppackages=0
 " > /tmp/salt-packages.repo
 
-zypper -D /srv/salt/repos.d/ ar /tmp/salt-packages.repo
+zypper -D /srv/salt/repos.d/ ar -G /tmp/salt-packages.repo
 
 zypper --gpg-auto-import-keys -D /srv/salt/repos.d/ ref
 
@@ -35,7 +35,7 @@ type=rpm-md
 keeppackages=0
 " > /tmp/oss.repo
 
-zypper ar /tmp/oss.repo
+zypper ar -G /tmp/oss.repo
 
 zypper --gpg-auto-import-keys ref
 
