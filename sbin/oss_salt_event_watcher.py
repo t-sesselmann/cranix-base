@@ -4,6 +4,7 @@
 #
 import fnmatch
 import subprocess
+import os
 
 import salt.config
 import salt.utils.event
@@ -21,16 +22,22 @@ while True:
     if ret is None:
         continue
 
-    if fnmatch.fnmatch(ret['tag'], 'salt/minion/*/start'):
-       #Log the event. TODO make it configurable
-       print ret
+    if fnmatch.fnmatch(ret['tag'], 'salt/event/exit'):
+	continue
 
+    newpid = os.fork()
+    if newpid == 0:
+        continue
+
+    #TODO only for debug
+    print ret
+    if fnmatch.fnmatch(ret['tag'], 'salt/minion/*/start'):
+       #TODO only for verbose
+       print "Client started: " + ret['data']['id']
        #Start the plugins
        subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
 
     if fnmatch.fnmatch(ret['tag'], 'salt/presence/change'):
-       # Log the event. TODO make it configurable
-       print(ret['data'])
-
        #At the moment nothing to do
+       print(ret['data'])
 

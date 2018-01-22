@@ -74,6 +74,7 @@ fi
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
 /var/adm/fillup-templates/sysconfig.schoolserver
+/srv/salt/_modules
 %doc README.md
 
 %description

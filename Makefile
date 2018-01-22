@@ -3,7 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-TOPACKAGE       = Makefile etc plugins sbin  setup tools templates README.md
+TOPACKAGE       = Makefile etc plugins sbin setup salt tools templates README.md 
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -20,12 +20,14 @@ install:
 	mkdir -p $(DESTDIR)/var/adm/fillup-templates/
 	mkdir -p $(DESTDIR)/etc/YaST2/
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
+	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   tools/           $(SHARE)/tools/
+	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
 	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
