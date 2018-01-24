@@ -422,9 +422,10 @@ chmod 600 /root/.my.cnf
     ########################################################################
     log "Enable some importent services"
     for i in apache2 \
-             salt-master \
+	     atd \
+	     ntpd \
              oss_salt_event_watcher \
-	     ntpd
+             salt-master 
     do
     	systemctl enable $i
     done
@@ -435,7 +436,7 @@ chmod 600 /root/.my.cnf
 
 
 if [ ! -f $sysconfig ]; then
-        echo -e "\033[0;31;1mThis script is for Open School Server only!\033[\0m"
+        echo -e "\033[0;31;1mThis script is for OSS only!\033[\0m"
         echo -e "\033[0;31;1m*********         exiting         *********\033[\0m"
         exit 0
 fi
