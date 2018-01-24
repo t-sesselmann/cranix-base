@@ -392,7 +392,12 @@ SCHOOL_STRING_CONVERT_TYPE="telex"
 SCHOOL_SEARCH_FOR_DELETE="all groups"
 
 ## Type:        string
-## Default:     
-# External software package url.
-SCHOOL_EXT_PKG_URL="http://repo.openschoolserver.net/cgi-bin/swpkg3.pl"
+## Default:	http://repo.cephalix.eu/salt-packages
+# Url to the salt packages
+SCHOOL_EXT_PKG_URL="http://repo.cephalix.eu/salt-packages"
+
+## Type:        string
+## Default:     http://repo.cephalix.eu/OSS
+# Url to the updates
+SCHOOL_UPDATE_URL="http://repo.cephalix.eu/OSS"
 
