@@ -17,5 +17,5 @@ do
   fi
 done
 
-/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES
+/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/oss-download-salt-packages.log  2>&1
 

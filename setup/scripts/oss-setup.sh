@@ -343,6 +343,7 @@ function PostSetup (){
 
     ########################################################################
     log "Start and setup mysql"
+    cp /etc/my.cnf.in /etc/my.cnf
     systemctl start  mysql
     systemctl enable mysql
     sleep 5

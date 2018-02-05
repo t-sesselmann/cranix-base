@@ -65,6 +65,7 @@ fi
 %dir /etc/skel/Desktop
 %dir    /etc/YaST2
 %config /etc/YaST2/oss-firstboot.xml
+%config /etc/my.cnf.in
 %dir    /etc/cron.hourly
 /etc/cron.hourly/oss.*
 /etc/cron.daily/oss*
