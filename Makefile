@@ -3,6 +3,7 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
+FILLUPDIR	= $(DESTDIR)/usr/share/fillup-templates/
 TOPACKAGE       = Makefile etc plugins sbin setup salt tools templates README.md 
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
@@ -29,7 +30,7 @@ install:
 	rsync -a   tools/           $(SHARE)/tools/
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
-	install -m 644 setup/schoolserver $(DESTDIR)/var/adm/fillup-templates/sysconfig.schoolserver
+	install -m 644 setup/schoolserver      $(FILLUPDIR)/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_salt_event_watcher.service $(DESTDIR)/usr/lib/systemd/system/
 
