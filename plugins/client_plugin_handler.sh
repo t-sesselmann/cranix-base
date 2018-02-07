@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2012-2018 Peter Varkoly <peter@varkoly.de> Nurember, Germany.  All rights reserved.
 
 . /etc/sysconfig/schoolserver
 what=$1
