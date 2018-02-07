@@ -29,15 +29,26 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Provides:	openschool-base
 Obsoletes:	openschool-base
 
+%if ! %{defined _fillupdir}
+%define _fillupdir /var/adm/fillup-templates
+%endif
+
 %prep
 %setup -q  -n %{name}
 
 %build
 
 %install
-make install DESTDIR=%{buildroot} %{?_smp_mflags}
+make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
+
+%pre
+%service_add_pre oss_salt_event_watcher.service
+
+%preun
+%service_del_preun oss_salt_event_watcher.service
 
 %post
+%service_add_post oss_salt_event_watcher.service
 if [ -e /etc/sysconfig/schoolserver ]; then
 	if [ ${1:-0} -gt 1 ]; then
 		echo "Executing Update Scripts"
@@ -55,8 +66,10 @@ if [ -e /etc/sysconfig/schoolserver ]; then
 		rsync -av /usr/share/oss/software/oss/ /home/software/oss/
 	fi
 fi
+%{fillup_only -n schoolserver}
 
 %postun
+%service_del_postun oss_salt_event_watcher.service
 
 %files
 %defattr(-,root,root)
@@ -74,8 +87,10 @@ fi
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
-/var/adm/fillup-templates/sysconfig.schoolserver
-/srv/salt/_modules
+%{_fillupdir}/sysconfig.schoolserver
+%dir /srv/salt
+%dir /srv/salt/_modules
+/srv/salt/_modules/*
 %doc README.md
 
 %description
