@@ -15,3 +15,6 @@ done
 #Apply high state
 salt "$MINION" state.apply &> /dev/null
 
+#Now we can read the installed software on the minion
+/usr/share/oss/tools/read_installed_software.pl $MINION
+
