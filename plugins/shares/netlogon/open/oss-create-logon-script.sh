@@ -13,6 +13,6 @@ setfacl -m g:users:rx /var/lib/samba/sysvol/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/scripts/
 cp /usr/share/oss/templates/login-${role}.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
-chown ${U} /var/lib/samba/sysvol/$R/scripts/tstudents.bat
-setfacl -m m::rwx /var/lib/samba/sysvol/$R/scripts/tstudents.bat
+chown ${U} /var/lib/samba/sysvol/$R/scripts/${U}.bat
+setfacl -m m::rwx /var/lib/samba/sysvol/$R/scripts/${U}.bat
 
