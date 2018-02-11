@@ -394,7 +394,7 @@ SCHOOL_SEARCH_FOR_DELETE="all groups"
 ## Type:        string
 ## Default:	http://repo.cephalix.eu/salt-packages
 # Url to the salt packages
-SCHOOL_EXT_PKG_URL="http://repo.cephalix.eu/salt-packages"
+SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 
 ## Type:        string
 ## Default:     http://repo.cephalix.eu/OSS
