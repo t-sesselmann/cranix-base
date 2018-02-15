@@ -5,7 +5,7 @@
 
 # other global variable
 sysconfig="/etc/sysconfig/schoolserver"
-logdate=`date "+%y.%m.%d.%H-%M-%S"`
+logdate=`date "+%Y%m%d-%H%M%S"`
 logfile="/var/log/oss-setup.$logdate.log"
 passwd=""
 windomain=""
@@ -238,7 +238,7 @@ function SetupInitialAccounts (){
 	mkdir -m 750 -p $SCHOOL_HOME_BASE/classes
     fi
 
-    if [ $SCHOOL_TYPE = 'primary' ]; then
+    if [ "$SCHOOL_TYPE" = "cephalix" -o "$SCHOOL_TYPE" = "business" -o $SCHOOL_TYPE = 'primary' ]; then
 	chmod 1777 $SCHOOL_HOME_BASE/all
     else
 	chmod 1770 $SCHOOL_HOME_BASE/all
@@ -247,13 +247,23 @@ function SetupInitialAccounts (){
     
 
     ########################################################################
-    log " - Create base role"
+    log " - Create base roles"
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="sysadmins"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
+    case $SCHOOL_TYPE in
+	cephalix)
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
+	;;
+	business)
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
+	;;
+	*)
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
+    esac
 
     ########################################################################
     #log " - Create primary group type and add base role to primary group"
@@ -271,10 +281,18 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base template users"
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups=""
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups=""
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups=""
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
+    case $SCHOOL_TYPE in
+	cephalix)
+	;;
+	business)
+	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
+	;;
+	*)
+	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups=""
+	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups=""
+	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups=""
+	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
+    esac
 
     ########################################################################
     log " - Create internal users"
@@ -291,40 +309,53 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=on
 
     sysadmins_gn=`wbinfo -n sysadmins | awk '{print "wbinfo -S "$1}'| bash`
-    students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
-    teachers_gn=`wbinfo -n teachers | awk '{print "wbinfo -S "$1}'| bash`
-    workstations_gn=`wbinfo -n workstations | awk '{print "wbinfo -S "$1}'| bash`
-    administration_gn=`wbinfo -n administration | awk '{print "wbinfo -S "$1}'| bash`
-    templates_gn=`wbinfo -n templates | awk '{print "wbinfo -S "$1}'| bash`
-#    _gn=`wbinfo -n  | awk '{print "wbinfo -S "$1}'| bash`
+    if [ "$SCHOOL_TYPE" != "cephalix" -a "$SCHOOL_TYPE" != "business" ]; then
+	students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
+	teachers_gn=`wbinfo -n teachers | awk '{print "wbinfo -S "$1}'| bash`
+	workstations_gn=`wbinfo -n workstations | awk '{print "wbinfo -S "$1}'| bash`
+	templates_gn=`wbinfo -n templates | awk '{print "wbinfo -S "$1}'| bash`
+    fi
 
 
     ########################################################################
     log " - Create base directory rights"
-    setfacl -m m::rwx                   $SCHOOL_HOME_BASE/all
-    setfacl -m g:$teachers_gn:rwx       $SCHOOL_HOME_BASE/all
-    setfacl -m g:$students_gn:rwx       $SCHOOL_HOME_BASE/all
-    setfacl -m g:$administration_gn:rwx $SCHOOL_HOME_BASE/all
-    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/all
-
-    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
-    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
-    setfacl -m g:$administration_gn:rx  $SCHOOL_HOME_BASE/software
-    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/software
+    case $SCHOOL_TYPE in
+    	cephalix)
+   	    chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
+	;;
+	business)
+   	    chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
+	;;
+	primary)
+   	    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
+   	    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
+	;;
+	*)
+	    setfacl -m m::rwx                   $SCHOOL_HOME_BASE/all
+	    setfacl -m g:$teachers_gn:rwx       $SCHOOL_HOME_BASE/all
+	    setfacl -m g:$students_gn:rwx       $SCHOOL_HOME_BASE/all
+	    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/all
+	    
+	    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
+	    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
+	    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/software
+    esac
 
     ########################################################################
     log " - Create itool directory and right "
     mkdir -p /srv/itool/{config,hwinfo,images,ROOT}
     chmod 755  /srv/itool
-    chgrp -R $sysadmins_gn /srv/itool
     chmod 4770 /srv/itool/{config,hwinfo,images}
     chmod 755  /srv/itool/ROOT
     setfacl -m    g::rwx /srv/itool/images
     setfacl -d -m g::rwx /srv/itool/images
-    setfacl -m    g:$teachers_gn:rx /srv/itool/{config,images}
-    setfacl -d -m g:$teachers_gn:rx /srv/itool/{config,images}
-    setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
-    setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
+    chgrp -R $sysadmins_gn /srv/itool
+    if [ "$SCHOOL_TYPE" != "cephalix" -a "$SCHOOL_TYPE" != "business" ]; then
+	setfacl -m    g:$teachers_gn:rx /srv/itool/{config,images}
+	setfacl -d -m g:$teachers_gn:rx /srv/itool/{config,images}
+	setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
+	setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
+    fi
 
     log "End SetupInitialAccounts"
 }
@@ -351,20 +382,33 @@ function PostSetup (){
     SERVER_NETMASK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $2 }' )
     ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
-    sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g"		/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"			/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"			/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"	/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"		/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g"	/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g"			/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"	/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g"	/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		/opt/oss-java/data/school-INSERT.sql
-    sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		/opt/oss-java/data/school-INSERT.sql
+    for i in /opt/oss-java/data/*-INSERT.sql
+    do
+	sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		$i
+	sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g"		$i
+	sed -i "s/#ANON_NETWORK#/${ANON_NETWORK}/g"		$i
+	sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"		$i
+	sed -i "s/#SCHOOL_NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g"	$i
+	sed -i "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"		$i
+	sed -i "s/#SCHOOL_MAILSERVER#/${SCHOOL_MAILSERVER}/g"	$i
+	sed -i "s/#SCHOOL_PROXY#/${SCHOOL_PROXY}/g"		$i
+	sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"	$i
+	sed -i "s/#SCHOOL_BACKUP_SERVER#/${SCHOOL_BACKUP_SERVER}/g" $i
+	sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		$i
+	sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		$i
+    done
     mysql < /opt/oss-java/data/oss-objects.sql
-    mysql OSS < /opt/oss-java/data/school-INSERT.sql
+    case $SCHOOL_TYPE in
+    	cephalix)
+            mysql OSS < /opt/oss-java/data/cephalix-objects.sql
+            mysql OSS < /opt/oss-java/data/cephalix-INSERT.sql
+	;;
+    	business)
+            mysql OSS < /opt/oss-java/data/business-INSERT.sql
+	;;
+	*)
+            mysql OSS < /opt/oss-java/data/school-INSERT.sql
+    esac
 
 
     ########################################################################
