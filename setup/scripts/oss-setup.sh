@@ -250,12 +250,10 @@ function SetupInitialAccounts (){
     log " - Create base roles"
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="sysadmins"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"
     case $SCHOOL_TYPE in
-	cephalix)
-	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
-	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"
-	;;
 	business)
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"
 	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN"
+	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"
 	;;
 	*)
 	    /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"
@@ -282,8 +280,6 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create base template users"
     case $SCHOOL_TYPE in
-	cephalix)
-	;;
 	business)
 	    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups=""
 	;;
@@ -350,11 +346,11 @@ function SetupInitialAccounts (){
     setfacl -m    g::rwx /srv/itool/images
     setfacl -d -m g::rwx /srv/itool/images
     chgrp -R $sysadmins_gn /srv/itool
-    if [ "$SCHOOL_TYPE" != "cephalix" -a "$SCHOOL_TYPE" != "business" ]; then
+    setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
+    setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
+    if [ "$SCHOOL_TYPE" != "business" ]; then
 	setfacl -m    g:$teachers_gn:rx /srv/itool/{config,images}
 	setfacl -d -m g:$teachers_gn:rx /srv/itool/{config,images}
-	setfacl -m    g:$workstations_gn:rx /srv/itool/{config,images}
-	setfacl -d -m g:$workstations_gn:rx /srv/itool/{config,images}
     fi
 
     log "End SetupInitialAccounts"
@@ -401,6 +397,7 @@ function PostSetup (){
     case $SCHOOL_TYPE in
     	cephalix)
             mysql OSS < /opt/oss-java/data/cephalix-objects.sql
+            mysql OSS < /opt/oss-java/data/school-INSERT.sql
             mysql OSS < /opt/oss-java/data/cephalix-INSERT.sql
 	;;
     	business)
