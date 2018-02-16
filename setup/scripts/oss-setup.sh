@@ -436,7 +436,7 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Adapt Apache configuration"
-    sed -i 's/^APACHE_MODULES=.*/APACHE_MODULES="actions alias auth_basic authn_file authz_host authz_groupfile authz_core authz_user autoindex cgi dir env expires include log_config mime negotiation setenvif ssl socache_shmcb userdir reqtimeout php5 rewrite authn_core proxy proxy_http proxy_connect"/' /etc/sysconfig/apache2
+    sed -i 's/^APACHE_MODULES=.*/APACHE_MODULES="actions alias auth_basic authn_file authz_host authz_groupfile authz_core authz_user autoindex cgi dir env expires include log_config mime negotiation setenvif ssl socache_shmcb userdir reqtimeout php5 rewrite authn_core proxy proxy_http proxy_connect headers"/' /etc/sysconfig/apache2
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
