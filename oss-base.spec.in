@@ -82,6 +82,7 @@ fi
 %dir    /etc/cron.hourly
 /etc/cron.hourly/oss.*
 /etc/cron.daily/oss*
+/etc/cron.d/oss*
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
 /usr/share/oss/
