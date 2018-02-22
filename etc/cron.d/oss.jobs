@@ -1,0 +1,1 @@
+* * * * * root salt admin pkg.list_pkgs 2> /dev/null | grep 'Failed to authenticate' || systemctl salt restart
