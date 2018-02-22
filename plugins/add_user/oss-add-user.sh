@@ -142,8 +142,8 @@ else
 fi
 
 #Create profiles directory
-mkdir -m 700 -p ${SCHOOL_HOME_BASE}/profiles/$uid
-chown $uidnumber  ${SCHOOL_HOME_BASE}/profiles/$uid
+#mkdir -m 700 -p ${SCHOOL_HOME_BASE}/profiles/$uid
+#chown $uidnumber  ${SCHOOL_HOME_BASE}/profiles/$uid
 
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
