@@ -73,16 +73,16 @@ fi
 
 %files
 %defattr(-,root,root)
-%dir /etc/salt
-%dir /etc/salt/master.d
-%dir /etc/skel/Desktop
+%dir    /etc/salt
+%dir    /etc/salt/master.d
+%dir    /etc/skel/Desktop
 %dir    /etc/YaST2
 %config /etc/YaST2/oss-firstboot.xml
 %config /etc/my.cnf.in
 %dir    /etc/cron.hourly
-/etc/cron.hourly/oss.*
-/etc/cron.daily/oss*
-/etc/cron.d/oss*
+%config /etc/cron.hourly/oss.*
+%config /etc/cron.daily/oss*
+%config(noreplace) /etc/cron.d/oss*
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
 /usr/share/oss/
@@ -95,8 +95,7 @@ fi
 %doc README.md
 
 %description
-This package contains the basic utilitis to setup configure and manipulate
-the Open School Server.
+This package contains the basic utilitis to setup configure and manage the OSS base system.
 
 Authors:
 --------
