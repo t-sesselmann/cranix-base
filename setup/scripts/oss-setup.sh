@@ -205,8 +205,11 @@ function SetupDHCP (){
     sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"                 /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK_STRING}/g"          /usr/share/oss/templates/dhcpd.conf
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
-    sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'	    /etc/sysconfig/dhcpd
     if [ $SCHOOL_USE_DHCP = "yes" ]; then
+        . /etc/sysconfig/dhcpd
+        if [ -z "$/DHCPD_INTERFACE" ]; then
+            sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'   /etc/sysconfig/dhcpd
+        fi
         systemctl enable dhcpd
         systemctl start  dhcpd
     fi
