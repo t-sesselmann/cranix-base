@@ -89,6 +89,8 @@ fi
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
+%dir /usr/share/cups/ipptool/
+%dir usr/share/cups/
 /usr/share/cups/ipptool/*
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt
