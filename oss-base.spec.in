@@ -20,6 +20,7 @@ Url:            http://oss.cephalix.eu/
 Group:          Productivity/
 Source:         %{name}.tar.bz2
 BuildArch:      noarch
+Requires:       cups
 Requires:       rsync
 Requires:       samba-ad
 BuildRequires:  rsync
@@ -88,6 +89,7 @@ fi
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
+/usr/share/cups/ipptool/*
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt
 %dir /srv/salt/_modules
