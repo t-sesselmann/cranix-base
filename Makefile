@@ -4,7 +4,7 @@
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR	= /usr/share/fillup-templates/
-TOPACKAGE       = Makefile etc plugins sbin setup salt tools templates README.md 
+TOPACKAGE       = Makefile etc ipptool plugins sbin setup salt tools templates README.md 
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -22,6 +22,7 @@ install:
 	mkdir -p $(DESTDIR)/etc/YaST2/
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
+	mkdir -p $(DESTDIR)/usr/share/cups/ipptool/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
@@ -33,6 +34,7 @@ install:
 	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_salt_event_watcher.service $(DESTDIR)/usr/lib/systemd/system/
+	install -m 644 ipptool/* $(DESTDIR)/usr/share/cups/ipptool/
 
 dist:
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
