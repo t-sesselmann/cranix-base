@@ -26,6 +26,7 @@ abort() {
         echo "add_user" > /var/adm/oss/opentasks/$TASK
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+        echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
         echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
         echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
