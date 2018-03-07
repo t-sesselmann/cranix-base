@@ -1,1 +1,2 @@
-* * * * * root /usr/share/oss/tools/check-salt-master.sh
+-*    * * * * root /usr/share/oss/tools/check-salt-master.sh
+-*/10 * * * * root /usr/share/oss/tools/set_dyndns.sh

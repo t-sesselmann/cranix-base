@@ -428,8 +428,9 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Create profile directory"
-    mkdir -p -m 1770 "$SCHOOL_HOME_BASE/profiles"
+    mkdir -p  "$SCHOOL_HOME_BASE/profiles"
     chgrp 100 "$SCHOOL_HOME_BASE/profiles/"
+    chmod 1770 "$SCHOOL_HOME_BASE/profiles"
 
     ########################################################################
     log "Create Certificates"
