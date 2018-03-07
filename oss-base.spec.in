@@ -89,9 +89,14 @@ fi
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
+%dir /usr/share/cups/drivers/
+%dir /usr/share/cups/drivers/x64/
+%dir /usr/share/cups/ipptool/
 %dir /usr/share/cups/ipptool/
 %dir /usr/share/cups/
 /usr/share/cups/ipptool/*
+/usr/share/cups/drivers/ps*
+/usr/share/cups/drivers/x64/ps*
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt
 %dir /srv/salt/_modules
