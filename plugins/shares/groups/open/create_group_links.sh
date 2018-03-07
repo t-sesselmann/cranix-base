@@ -8,8 +8,9 @@ mkdir -m 700 -p $SCHOOL_HOME_BASE/groups/LINKED/$user/
 chown $user $SCHOOL_HOME_BASE/groups/LINKED/$user/
 rm -f $SCHOOL_HOME_BASE/groups/LINKED/$user/*
 
-for g in  $( oss_api_text.sh GET users/byUid/$user/groups )
+for GROUP in  $( oss_api_text.sh GET users/byUid/$user/groups )
 do
+    g=$( echo $GROUP|tr '[:upper:]' '[:lower:]' )
     if [ -d "$SCHOOL_HOME_BASE/groups/$g" ]
     then
         ln -s "$SCHOOL_HOME_BASE/groups/$g" "$SCHOOL_HOME_BASE/groups/LINKED/$user/$g"
