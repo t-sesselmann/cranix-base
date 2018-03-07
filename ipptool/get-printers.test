@@ -38,7 +38,7 @@
         DISPLAY printer-name
         DISPLAY printer-state
         DISPLAY printer-is-accepting-jobs
-        DISPLAY jobs
+        DISPLAY queued-job-count
 }
 
 
