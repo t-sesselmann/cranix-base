@@ -146,8 +146,7 @@ function SetupSamba (){
     samba-tool dns add localhost $SCHOOL_DOMAIN mailserver   A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN schoolserver A $SCHOOL_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN proxy        A $SCHOOL_PROXY         -U Administrator%"$passwd"
-    #TODO at the moment do not work
-    #samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN printserver  A $SCHOOL_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN install      A $SCHOOL_SERVER        -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN timeserver   A $SCHOOL_SERVER        -U Administrator%"$passwd"
@@ -181,7 +180,11 @@ function SetupSamba (){
     ########################################################################
     log " - Setup our smb.conf file"
     cp /etc/samba/smb.conf /etc/samba/smb.conf-orig
-    sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.ini > /etc/samba/smb.conf
+    if [ "$SCHOOL_TYPE" != "business" ]; then
+        sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.business > /etc/samba/smb.conf
+    else
+        sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
+    fi
     sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"              /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"              /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g"     /etc/samba/smb.conf
@@ -308,7 +311,7 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=on
 
     sysadmins_gn=`wbinfo -n sysadmins | awk '{print "wbinfo -S "$1}'| bash`
-    if [ "$SCHOOL_TYPE" != "cephalix" -a "$SCHOOL_TYPE" != "business" ]; then
+    if [ "$SCHOOL_TYPE" != "business" ]; then
 	students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
 	teachers_gn=`wbinfo -n teachers | awk '{print "wbinfo -S "$1}'| bash`
 	workstations_gn=`wbinfo -n workstations | awk '{print "wbinfo -S "$1}'| bash`
