@@ -77,6 +77,9 @@ function InitGlobalVariable (){
     windomain=`echo "$SCHOOL_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
     sed -i s/^SCHOOL_WORKGROUP=.*/SCHOOL_WORKGROUP=\"$windomain\"/ $sysconfig
+    SCHOOL_DOMAIN=$( echo "$SCHOOL_DOMAIN" | tr "[:upper:]" "[:lower:]" )
+    sed -i s/^SCHOOL_DOMAIN=.*/SCHOOL_DOMAIN=\"$SCHOOL_DOMAIN\"/ $sysconfig
+    REALM=$( echo "$SCHOOL_DOMAIN" | tr "[:lower:]" "[:upper:]" )
 
     log "End InitGlobalVariable"
 }
@@ -185,7 +188,8 @@ function SetupSamba (){
     else
         sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
     fi
-    sed -i "s/#REALM#/$SCHOOL_DOMAIN/g"              /etc/samba/smb.conf
+    sed -i "s/#REALM#/$REALM/g"                      /etc/samba/smb.conf
+    sed -i "s/#SCHOOL_DOMAIN#/$SCHOOL_DOMAIN/g"      /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"              /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$SCHOOL_SERVER_EXT_GW/g"     /etc/samba/smb.conf
     sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"             /etc/samba/smb.conf
