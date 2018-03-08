@@ -5,13 +5,12 @@
 	workgroup = #WORKGROUP#
 	dns forwarder = 8.8.8.8 #GATEWAY#
 	server role = active directory domain controller
-	idmap_ldb:use rfc2307 = yes
-	template shell = /bin/bash
-	template homedir = HOMEBASE/%U
-	log level = 3
-        winbind nss info = rfc2307
-        winbind enum users = Yes
-        winbind enum groups = Yes
+        idmap config #WORKGROUP# : backend = ad
+        idmap config #WORKGROUP# : unix_nss_info = yes
+        idmap config #WORKGROUP# : schema_mode = rfc2307
+        idmap config #WORKGROUP# : range = 1000-10000000
+	#winbind enum users = Yes
+	#winbind enum groups = Yes
 	wide links = Yes
 	unix extensions = No
 
@@ -27,7 +26,7 @@
 	path = /srv/itool
 	root preexec = /usr/share/oss/plugins/share_plugin_handler.sh itool open %u %I %a %m
 	inherit permissions = Yes
-	valid users = @teachers, @sysadmins, @workstations, root, Administrator, register
+	valid users = @sysadmins, @workstations, root, Administrator, register
 	force group = sysadmins
 	browseable = no
 	guest ok = no
@@ -58,7 +57,6 @@
 
 [homes]
         comment = Home Directories
-	path = HOMEBASE/%U
  	root preexec=/usr/share/oss/plugins/share_plugin_handler.sh homes open %U %I %a %m #REALM#
  	root postexec=/usr/share/oss/plugins/share_plugin_handler.sh homes close %U %I %a %m #REALM#
 	inherit permissions = Yes
@@ -90,7 +88,7 @@
 	guest ok = No
 	printable = No
 	read only = No
-	#valid users=@sysadmins, @teachers, root, Administrator
+	#valid users=@sysadmins, root, Administrator
 	#veto files=/aquota.user/
 
 [all]
@@ -101,15 +99,6 @@
 	guest ok = No
 	writable = Yes
 
-[allteachers]
-	comment = Folder for all teacher
-	path = HOMEBASE/groups/teachers
-	inherit permissions = Yes
-	browseable = Yes
-	guest ok = No
-        writable = Yes
-	valid users = @teachers
-	force group = teachers
 
 [alladmins]
 	comment = Folder for administration personal

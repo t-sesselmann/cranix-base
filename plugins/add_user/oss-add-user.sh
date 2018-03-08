@@ -87,7 +87,7 @@ skel="/etc/skel"
 
 winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
 winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
-unixhome=${SCHOOL_HOME_BASE}/$uid
+unixhome=${SCHOOL_HOME_BASE}/$role/$uid
 
 echo "uid:       $uid"
 echo "password:  $password"
@@ -102,9 +102,11 @@ if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
 fi
 
-if [ "$role" = "workstations" ]; then
+if [ "$role" = "workstations"  -o "$role" = "guest" ]; then
     samba-tool domain passwordsettings set --complexity=off
 fi
+
+uidNumber=$( /usr/share/oss/tools/get_next_id )
 
 samba-tool user create "$uid" "$password" \
 				--username="$uid" \
@@ -113,13 +115,18 @@ samba-tool user create "$uid" "$password" \
 				--surname="$surName" \
 				--given-name="$givenName" \
 				--home-drive="Z:" \
-				--home-directory="$winhome" \
-				--unix-home="$unixhome" \
 				--profile-path="$winprofile" \
-				--script-path="$uid.bat" $ADDPARAM
+				--script-path="$uid.bat" \
+				--home-directory="$winhome" \
+				--nis-domain="${SCHOOL_WORKGROUP}" \
+				--unix-home="$unixhome" \
+				--login-shell=/bin/bash \
+				--uid-number=$uidNumber \
+				--gid-number=100 \
+				$ADDPARAM
 
 if [ $? != 0 ]; then
-   if [ "$role" = "workstations" ]; then
+   if [ "${SCHOOL_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
        samba-tool domain passwordsettings set --complexity=on
    fi
    abort

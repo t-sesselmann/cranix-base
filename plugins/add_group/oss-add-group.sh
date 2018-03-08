@@ -71,7 +71,8 @@ if [ "$mail" ]; then
     params="--mail-address=\"$mail\""
 fi
 
-samba-tool group add "$name" --description="$description" $params
+gidNumber=$( /usr/share/oss/tools/get_next_id )
+samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain=${SCHOOL_WORKGROUP} $params
 
 if [ $? != 0 ]; then
    abort
@@ -85,4 +86,9 @@ gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 mkdir -p -m 3770 $gdir
 chgrp $gidnumber $gdir
 setfacl -d -m g::rwx $gdir
+
+if [ "$type" = "primary" ]; then
+   mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
+   chgrp $gidnumber ${SCHOOL_HOME_BASE}/${nameLo}
+fi
 

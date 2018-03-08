@@ -65,6 +65,13 @@ while [ "$1" != "" ]; do
                                         usage 0
                                 fi
         ;;
+	-g | --gid-number=* )
+                                gidNumber=$(echo $1 | sed -e 's/--gid-number=//g');
+                                if [ "$gidNumber" = '' ]
+                                then
+                                        usage 0
+                                fi
+        ;;
 	\?)
                 echo "UNKNOWN argument \"-$OPTARG\"." >&2
                 usage 1
@@ -92,8 +99,7 @@ params=''
 if [ "$mail" ]; then
     params="--mail-address=\"$mail\""
 fi
-
-samba-tool group add "$name" --description="$description" $params
+samba-tool group add "$name" --description="$description" --gid-number=$gidNumber $params
 
 
 #create diredtory and set permission
@@ -105,3 +111,8 @@ gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 mkdir -p -m 3770 $gdir
 chgrp $gidnumber $gdir
 setfacl -d -m g::rwx $gdir
+
+if [ "$type" = "primary" ]; then
+   mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
+   chgrp $gidnumber ${SCHOOL_HOME_BASE}/${nameLo}
+fi

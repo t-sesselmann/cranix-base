@@ -11,8 +11,8 @@ role=''
 uid=''
 password=''
 rpassword='no'
-mpassword='no'
 groups=""
+uidNumber=""
 
 function usage (){
 	echo "Usage: oss-add-user.sh [OPTION]"
@@ -28,7 +28,6 @@ function usage (){
 	echo "                --uid=<USERNAME>      Username and user's Unix/RFC2307 username."
 	echo "                --password=<PASSORD>  Password"
 	echo "                --rpassword           Generate random password."
-	echo "                --mpassword           Force password to be changed on next login."
 	echo "                --groups              Groups"
 	echo "Ex.: ./oss-add-user.sh --uid='deakzs' --givenname='Zsombor' --surname='Deak' --role='students' --password='Deak123' --groups='wgroup1 10A 10B'"
 	exit $1
@@ -68,14 +67,14 @@ while [ "$1" != "" ]; do
 	--uid=* )
                                 uid=$(echo $1 | sed -e 's/--uid=//g');
         ;;
+	--uid-number=* )
+                                uidNumber=$(echo $1 | sed -e 's/--uid-number=//g');
+        ;;
 	--password=* )
                                 password=$(echo $1 | sed -e 's/--password=//g');
         ;;
 	--rpassword )
                                 rpassword="yes"
-        ;;
-	--mpassword )
-                                mpassword="yes"
         ;;
 	--groups=* )
 				groups=$(echo $1 | sed -e 's/--groups=//g');
@@ -102,7 +101,7 @@ skel="/etc/skel"
 
 winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
 winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
-unixhome=${SCHOOL_HOME_BASE}/$uid
+unixhome=${SCHOOL_HOME_BASE}/$role/$uid
 
 echo "uid:       $uid"
 echo "password:  $password"
@@ -121,9 +120,13 @@ samba-tool user create "$uid" "$password" \
 				--given-name="$givenname" \
 				--home-drive="Z:" \
 				--home-directory="$winhome" \
-				--unix-home="$unixhome" \
 				--profile-path="$winprofile" \
-				--script-path="$uid.bat"
+				--script-path="$uid.bat" \
+                                --nis-domain="${SCHOOL_WORKGROUP}" \
+                                --unix-home="$unixhome" \
+                                --login-shell=/bin/bash \
+                                --uid-number=$uidNumber \
+                                --gid-number=100 
 
 uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`
 gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
