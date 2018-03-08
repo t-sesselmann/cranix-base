@@ -20,7 +20,7 @@ Url:            http://oss.cephalix.eu/
 Group:          Productivity/
 Source:         %{name}.tar.bz2
 BuildArch:      noarch
-Requires:       cups
+PreReq:         cups
 Requires:       rsync
 Requires:       samba-ad
 BuildRequires:  rsync
@@ -89,7 +89,6 @@ fi
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
-%dir /usr/share/cups/drivers/
 %dir /usr/share/cups/drivers/x64/
 %dir /usr/share/cups/ipptool/
 %dir /usr/share/cups/ipptool/

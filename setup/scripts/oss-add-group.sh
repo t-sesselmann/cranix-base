@@ -88,6 +88,7 @@ while [ "$1" != "" ]; do
     shift
 done
 
+name=`echo "$name" | tr "[:lower:]" "[:upper:]"`
 
 echo "name:        $name"
 echo "description: $description"
@@ -105,7 +106,7 @@ samba-tool group add "$name" --description="$description" --gid-number=$gidNumbe
 #create diredtory and set permission
 . /etc/sysconfig/schoolserver
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
-gdir=${SCHOOL_HOME_BASE}/groups/${nameLo}
+gdir=${SCHOOL_HOME_BASE}/groups/${name}
 gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 
 mkdir -p -m 3770 $gdir

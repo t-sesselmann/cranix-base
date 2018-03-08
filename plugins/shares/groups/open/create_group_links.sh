@@ -10,7 +10,7 @@ rm -f $SCHOOL_HOME_BASE/groups/LINKED/$user/*
 
 for GROUP in  $( oss_api_text.sh GET users/byUid/$user/groups )
 do
-    g=$( echo $GROUP|tr '[:upper:]' '[:lower:]' )
+    g=$( echo $GROUP|tr '[:lower:]' '[:upper:]' )
     if [ -d "$SCHOOL_HOME_BASE/groups/$g" ]
     then
         ln -s "$SCHOOL_HOME_BASE/groups/$g" "$SCHOOL_HOME_BASE/groups/LINKED/$user/$g"

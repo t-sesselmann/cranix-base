@@ -254,13 +254,13 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base roles"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="sysadmins"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=3000019
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="workstations"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=3000020
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="administration" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=3000021
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="templates"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=3000022
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=3000019
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=3000020
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=3000021
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=3000022
     if [ $SCHOOL_TYPE != "business" ]; then
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="students"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=3000023
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="teachers"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=3000024
+        /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=3000023
+        /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=3000024
     fi
 
     ########################################################################
@@ -270,7 +270,7 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - sysadmin primary group add to Domain Admins group"
-    samba-tool group addmembers "Domain Admins" "sysadmins"
+    samba-tool group addmembers "Domain Admins" "SYSADMINS"
 
     ########################################################################
     #log " - Create admin user"

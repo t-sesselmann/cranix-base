@@ -60,6 +60,8 @@ do
   esac
 done
 
+name=`echo "$name" | tr "[:lower:]" "[:upper:]"`
+
 echo "name:        $name"
 echo "description: $description"
 echo "type:        $type"
@@ -80,7 +82,7 @@ fi
 
 #create diredtory and set permission
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
-gdir=${SCHOOL_HOME_BASE}/groups/${nameLo}
+gdir=${SCHOOL_HOME_BASE}/groups/${name}
 gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 
 mkdir -p -m 3770 $gdir
