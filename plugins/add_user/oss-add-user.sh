@@ -126,13 +126,10 @@ samba-tool user create "$uid" "$password" \
 				$ADDPARAM
 
 if [ $? != 0 ]; then
-   if [ "${SCHOOL_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
-       samba-tool domain passwordsettings set --complexity=on
-   fi
    abort
 fi
-if [ "$role" = "workstations" ]; then
-    samba-tool domain passwordsettings set --complexity=on
+if [ "${SCHOOL_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
+   samba-tool domain passwordsettings set --complexity=on
 fi
 
 #create home diredtory and set permission
