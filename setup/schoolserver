@@ -369,7 +369,7 @@ SCHOOL_MAY_NOT_CHANGE_PASSWORD="no"
 ## Type:        integer(10:16)
 ## Default:     10
 # Maximal lenght of password. Should not be graeter then 16 if you are using Office365.
-SCHOOL_MAXIMAL_PASSWORD_LENGTH="10"
+SCHOOL_MAXIMAL_PASSWORD_LENGTH="16"
 
 ## Type:        integer(8:16)
 ## Default:     8
