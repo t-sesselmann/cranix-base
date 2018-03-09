@@ -9,6 +9,7 @@
         idmap config #WORKGROUP# : unix_nss_info = yes
         idmap config #WORKGROUP# : schema_mode = rfc2307
         idmap config #WORKGROUP# : range = 1000-10000000
+	idmap_ldb:use rfc2307 = Yes
 	#winbind enum users = Yes
 	#winbind enum groups = Yes
 	wide links = Yes
