@@ -10,6 +10,7 @@
         idmap config #WORKGROUP# : schema_mode = rfc2307
         idmap config #WORKGROUP# : range = 1000-10000000
 	idmap_ldb:use rfc2307 = Yes
+	check password script = /usr/share/oss/tools/check_password_complexity.sh
 	#winbind enum users = Yes
 	#winbind enum groups = Yes
 	wide links = Yes
