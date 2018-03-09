@@ -128,23 +128,19 @@ samba-tool user create "$uid" "$password" \
                                 --uid-number=$uidNumber \
                                 --gid-number=100 
 
-uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`
-gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
-
-
 #create home diredtory and set permission
 mkdir -p $unixhome
 if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
-	chown -R $uidnumber:TEACHERS $unixhome
+	chown -R $uidNumber:TEACHERS $unixhome
 	chmod 0770 $unixhome
 else
-	chown -R $uidnumber:$gidnumber $unixhome
+	chown -R $uidNumber:100 $unixhome
 	chmod 0700 $unixhome
 fi
 
 #Create profiles directory
 mkdir -m 700 -p ${SCHOOL_HOME_BASE}/profiles/$uid
-chown $uidnumber  ${SCHOOL_HOME_BASE}/profiles/$uid
+chown $uidNumber  ${SCHOOL_HOME_BASE}/profiles/$uid
 
 #add user to groups
 samba-tool group addmembers "$role" "$uid"

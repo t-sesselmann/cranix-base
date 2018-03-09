@@ -3,6 +3,7 @@
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
 
+. /etc/sysconfig/schoolserver
 
 name=''
 description=''
@@ -100,20 +101,18 @@ params=''
 if [ "$mail" ]; then
     params="--mail-address=\"$mail\""
 fi
-samba-tool group add "$name" --description="$description" --gid-number=$gidNumber $params
+samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain=${SCHOOL_WORKSATATION} $params
 
 
 #create diredtory and set permission
-. /etc/sysconfig/schoolserver
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir=${SCHOOL_HOME_BASE}/groups/${name}
-gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 
 mkdir -p -m 3770 $gdir
-chgrp $gidnumber $gdir
+chgrp $gidNumber $gdir
 setfacl -d -m g::rwx $gdir
 
 if [ "$type" = "primary" ]; then
    mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
-   chgrp $gidnumber ${SCHOOL_HOME_BASE}/${nameLo}
+   chgrp $gidNumber ${SCHOOL_HOME_BASE}/${nameLo}
 fi

@@ -83,14 +83,13 @@ fi
 #create diredtory and set permission
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir=${SCHOOL_HOME_BASE}/groups/${name}
-gidnumber=`wbinfo -n $name | awk '{print "wbinfo -S "$1}'| bash`
 
 mkdir -p -m 3770 $gdir
-chgrp $gidnumber $gdir
+chgrp $gidNumber $gdir
 setfacl -d -m g::rwx $gdir
 
 if [ "$type" = "primary" ]; then
    mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
-   chgrp $gidnumber ${SCHOOL_HOME_BASE}/${nameLo}
+   chgrp $gidNumber ${SCHOOL_HOME_BASE}/${nameLo}
 fi
 

@@ -135,17 +135,13 @@ if [ "$role" = "workstations" ]; then
     samba-tool domain passwordsettings set --complexity=on
 fi
 
-uidnumber=`wbinfo -n $uid  | awk '{print "wbinfo -S "$1}'| bash`
-gidnumber=`wbinfo -n $role | awk '{print "wbinfo -S "$1}'| bash`
-
-
 #create home diredtory and set permission
 mkdir -p $unixhome
 if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
-	chown -R $uidnumber:TEACHERS "$unixhome"
+	chown -R $uidNumber:TEACHERS "$unixhome"
 	chmod 0770 "$unixhome"
 else
-	chown -R $uidnumber:$gidnumber "$unixhome"
+	chown -R $uidNumber:100 "$unixhome"
 	chmod 0700 "$unixhome"
 fi
 
