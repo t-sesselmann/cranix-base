@@ -101,7 +101,7 @@ params=''
 if [ "$mail" ]; then
     params="--mail-address=\"$mail\""
 fi
-samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain=${SCHOOL_WORKSATATION} $params
+samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain=${SCHOOL_WORKGROUP} $params
 
 
 #create diredtory and set permission
