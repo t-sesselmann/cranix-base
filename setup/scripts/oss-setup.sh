@@ -257,14 +257,35 @@ function SetupInitialAccounts (){
     
 
     ########################################################################
+    log " - Create internal users"
+    cephalixpw=`mktemp XXXXXXXXXX`
+    samba-tool user setexpiry --noexpiry Administrator
+    samba-tool domain passwordsettings set --complexity=off
+    samba-tool user create cephalix "$cephalixpw"
+    samba-tool group addmembers "Domain Admins" cephalix
+    sed -i s/CEPHALIXPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
+    samba-tool user setexpiry --noexpiry cephalix
+    samba-tool user create register register
+    samba-tool user setexpiry --noexpiry register
+    samba-tool group addmembers "Administrators" register
+
+    ########################################################################
+    sysadmins_gn=4000000
+    workstations_gn=4000001
+    administration_ng=4000002
+    templates_gn=4000003
+    students_gn=4000004
+    teachers_gn=4000005
+
+    ########################################################################
     log " - Create base roles"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=3000019
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=3000020
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=3000021
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=3000022
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=$sysadmins_gn
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=$workstations_gn
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=$administration_ng
+    /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=$templates_gn
     if [ $SCHOOL_TYPE != "business" ]; then
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=3000023
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=3000024
+        /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
+        /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=$teachers_gn
     fi
 
     ########################################################################
@@ -283,34 +304,14 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base template users"
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=3000025
+    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=4000011
     if [ $SCHOOL_TYPE != "business" ]; then
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=3000026
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=3000027
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=3000028
+        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=4000012
+        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
+        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
     fi
 
-    ########################################################################
-    log " - Create internal users"
-    cephalixpw=`mktemp XXXXXXXXXX`
-    samba-tool user setexpiry --noexpiry Administrator
-    samba-tool domain passwordsettings set --complexity=off
-    samba-tool user create cephalix "$cephalixpw"
-    samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/CEPHALIXPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
-    samba-tool user setexpiry --noexpiry cephalix
-    samba-tool user create register register
-    samba-tool user setexpiry --noexpiry register
-    samba-tool group addmembers "Administrators" register
     samba-tool domain passwordsettings set --complexity=on
-
-    sysadmins_gn=`wbinfo -n sysadmins | awk '{print "wbinfo -S "$1}'| bash`
-    if [ "$SCHOOL_TYPE" != "business" ]; then
-	students_gn=`wbinfo -n students | awk '{print "wbinfo -S "$1}'| bash`
-	teachers_gn=`wbinfo -n teachers | awk '{print "wbinfo -S "$1}'| bash`
-	workstations_gn=`wbinfo -n workstations | awk '{print "wbinfo -S "$1}'| bash`
-	templates_gn=`wbinfo -n templates | awk '{print "wbinfo -S "$1}'| bash`
-    fi
 
 
     ########################################################################
