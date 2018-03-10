@@ -138,9 +138,8 @@ else
 	chmod 0700 $unixhome
 fi
 
-#Create profiles directory
-mkdir -m 700 -p ${SCHOOL_HOME_BASE}/profiles/$uid
-chown $uidNumber  ${SCHOOL_HOME_BASE}/profiles/$uid
+#Samba has to recognize the new user
+sleep 3
 
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
