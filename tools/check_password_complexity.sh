@@ -30,12 +30,12 @@ else
 	echo "User password must contain digits."
 	exit 5
 fi
-if [[ $pw2check =~ [#%=§] ]]; then
-	a=1
-else
-	echo "User password must contain one of these special chracters: #%=§"
-	exit 6
-fi
+#if [[ $pw2check =~ [#%=§] ]]; then
+#	a=1
+#else
+#	echo "User password must contain one of these special chracters: #%=§"
+#	exit 6
+#fi
 
 PWCHECK=$( echo ${pw2check} | /usr/sbin/cracklib-check )
 if [ $? != 0 ]; then
