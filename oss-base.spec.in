@@ -74,6 +74,7 @@ fi
 
 %files
 %defattr(-,root,root)
+/etc/cups/cupsd.conf.in
 %dir    /etc/salt
 %dir    /etc/salt/master.d
 %dir    /etc/skel/Desktop
