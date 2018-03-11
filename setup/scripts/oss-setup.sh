@@ -459,6 +459,10 @@ chmod 600 /root/.my.cnf
     fi
 
     ########################################################################
+    log "Setup Cups"
+    cp /etc/cups/cupsd.conf.in /etc/cups/cupsd.conf
+
+    ########################################################################
     log "Prepare roots desktop"
     mkdir -p /root/Desktop/
     cp /etc/skel/Desktop/* /root/Desktop/
