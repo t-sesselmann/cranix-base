@@ -461,6 +461,8 @@ chmod 600 /root/.my.cnf
     ########################################################################
     log "Setup Cups"
     cp /etc/cups/cupsd.conf.in /etc/cups/cupsd.conf
+    sed -i 's/^SystemGroup.*/SystemGroup root lp/' /etc/cups/cups-files.conf
+    usermod -a -G lp root
 
     ########################################################################
     log "Prepare roots desktop"
