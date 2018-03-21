@@ -58,12 +58,6 @@ do
       role="${c}"
       sysadmin="${c}"
     ;;
-    password)
-      password="${c}"
-    ;;
-    mpassword)
-      mpassword="${c}"
-    ;;
   esac
 done
 

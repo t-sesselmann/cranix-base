@@ -89,15 +89,6 @@ winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
 winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
 unixhome=${SCHOOL_HOME_BASE}/$role/$uid
 
-echo "uid:       $uid"
-echo "password:  $password"
-echo "surName:   $surName"
-echo "givenName: $givenName"
-echo "winhome:   $winhome"
-echo "unixhome:  $unixhome"
-echo "profile:   $winprofile"
-echo "role:      $role"
-
 if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
 fi
@@ -132,8 +123,11 @@ if [ "${SCHOOL_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
    samba-tool domain passwordsettings set --complexity=on
 fi
 
-#create home diredtory and set permission
+#create home diredtory copy template user homedirectory and set permission
 mkdir -p $unixhome
+if [ -d "${SCHOOL_HOME_BASE}/templates/t${role}" ]; then
+	rsync -a ${SCHOOL_HOME_BASE}/templates/t${role}/ $unixhome/
+fi
 if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
 	chown -R $uidNumber:TEACHERS "$unixhome"
 	chmod 0770 "$unixhome"
@@ -166,5 +160,3 @@ if [ -z "$fsQuota" ]; then
 fi
 
 /usr/sbin/oss_set_quota.sh $uid $fsQuota
-#TODO hande mailsystem quota
-
