@@ -1,0 +1,7 @@
+apache2
+atd
+ntpd
+oss_salt_event_watcher
+salt-master
+clamd
+freshclam

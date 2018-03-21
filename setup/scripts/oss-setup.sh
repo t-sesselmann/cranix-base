@@ -471,11 +471,7 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Enable some importent services"
-    for i in apache2 \
-	     atd \
-	     ntpd \
-             oss_salt_event_watcher \
-             salt-master 
+    for i in i$( cat /usr/share/oss/setup/services-to-enable )
     do
     	systemctl enable $i
     done
