@@ -23,7 +23,6 @@ fi
 
 surName=''
 givenName=''
-role=''
 uid=''
 password=''
 rpassword='no'
@@ -34,15 +33,14 @@ msQuota=0
 
 abort() {
 	TASK=$( uuidgen -t )
-	echo "modify_user" > /var/adm/oss/opentasks/$TASK
-	echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
-	echo "password: $password" >> /var/adm/oss/opentasks/$TASK
+	echo "modify_user"           >  /var/adm/oss/opentasks/$TASK
+	echo "uid: $uid"             >> /var/adm/oss/opentasks/$TASK
+	echo "password: $password"   >> /var/adm/oss/opentasks/$TASK
 	echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
-	echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
+	echo "surName: $surName"     >> /var/adm/oss/opentasks/$TASK
 	echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
-	echo "role: $role" >> /var/adm/oss/opentasks/$TASK
-	echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
-        echo "msQuota: $msQuota" >> /var/adm/oss/opentasks/$TASK
+	echo "fsQuota: $fsQuota"     >> /var/adm/oss/opentasks/$TASK
+        echo "msQuota: $msQuota"     >> /var/adm/oss/opentasks/$TASK
 	exit 1
 }
 
@@ -59,10 +57,6 @@ do
     ;;
     uid)
       uid="${c}"
-    ;;
-    role)
-      role="${c}"
-      sysadmin="${c}"
     ;;
     password)
       password="${c}"
@@ -84,24 +78,13 @@ done
 
 #TODO hande mailsystem quota
 
-role=${role/,*/} #Remove sysadmins
-sysadmin=${sysadmin/$role/}
+if [ "$surName" -a "$givenName" ]
+then
 
-if [ $mpassword != "no" ]; then
-   ADDPARAM=" --must-change-at-next-login"
-fi
-
-DN=$( /usr/bin/ldbsearch  -H /var/lib/samba/private/sam.ldb uid=$uid dn | grep dn: | sed 's/dn: //' )
-b=${DN/CN=Users,*/}
-BASE=${DN/$b/}
-NEWDN="CN=$givenName $surName,$BASE"
-/usr/bin/ldbrename -H /var/lib/samba/private/sam.ldb "$DN" "$NEWDN"
-if [ $? != 0 ]; then
-   abort
-fi
+DN=$( /usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb uid=$uid dn | grep dn: | sed 's/dn: //' )
 
 FILE=$( mktemp /tmp/modify-user-XXXXXXXX )
-echo "dn: $NEWDN
+echo "dn: $DN
 changetype: modify
 replace: givenName
 givenName: $givenName
@@ -116,4 +99,13 @@ if [ $? != 0 ]; then
 fi
 rm -f $FILE
 
+fi
+
+if [ $mpassword != "no" ]; then
+    ADDPARAM="--must-change-at-next-login"
+fi
+
+if [ "$password" ]; then
+    samba-tool user setpassword $uid --newpassword="$password" $ADDPARAM
+fi
 

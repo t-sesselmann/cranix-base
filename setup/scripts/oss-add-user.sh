@@ -126,7 +126,8 @@ samba-tool user create "$uid" "$password" \
                                 --unix-home="$unixhome" \
                                 --login-shell=/bin/bash \
                                 --uid-number=$uidNumber \
-                                --gid-number=100 
+                                --gid-number=100 \
+				--use-username-as-cn
 
 #create home diredtory and set permission
 mkdir -p $unixhome
