@@ -174,7 +174,7 @@ function SetupSamba (){
     log " - Some additional samba settings -"
     samba-tool domain passwordsettings set --max-pwd-age=365
 
-    for i in /usr/share/oss/templates/login-*.ini
+    for i in /usr/share/oss/templates/*.ini
     do
 	b=$( basename $i .ini )
 	sed "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g" $i > /usr/share/oss/templates/$b
