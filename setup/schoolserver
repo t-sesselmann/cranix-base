@@ -391,12 +391,12 @@ SCHOOL_STRING_CONVERT_TYPE="telex"
 # In which subdirectories in /home will be searched for files when deleting a user.
 SCHOOL_SEARCH_FOR_DELETE="all groups"
 
-## Type:        string
+## Type:        string readonly
 ## Default:	http://repo.cephalix.eu/salt-packages
 # Url to the salt packages
 SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 
-## Type:        string
+## Type:        string readonly
 ## Default:     http://repo.cephalix.eu/OSS
 # Url to the updates
 SCHOOL_UPDATE_URL="http://repo.cephalix.eu/OSS"
