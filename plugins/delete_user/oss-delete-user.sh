@@ -74,16 +74,14 @@ if [ -z "$uid" ]; then
    exit 4;
 fi
 
-# delete user
-samba-tool user delete "$uid"
+FILE=`mktemp /tmp/oss_del_user_filesXXX`
+DATUM=`/usr/share/oss/tools/oss_date.sh`
 
-if [ $? != 0 ]; then
-   abort
-fi
-
+HOMEDIR=$( /usr/sbin/oss_get_home.sh $uid )
 #delete home dir and profile dirs
-if [ -d ${SCHOOL_HOME_BASE}/$uid ]; then
-    rm -r ${SCHOOL_HOME_BASE}/$uid
+if [ -d ${HOMEDIR} ]; then
+    tar czf /home/archiv/$uid-$DATUM.tgz $HOMEDIR
+    rm -r $HOMEDIR
 fi
 
 if [ -d ${SCHOOL_HOME_BASE}/profiles/$uid ]; then
@@ -94,4 +92,25 @@ fi
 if [ -e /var/lib/samba/netlogon/$uid.bat ]; then
    rm  /var/lib/samba/netlogon/$uid.bat 
 fi
+
+UIDNUMBER=$(  /usr/sbin/oss_get_uidNumber.sh $uid )
+for i in $SCHOOL_SEARCH_FOR_DELETE
+do
+        test -d $SCHOOL_HOME_BASE/$i || continue;
+        #Find directories owned by this user
+        find $SCHOOL_HOME_BASE/$i -type d -uid $UIDNUMBER -printf "rm -fr '%p'\n" > $FILE
+        . $FILE
+        #Find files owned by this user
+        find $SCHOOL_HOME_BASE/$i -type f -uid $UIDNUMBER -printf "rm -f  '%p'\n" > $FILE
+        . $FILE
+done
+rm $FILE
+
+# delete user
+samba-tool user delete "$uid"
+
+if [ $? != 0 ]; then
+   abort
+fi
+
 
