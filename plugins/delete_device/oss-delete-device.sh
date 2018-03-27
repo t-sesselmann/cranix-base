@@ -28,7 +28,7 @@ done
 passwd=$( grep de.openschoolserver.dao.User.Cephalix.Password= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Cephalix.Password=//' )
 
 samba-tool dns delete localhost $SCHOOL_DOMAIN $name  A $ip   -U cephalix%"$passwd"
-if [ "$wlanip" && "$wlanmac" ]; then
+if [ "$wlanip" -a "$wlanmac" ]; then
 	samba-tool dns delete localhost $SCHOOL_DOMAIN $name  A $wlanip   -U cephalix%"$passwd"
 fi
 
