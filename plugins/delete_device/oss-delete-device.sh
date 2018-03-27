@@ -31,4 +31,5 @@ samba-tool dns delete localhost $SCHOOL_DOMAIN $name  A $ip   -U cephalix%"$pass
 if [ "$wlanip" -a "$wlanmac" ]; then
 	samba-tool dns delete localhost $SCHOOL_DOMAIN $name  A $wlanip   -U cephalix%"$passwd"
 fi
+samba-tool user delete "${name}$"
 
