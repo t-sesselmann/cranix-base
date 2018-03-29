@@ -471,7 +471,7 @@ chmod 600 /root/.my.cnf
 
     ########################################################################
     log "Enable some importent services"
-    for i in i$( cat /usr/share/oss/setup/services-to-enable )
+    for i in $( cat /usr/share/oss/setup/services-to-enable )
     do
     	systemctl enable $i
     done
