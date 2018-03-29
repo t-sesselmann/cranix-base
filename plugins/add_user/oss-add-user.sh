@@ -126,9 +126,7 @@ fi
 
 #create home diredtory copy template user homedirectory and set permission
 mkdir -p $unixhome
-if [ -d "${SCHOOL_HOME_BASE}/templates/t${role}" ]; then
-	rsync -a ${SCHOOL_HOME_BASE}/templates/t${role}/ $unixhome/
-fi
+/usr/sbin/oss_copy_template_home.sh $uid
 if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
 	chown -R $uidNumber:TEACHERS "$unixhome"
 	chmod 0770 "$unixhome"
