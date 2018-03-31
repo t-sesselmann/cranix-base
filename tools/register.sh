@@ -5,6 +5,11 @@ REPO_USER=${SCHOOL_REG_CODE:0:9}
 REPO_PASSWORD=${SCHOOL_REG_CODE:10:9}
 . /etc/os-release
 
+if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
+	echo "Invalid regcode."
+	exit 1
+fi
+
 #Save the credentials
 echo "[${SCHOOL_UPDATE_URL}/${VERSION_ID}]
 username = ${REPO_USER}

@@ -516,6 +516,10 @@ chmod 600 /root/.my.cnf
     	systemctl enable $i
     done
     
+    ########################################################################
+    log "Registering"
+    /usr/share/oss/tools/register.sh
+
     log "End PostSetup"
 
 }
