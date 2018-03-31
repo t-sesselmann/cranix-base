@@ -138,7 +138,8 @@ else
 	chown -R $uidNumber:100 $unixhome
 	chmod 0700 $unixhome
 fi
-
+#Workaround
+ln -s $unixhome ${SCHOOL_HOME_BASE}/${SCHOOL_WORKGROUP}/$uid
 #Samba has to recognize the new user
 sleep 3
 
