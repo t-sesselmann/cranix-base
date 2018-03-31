@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cn=shift
+cn=$1
 
-/usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb cn=$uid dn  | grep dn:
+/usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb cn=$cn dn  | grep dn:
 

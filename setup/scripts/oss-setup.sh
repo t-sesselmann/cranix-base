@@ -76,7 +76,6 @@ function InitGlobalVariable (){
     log " - Set windomain variable"
     windomain=`echo "$SCHOOL_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
-    sed -i s/^SCHOOL_WORKGROUP=.*/SCHOOL_WORKGROUP=\"$windomain\"/ $sysconfig
     SCHOOL_DOMAIN=$( echo "$SCHOOL_DOMAIN" | tr "[:upper:]" "[:lower:]" )
     sed -i s/^SCHOOL_DOMAIN=.*/SCHOOL_DOMAIN=\"$SCHOOL_DOMAIN\"/ $sysconfig
     REALM=$( echo "$SCHOOL_DOMAIN" | tr "[:lower:]" "[:upper:]" )
@@ -138,12 +137,12 @@ function SetupSamba (){
     ########################################################################
     log " - Use our enhanced samba.service file."
     cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
-    ln -s /root/ /home/administrator
 
     ########################################################################
     log " - Create linked groups directory "
     mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
-    mkdir -p -m 755 $SCHOOL_HOME_BASE/${SCHOOL_WORKGROUP}
+    mkdir -p -m 755 $SCHOOL_HOME_BASE/${windomain}
+    ln -s /root/ /home/${windomain}/administrator
 
     ########################################################################
     log " - Create dns entries "
