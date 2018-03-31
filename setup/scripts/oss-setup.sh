@@ -143,6 +143,7 @@ function SetupSamba (){
     ########################################################################
     log " - Create linked groups directory "
     mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
+    mkdir -p -m 755 $SCHOOL_HOME_BASE/${SCHOOL_WORKGROUP}
 
     ########################################################################
     log " - Create dns entries "
@@ -156,6 +157,46 @@ function SetupSamba (){
     if [ $SCHOOL_NETBIOSNAME != "admin" ]; then
        samba-tool dns add localhost $SCHOOL_DOMAIN admin   A $SCHOOL_SERVER        -U Administrator%"$passwd"
     fi
+
+    #Add rfc2307 attributes to Administartor
+    DN=$( /usr/sbin/oss_get_dn.sh Administrator )
+    echo "$DN
+changetype: modify
+add: uid
+uid: administrator
+-
+add: uidNumber
+uidNumber: 0
+-
+add: unixHomeDirectory
+unixHomeDirectory: /root
+-
+add: gidNumber
+gidNumber: 100
+-
+add: loginShell
+loginShell: /bin/bash
+-
+add: msSFU30NisDomain
+msSFU30NisDomain: iqondns
+-
+add: msSFU30Name
+msSFU30Name: administrator
+-
+add: homeDirectory
+homeDirectory: \\\\admin\\administrator
+-
+add: homeDrive
+homeDrive: Z:
+-
+add: scriptPath
+scriptPath: administrator.bat
+-
+add: profilePath
+profilePath: \\\\admin\\profiles\\administrator
+"  > /tmp/rfc2307-Administartor
+     ldbmodify  -H /var/lib/samba/private/sam.ldb  /tmp/rfc2307-Administartor
+     #rm /tmp/rfc2307-Administartor
 
     ########################################################################
     log " - Setup printserver "
