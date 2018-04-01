@@ -255,10 +255,10 @@ SCHOOL_DOMAIN="extis.eu"
 # When setting this variable to yes, the OSS scripts write debug information.
 SCHOOL_DEBUG="no"
 
-## Type:	string(CSV,WinSV,SiBank,Schild-NRW)
-## Default:     CSV	
-# The import file format.
-SCHOOL_IMPORT_FILE_FORMAT="CSV"
+## Type:	yesno
+## Default:     no	
+# To increase security you can reset the password for register every day.
+SCHOOL_RESET_REGISTER_PASSWORD="no"
 
 ## Type:	string
 ## Default:

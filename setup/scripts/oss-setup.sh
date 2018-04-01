@@ -303,11 +303,13 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/CEPHALIXPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/REGISTERPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
     samba-tool user setexpiry --noexpiry cephalix
-    samba-tool user create register register
+    samba-tool user create register "$cephalixpw"
     samba-tool user setexpiry --noexpiry register
     samba-tool group addmembers "Administrators" register
+    samba-tool user create ossreader ossreader
+    samba-tool user setexpiry --noexpiry ossreader
 
     ########################################################################
     sysadmins_gn=4000000

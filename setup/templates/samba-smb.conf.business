@@ -24,7 +24,7 @@
 	path = /srv/itool
 	root preexec = /usr/share/oss/plugins/share_plugin_handler.sh itool open %u %I %a %m
 	inherit permissions = Yes
-	valid users = @sysadmins, @workstations, root, Administrator, register
+	valid users = @sysadmins, @workstations, root, Administrator, ossreader
 	force group = sysadmins
 	browseable = no
 	guest ok = no
