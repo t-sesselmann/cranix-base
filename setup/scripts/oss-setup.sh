@@ -209,6 +209,9 @@ profilePath: \\\\admin\\profiles\\administrator
     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
+    chmod -R 775 /var/lib/printserver/drivers
+    chgroup -R 4000000 /var/lib/printserver/drivers
+    setfacl -Rdm g:4000000:rwx /var/lib/printserver/drivers 
 
     #########################################################################
     log " - Some additional samba settings -"
@@ -329,6 +332,7 @@ function SetupInitialAccounts (){
         /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
         /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=$teachers_gn
     fi
+    samba-tool group addmembers "Sysadmins" register
 
     ########################################################################
     #log " - Create primary group type and add base role to primary group"
