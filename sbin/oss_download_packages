@@ -16,6 +16,7 @@ do
      sleep 2
   fi
 done
-
+echo "$PACKAGES" > /run/lock/oss-api/oss_download_packages
 /usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/oss-download-salt-packages.log  2>&1
+rm -f /run/lock/oss-api/oss_download_packages
 
