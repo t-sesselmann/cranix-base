@@ -142,7 +142,8 @@ function SetupSamba (){
     log " - Create linked groups directory "
     mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
     mkdir -p -m 755 $SCHOOL_HOME_BASE/${windomain}
-    ln -s /root/ /home/${windomain}/administrator
+    mkdir -p /home/sysadmins/administrator
+    ln -s /home/sysadmins/administrator /home/${windomain}/administrator
 
     ########################################################################
     log " - Create dns entries "
@@ -168,7 +169,7 @@ add: uidNumber
 uidNumber: 0
 -
 add: unixHomeDirectory
-unixHomeDirectory: /root
+unixHomeDirectory: /home/sysadmins/administrator
 -
 add: gidNumber
 gidNumber: 100
