@@ -87,7 +87,12 @@ skel="/etc/skel"
 
 winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
 winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
-unixhome=${SCHOOL_HOME_BASE}/$role/$uid
+
+if [ $SCHOOL_SORT_HOMES = "yes" ]; then
+        unixhome=${SCHOOL_HOME_BASE}/$role/$uid
+else
+        unixhome=${SCHOOL_HOME_BASE}/$uid
+fi
 
 if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
@@ -135,7 +140,10 @@ else
 	chmod 0700 "$unixhome"
 fi
 #Workaround
-ln -s $unixhome ${SCHOOL_HOME_BASE}/${SCHOOL_WORKGROUP}/$uid
+if [ $SCHOOL_SORT_HOMES = "yes" ]; then
+        ln -s $unixhome ${SCHOOL_HOME_BASE}/${SCHOOL_WORKGROUP}/$uid
+fi
+
 
 #Samba has to recognize the ne user
 sleep 3
