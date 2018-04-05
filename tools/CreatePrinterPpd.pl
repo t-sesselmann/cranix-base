@@ -7,6 +7,9 @@ my $printers = {};
 my $drivers  = {};
 foreach my $ppd ( @ppds ) {
   chomp $ppd;
+  if( $ppd =~ /.sim.ppd.gz$/ ) {
+    next;
+  }
   my @content = `cat $ppd | gunzip`;
   my $Manufacturer = "";
   my $ModelName    = "";
