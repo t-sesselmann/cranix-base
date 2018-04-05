@@ -100,7 +100,7 @@
 
 [alladmins]
 	comment = Folder for administration personal
-	path = HOMEBASE/groups/administration
+	path = HOMEBASE/groups/ADMINISTRATION
 	inherit permissions = Yes
 	browseable = Yes
 	guest ok = No
