@@ -13,7 +13,7 @@ if [ ! -e $SCHOOL_HOME_BASE/profile/$user/$arch ]; then
 	mkdir -m 700 -p $SCHOOL_HOME_BASE/profile/$user/$arch
 	chown $user $SCHOOL_HOME_BASE/profile/$user $SCHOOL_HOME_BASE/profile/$user/$arch
 fi
-USERHOME=$( /usr/sbin/oss_get_home $user )
+USERHOME=$( /usr/sbin/oss_get_home.sh $user )
 
 if [ "${USERHOME/home/}" = "$USERHOME" ]; then
         echo "check_profil.sh error $user does not have homedirectory $USERHOME"
