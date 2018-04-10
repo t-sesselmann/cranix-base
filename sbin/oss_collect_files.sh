@@ -32,7 +32,7 @@ done
 
 . /etc/sysconfig/schoolserver
 
-IMPORTS="${SCHOOL_HOME_BASE}/${TO}/Imports/"
+IMPORTS="$( oss_get_home.sh ${TO} )/Import/"
 if [ $SORTDIR = "y" ]; then
     TARGET="${IMPORTS}/${PROJECT}/$FROM"
 else
@@ -40,7 +40,7 @@ else
 fi
 mkdir -p -m 700 $TARGET
 
-EXPORTS="${SCHOOL_HOME_BASE}/${FROM}/Exports/"
+EXPORTS="$( oss_get_home.sh ${FROM} )/Export/"
 
 if [ ! -d $EXPORTS ]; then
     echo "The export directory '$EXPORTS' does not exists." 1>&2
