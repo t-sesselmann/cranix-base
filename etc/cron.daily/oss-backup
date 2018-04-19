@@ -163,18 +163,6 @@ if [ "$SCHOOL_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
         }
     fi
 
-    # save LDAP database
-    if [ "$SCHOOL_BACKUP_LDAP" = "yes" ]; then
-	LOG "Syncing LDAP Database" 
-	if [ -e $SCHOOL_BACKUP_FULL_DIR/SLAPCAT.gz ]; then
-		mv $SCHOOL_BACKUP_FULL_DIR/SLAPCAT.gz $BACKUP_DIR/SLAPCAT.gz
-	fi
-        slapcat | gzip > $SCHOOL_BACKUP_FULL_DIR/SLAPCAT.gz
-        if [ $? != 0 ]; then
-            TheEnd 6 "CAN_NOT_MAKE_BACKUP"
-        fi  
-    fi
-
     # copy sysconfig file schoolconf to the base for simple recovery
     cp /etc/sysconfig/schoolserver $SCHOOL_BACKUP_FULL_DIR/
     if [ $? != 0 ]; then
@@ -192,27 +180,15 @@ if [ "$SCHOOL_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
 	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
     fi  
 
-    # save samba settings
-    if chkconfig -c smb
-    then
-    	LOG "Syncing samba settings" 
-    	test -d $SCHOOL_BACKUP_FULL_DIR/var/lib/samba/netlogon || mkdir -p $SCHOOL_BACKUP_FULL_DIR/var/lib/samba/netlogon
-    	mkdir -p $SCHOOL_BACKUP_FULL_DIR/var/lib/samba
-    	pushd /var/lib/samba/ 1>/dev/null
-    	tdbbackup -s .bak *.tdb
-    	popd 1>/dev/null
-    	pushd /etc/samba 1>/dev/null
-    	tdbbackup -s .bak secrets.tdb
-    	popd 1>/dev/null
-        if [ "$SCHOOL_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
-		test -e $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz && mv $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
-    		getfacl --absolute-names -R /var/lib/samba/ | gzip > $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz
-	fi
-        mkdir -p $BACKUP_DIR/var/lib/samba/
-    	rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $SCHOOL_BACKUP_FULL_DIR/var/lib/samba/
-        if [ $? != 0 ]; then
-            TheEnd 6 "CAN_NOT_MAKE_BACKUP"
-        fi  
+    LOG "Syncing samba"
+    if [ "$SCHOOL_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
+       test -e $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz && mv $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
+       getfacl --absolute-names -R /var/lib/samba/ | gzip > $SCHOOL_BACKUP_FULL_DIR/samba_facls.gz
+    fi
+    mkdir -p $BACKUP_DIR/var/lib/samba/
+    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $SCHOOL_BACKUP_FULL_DIR/var/lib/samba/
+    if [ $? != 0 ]; then
+        TheEnd 6 "CAN_NOT_MAKE_BACKUP"
     fi
 
     # save /etc - must run after samba-backup otherwise secrets.tdb.bak is not saved
@@ -230,15 +206,6 @@ if [ "$SCHOOL_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
 	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
     fi  
 
-    # save server certificates
-    LOG "Saving server certificate"
-    test -d $SCHOOL_BACKUP_FULL_DIR/var/lib/CAM || mkdir -p $SCHOOL_BACKUP_FULL_DIR/var/lib/CAM
-    test -d $BACKUP_DIR/var/lib/CAM || mkdir -p $BACKUP_DIR/var/lib/CAM
-    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/CAM/ /var/lib/CAM/ $SCHOOL_BACKUP_FULL_DIR/var/lib/CAM/
-    if [ $? != 0 ]; then
-	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
-    fi  
-    
     # save /root (needed already for ssh-key files)
     LOG "Syncing /root/"
     mkdir -p $BACKUP_DIR/root/
@@ -285,53 +252,11 @@ if [ "$SCHOOL_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
     fi
     
     if [ "$SCHOOL_BACKUP_DB" = "yes" ]; then
-        if [ "$SCHOOL_USE_EGROUPWARE" = "yes" ]; then
-            LOG "Syncing eGroupware Database"
-            mysqldump $MYSQLDUMP_OPTIONS egroupware | gzip > $BACKUP_DIR/egroupware.gz
-            cp $BACKUP_DIR/egroupware.gz $SCHOOL_BACKUP_FULL_DIR/egroupware.gz
-	    if [ $? != 0 ]; then
-		LOG "  CAN_NOT_MAKE_BACKUP"
-	    fi
-        fi
-	if [ "$SCHOOL_BACKUP_JOOMLA" = "yes" ]; then
-	  if [ `echo "show databases;" | mysql -u root | grep -q joomla; echo $?` -eq 0 ] ; then
-		LOG "Syncing Joomla Database"
-		mysqldump $MYSQLDUMP_OPTIONS joomla | gzip > $BACKUP_DIR/joomla.gz
-		cp $BACKUP_DIR/joomla.gz $SCHOOL_BACKUP_FULL_DIR/joomla.gz
-	  fi
-	fi
 	LOG "Syncing OSS Database"
-        mysqldump $MYSQLDUMP_OPTIONS OSS | gzip > $BACKUP_DIR/OSS.sql.gz
+        mysqldump $MYSQLDUMP_OPTIONS --all-databases | gzip > $BACKUP_DIR/MYSQL.sql.gz
 	if [ $? != 0 ]; then
 		LOG " CAN_NOT_MAKE_BACKUP"
 	fi  
-    fi
-
-    if [ "$SCHOOL_BACKUP_MOODLE" = "yes" ]; then
-      if [ `echo "show databases;" | mysql -u root | grep -q moodle; echo $?` -eq 0 ] ; then
-    	LOG "Syncing Moodle Database"
-    	mysqldump $MYSQLDUMP_OPTIONS moodle | gzip > $BACKUP_DIR/moodle.gz
-    	cp $BACKUP_DIR/moodle.gz $SCHOOL_BACKUP_FULL_DIR/moodle.gz
-    	if [ -d /srv/www/moodledata/ ]; then
-    		test -d $SCHOOL_BACKUP_FULL_DIR/srv/www/moodledata/ || mkdir -p $SCHOOL_BACKUP_FULL_DIR/srv/www/moodledata/
-    		test -d $BACKUP_DIR/srv/www/moodledata/             || mkdir -p $BACKUP_DIR/srv/www/moodledata/
-    		rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/srv/www/moodledata/ \
-    		 /srv/www/moodledata/ \
-    		 $SCHOOL_BACKUP_FULL_DIR/srv/www/moodledata/
-	         if [ $? != 0 ]; then
-			LOG " CAN_NOT_MAKE_BACKUP"
-	         fi  
-    	elif [ "$SCHOOL_BACKUP_HOME" != "yes" ]; then
-    		test -d $SCHOOL_BACKUP_FULL_DIR/home/groups/moodledata/ || mkdir -p $SCHOOL_BACKUP_FULL_DIR/home/groups/moodledata/
-    		test -d $BACKUP_DIR/home/groups/moodledata/ 		|| mkdir -p $BACKUP_DIR/home/groups/moodledata/
-    		rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/home/groups/moodledata/ \
-    		 /home/groups/moodledata/ \
-    		$SCHOOL_BACKUP_FULL_DIR/home/groups/moodledata/
-	         if [ $? != 0 ]; then
-			LOG " CAN_NOT_MAKE_BACKUP"
-	         fi  
-    	fi # otherwise moodledata is included in /home
-      fi
     fi
 
     if [ "$SCHOOL_BACKUP_MAIL" = "yes" ]; then

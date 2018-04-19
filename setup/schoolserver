@@ -65,11 +65,6 @@ SCHOOL_BACKUP_INC_DIR="/mnt/backup"
 
 ## Type:	yesno
 ## Default:	yes
-# Make backup from LDAP.
-SCHOOL_BACKUP_LDAP="yes"
-
-## Type:	yesno
-## Default:	yes
 # Make backup from mail system.
 SCHOOL_BACKUP_MAIL="yes"
 
