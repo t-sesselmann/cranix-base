@@ -4,6 +4,19 @@
 
 read pw2check
 
+if [ ${SCHOOL_CHECK_PASSWORD_QUALITY} = "no" ]; then
+        exit 0
+fi
+
+if [ -x /usr/share/oss/tools/custom_check_password_complexity.sh ]; then
+	PWCHECK=$( echo ${pw2check} | /usr/share/oss/tools/custom_check_password_complexity.sh )
+	if [ "$PWCHECK" ]; then
+		echo ${PWCHECK}
+		exit 1
+	fi
+	exit 0
+fi
+
 if [ ${#pw2check} -lt $SCHOOL_MINIMAL_PASSWORD_LENGTH ]; then
 	echo "User password must contain minimum %s characters.##$SCHOOL_MINIMAL_PASSWORD_LENGTH"
 	exit 1
