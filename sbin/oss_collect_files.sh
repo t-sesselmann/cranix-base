@@ -32,33 +32,35 @@ done
 
 . /etc/sysconfig/schoolserver
 
-IMPORTS="$( oss_get_home.sh ${TO} )/Import/"
+IMPORT="$( oss_get_home.sh ${TO} )/Import/"
 if [ $SORTDIR = "y" ]; then
-    TARGET="${IMPORTS}/${PROJECT}/$FROM"
+    TARGET="${IMPORT}/${PROJECT}/$FROM"
 else
-    TARGET="${IMPORTS}/${PROJECT}"
+    TARGET="${IMPORT}/${PROJECT}"
 fi
 mkdir -p -m 700 $TARGET
 
-EXPORTS="$( oss_get_home.sh ${FROM} )/Export/"
+USERHOME=$( oss_get_home.sh ${FROM} )
+EXPORT="${USERHOME}/Export/"
 
-if [ ! -d $EXPORTS ]; then
-    echo "The export directory '$EXPORTS' does not exists." 1>&2
+if [ ! -d $EXPORT ]; then
+    echo "The export directory '$EXPORT' does not exists." 1>&2
 fi
 
 if [ "$SORTDIR" = "y" ]; then
-    cp $EXPORTS/* $TARGET/ 
+    cp $EXPORT/* $TARGET/ 
 else
     IFS=$'\n'
-    for i in $EXPORTS/*
+    for i in $EXPORT/*
     do
        j=$( basename $i )
-       cp $i "${TARGET}/${FROM}-${j}"
+       cp "$i" "${TARGET}/${FROM}-${j}"
     done
 fi
 
-chown -R $TO "${IMPORTS}/${PROJECT}"
+chown -R $TO "${IMPORT}/${PROJECT}"
 
 if [ "$CLEANUP" = 'y' ]; then
-    rm -rf $EXPORTS/*
+    rm -rf $EXPORT/*
+    rm -rf ${USERHOME}/Import/*
 fi
