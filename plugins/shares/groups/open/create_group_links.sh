@@ -4,7 +4,7 @@
 . /etc/sysconfig/schoolserver
 
 user=$1
-mkdir -m 700 -p $SCHOOL_HOME_BASE/groups/LINKED/$user/
+mkdir -m 500 -p $SCHOOL_HOME_BASE/groups/LINKED/$user/
 chown $user $SCHOOL_HOME_BASE/groups/LINKED/$user/
 rm -f $SCHOOL_HOME_BASE/groups/LINKED/$user/*
 
