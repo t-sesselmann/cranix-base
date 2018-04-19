@@ -46,7 +46,7 @@ if [ ! -d $EXPORTS ]; then
     echo "The export directory '$EXPORTS' does not exists." 1>&2
 fi
 
-if [ $SORTDIR = "y" ]; then
+if [ "$SORTDIR" = "y" ]; then
     cp $EXPORTS/* $TARGET/ 
 else
     IFS=$'\n'
@@ -57,8 +57,8 @@ else
     done
 fi
 
-chown -R $TO ${TARGET}
+chown -R $TO "${IMPORTS}/${PROJECT}"
 
-if [ $CLEANUP = 'y' ]; then
+if [ "$CLEANUP" = 'y' ]; then
     rm -rf $EXPORTS/*
 fi

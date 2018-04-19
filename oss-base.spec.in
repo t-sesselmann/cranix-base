@@ -21,6 +21,8 @@ Group:          Productivity/
 Source:         %{name}.tar.bz2
 BuildArch:      noarch
 PreReq:         cups
+PreReq:         salt
+PreReq:         salt-master
 Requires:       rsync
 Requires:       samba-ad
 BuildRequires:  rsync
@@ -75,8 +77,6 @@ fi
 %files
 %defattr(-,root,root)
 /etc/cups/cupsd.conf.in
-%dir    /etc/salt
-%dir    /etc/salt/master.d
 %dir    /etc/skel/Desktop
 %dir    /etc/YaST2
 %config /etc/YaST2/oss-firstboot.xml
@@ -98,7 +98,6 @@ fi
 /usr/share/cups/drivers/ps*
 /usr/share/cups/drivers/x64/ps*
 %{_fillupdir}/sysconfig.schoolserver
-%dir /srv/salt
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
 %doc README.md
