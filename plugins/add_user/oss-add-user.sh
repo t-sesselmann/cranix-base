@@ -40,7 +40,6 @@ givenName=''
 role=''
 uid=''
 password=''
-rpassword='no'
 mpassword='no'
 fsQuota=0
 msQuota=0
@@ -63,7 +62,6 @@ do
     ;;
     role)
       role="${c}"
-      sysadmin="${c}"
     ;;
     password)
       password="${c}"
@@ -79,9 +77,6 @@ do
     ;;
   esac
 done
-
-role=${role/,*/} #Remove sysadmins
-sysadmin=${sysadmin/$role/}
 
 skel="/etc/skel"
 
@@ -151,13 +146,17 @@ sleep 3
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
 
-if [ "$sysadmin" = ",sysadmins" ]; then
-   samba-tool group addmembers "sysadmins" "$uid"
-fi
-
 #Workstation users password should not expire
 if [ "$role" = "workstations" ]; then
-	pdbedit -u $uid -c "[X]"
+	tmpldif=$( mktemp /tmp/XXXXXXXX )
+	/usr/sbin/oss_get_dn.sh $uid > $tmpldif
+	echo "changetype: modify
+add: userWorkstations
+userWorkstations: $uid" >> $tmpldif
+	ldbmodify  -H /var/lib/samba/private/sam.ldb $tmpldif
+	samba-tool user setexpiry  --noexpiry $uid
+	rm -f $tmpldif
+	#pdbedit -u $uid -c "[X]"
 fi
 
 #Set default quota
