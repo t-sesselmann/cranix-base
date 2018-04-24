@@ -1,0 +1,10 @@
+#Logrotate file for the oss services
+maxage 365
+rotate 99
+missingok
+compress
+
+/var/log/oss-api.log {
+	nocreate
+	size=+2048k
+}
