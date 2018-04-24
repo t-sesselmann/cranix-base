@@ -5,3 +5,4 @@ oss_salt_event_watcher
 salt-master
 clamd
 freshclam
+vsftpd
