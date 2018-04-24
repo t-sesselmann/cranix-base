@@ -23,6 +23,7 @@ BuildArch:      noarch
 PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
+PreReq:		filesystem
 Requires:       rsync
 Requires:       samba-ad
 BuildRequires:  rsync
@@ -87,6 +88,7 @@ fi
 %config(noreplace) /etc/cron.d/oss*
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
+%config /etc/logrotate.d/oss-*
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_salt_event_watcher.service
