@@ -5,12 +5,11 @@
 #
 # $Id: oss_get_access_status,v 2.1 2007/05/09 21:24:06 pv Exp $
 #
-# syntax: /usr/sbin/oss_get_access_status network all|proxy|internet|samba|priniting|mailing
+# syntax: /usr/sbin/oss_get_access_status network direct|proxy|internet|login|printing|portal
 #
-
 . /etc/sysconfig/schoolserver
 case "$2" in
-   all)
+   direct)
         export DEST=$SCHOOL_NET_GATEWAY
         ;;
    internet|proxy)
@@ -23,10 +22,10 @@ case "$2" in
    printing)
         export DEST=$SCHOOL_PRINTSERVER
         ;;
-   mailing)
+   portal)
         export DEST=$SCHOOL_MAILSERVER
         ;;
-   samba)
+   login)
         export DEST=$SCHOOL_SERVER
         ;;
 esac
@@ -34,7 +33,7 @@ esac
 LOCAL=`ip addr | grep "$DEST/"`
 
 case "$2" in
-   all)
+   direct)
 #TODO
 #We have to mark not full internet access too.
 #E.m. if only some ports or server are enabled

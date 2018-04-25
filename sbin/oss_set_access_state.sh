@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Copyright (c) 2005 Peter Varkoly Fuerth, Germany.  All rights reserved.
 # Copyright (c) 2002 SuSE Linux AG Nuernberg, Germany.  All rights reserved.
 #
 # $Id: control_access,v 2.4 2007/05/09 21:24:06 pv Exp $
 #
-# syntax: /usr/sbin/oss_set_access_state  1|0 network all|proxy|proxy|internet|samba|priniting|mailing [IP of not controlled ws]
+# syntax: /usr/sbin/oss_set_access_state  1|0 network direct|proxy|internet|login|printing|portal [IP of not controlled ws]
 #
 
 
@@ -15,7 +15,7 @@
 export NETWORK="$SCHOOL_SERVER/$SCHOOL_NETMASK";
 
 case "$3" in
-   all)
+   direct)
 	if test "$SCHOOL_ISGATE" = "no"; then
                 echo -n '1'
                 exit 0
@@ -32,10 +32,10 @@ case "$3" in
    printing)
 	export DEST=$SCHOOL_PRINTSERVER
 	;;
-   mailing)
+   portal)
 	export DEST=$SCHOOL_MAILSERVER
 	;;
-   samba)
+   login)
 	export DEST=$SCHOOL_SERVER
 	;;
 esac
@@ -43,7 +43,7 @@ esac
 LOCAL=`/sbin/ip addr | grep "$DEST/"`
 
 case "$3" in
-   all)
+   direct)
 	if test "$1" = "1"; then
 		IFS=$'\n'; i=0; e=0; n=0;
 		for l in $( /usr/sbin/iptables -t filter -S forward_int ); do n=$((n+1)); echo $l | grep -q 'j ACCEPT' && i=$n; done;
@@ -62,7 +62,7 @@ case "$3" in
 		COMMAND="$COMMAND; while /usr/sbin/iptables -D POSTROUTING -s $2 ! -d $NETWORK -j MASQUERADE -t nat ; do false; done &> /dev/null"
 	fi
 	;;
-   proxy|internet|printing|mailing)
+   proxy|internet|printing|portal)
 	if test "$1" = "1"; then
 	      COMMAND="while /usr/sbin/iptables -D INPUT -s $2 -j $3-$2; do false; done &> /dev/null"
 	      COMMAND="$COMMAND; /usr/sbin/iptables -F $3-$2 &> /dev/null"
@@ -77,7 +77,7 @@ case "$3" in
 	      COMMAND="$COMMAND; /usr/sbin/iptables -I INPUT -s $2 -j $3-$2 &> /dev/null"
 	fi
 	;;
-   samba)
+   login)
 	if test "$1" = "1"; then
 	      COMMAND="while /usr/sbin/iptables -D INPUT -s $2 -j $3-$2; do false; done &> /dev/null"
 	      COMMAND="$COMMAND; /usr/sbin/iptables -F $3-$2 &> /dev/null"
