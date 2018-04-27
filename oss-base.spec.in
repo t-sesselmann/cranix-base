@@ -47,12 +47,15 @@ make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
+%service_add_pre oss_get_screen_shots.service
 
 %preun
 %service_del_preun oss_salt_event_watcher.service
+%service_del_preun oss_get_screen_shots.service
 
 %post
 %service_add_post oss_salt_event_watcher.service
+%service_add_post oss_get_screen_shots.service
 if [ -e /etc/sysconfig/schoolserver ]; then
    if [ ${1:-0} -gt 1 ]; then
        echo "Executing Update Scripts"
@@ -74,6 +77,7 @@ fi
 
 %postun
 %service_del_postun oss_salt_event_watcher.service
+%service_del_postun oss_get_screen_shots.service
 
 %files
 %defattr(-,root,root)
@@ -91,7 +95,7 @@ fi
 %config /etc/logrotate.d/oss-*
 /usr/share/oss/
 /usr/sbin/oss*
-/usr/lib/systemd/system/oss_salt_event_watcher.service
+/usr/lib/systemd/system/oss_*.service
 %dir /usr/share/cups/drivers/x64/
 %dir /usr/share/cups/ipptool/
 %dir /usr/share/cups/ipptool/
