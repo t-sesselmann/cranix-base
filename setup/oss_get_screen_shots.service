@@ -1,0 +1,13 @@
+[Unit]
+Description=Gets screen shots from salt client where user is logged in.
+Wants=basic.target
+After=basic.target network.target syslog.target salt-master.service
+
+[Service]
+Restart=on-failure
+ExecStartPre=mkdir -p /srv/www/admin/screenShots
+ExecStart=/usr/share/oss/tools/get_screen_shots.sh
+
+[Install]
+WantedBy=multi-user.target
+

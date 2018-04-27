@@ -263,7 +263,7 @@ SCHOOL_RESET_REGISTER_PASSWORD="no"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-SCHOOL_MONITOR_SERVICES="amavis,apcupsd,cups,dhcpd,ldap,named,postfix,samba,squid"
+SCHOOL_MONITOR_SERVICES="amavis,apcupsd,cups,dhcpd,postfix,samba,squid"
 
 ## Type:	yesno
 ## Default:	no
@@ -400,4 +400,9 @@ SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 ## Default:     http://repo.cephalix.eu/OSS
 # Url to the updates
 SCHOOL_UPDATE_URL="http://repo.cephalix.eu/OSS"
+
+## Type:                integer
+## Default:             "90"
+# oss-api session time out in minutes
+SCHOOL_SESSION_TIMEOUT="90"
 
