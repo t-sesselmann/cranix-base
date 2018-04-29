@@ -46,7 +46,7 @@ def unLockClient():
   return True
 
 #Locks the input devices
-def lockInput():
+def blockInput():
   if __grains__['os_family'] == 'Windows':
     os.system('C:\Windows\ClientControl\ClientControl.exe blockInput')
   else:
@@ -55,7 +55,7 @@ def lockInput():
   return True
 
 #Unlocks the input devices
-def unLockInput():
+def unBlockInput():
   if __grains__['os_family'] == 'Windows':
     os.system("taskkill /IM blockInput.exe /F")
   else:
