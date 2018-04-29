@@ -8,14 +8,16 @@ do
 	if [ "$SCHOOL_DEBUG" = "yes" ]; then
 		echo $CLIENTS
 	fi
-        salt --async -L $CLIENTS  cmd.run "C:\\Windows\\ClientControl\\tools\\GetScreenShot.exe C:\\bla" &> /dev/null
-        sleep 1
-        salt --async -L $CLIENTS  cp.push "C:\\bla" &> /dev/null
-        for i in $( echo $CLIENTS | sed 's/,/ /' )
+        salt --async -L $CLIENTS  cmd.run "C:\\Windows\\ClientControl\\tools\\GetScreenShot.exe C:\\screenShot" &> /dev/null
+        sleep 2
+        salt --async -L $CLIENTS  cp.push "C:\\screenShot" &> /dev/null
+	sleep 1
+        for MINION in $( echo $CLIENTS | sed 's/,/ /' )
         do
-                if [ -e /var/cache/salt/master/minions/${i}/files/bla ]; then
-                        mv /var/cache/salt/master/minions/${i}/files/bla /srv/www/admin/screenShots/${i}.png
+                if [ -e /var/cache/salt/master/minions/${MINION}/files/screenShot ]; then
+			CLIENT=${MINION/.$SCHOOL_DOMAIN/}
+                        mv /var/cache/salt/master/minions/${MINION}/files/screenShot /srv/www/admin/screenShots/${CLIENT}.png
                 fi
         done
-        sleep 4
+        sleep 1
 done
