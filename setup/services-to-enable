@@ -2,6 +2,7 @@ apache2
 atd
 ntpd
 oss_salt_event_watcher
+oss_get_screen_shots
 salt-master
 clamd
 freshclam
