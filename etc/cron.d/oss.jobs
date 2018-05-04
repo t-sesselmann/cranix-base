@@ -1,2 +1,3 @@
 -*    * * * * root /usr/share/oss/tools/check-salt-master.sh
 -*/10 * * * * root /usr/share/oss/tools/set_dyndns.sh
+-0    7 * * * root /usr/share/oss/tools/clean_up_loggedIn.sh
