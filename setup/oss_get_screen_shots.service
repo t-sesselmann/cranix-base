@@ -6,7 +6,7 @@ After=basic.target network.target syslog.target salt-master.service
 [Service]
 Restart=on-failure
 ExecStartPre=/usr/bin/mkdir -p /srv/www/admin/screenShots
-ExecStart=/usr/share/oss/tools/get_screen_shots.sh
+ExecStart=/usr/sbin/oss_get_screen_shots.sh
 
 [Install]
 WantedBy=multi-user.target
