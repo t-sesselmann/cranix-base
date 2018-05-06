@@ -399,7 +399,7 @@ SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 ## Type:        string readonly
 ## Default:     http://repo.cephalix.eu/OSS
 # Url to the updates
-SCHOOL_UPDATE_URL="http://repo.cephalix.eu/OSS"
+SCHOOL_UPDATE_URL="http://repo.cephalix.eu"
 
 ## Type:                integer
 ## Default:             "90"

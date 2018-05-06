@@ -11,7 +11,7 @@ if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
 fi
 
 #Save the credentials
-echo "[${SCHOOL_UPDATE_URL}/${VERSION_ID}]
+echo "[${SCHOOL_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}
 password = ${REPO_PASSWORD}
 
@@ -39,14 +39,14 @@ zypper -D /srv/salt/repos.d/ ar -G /tmp/salt-packages.repo
 
 zypper --gpg-auto-import-keys -D /srv/salt/repos.d/ ref
 
-#Register OSS repository
-zypper rr OSS &> /dev/null
+#Register ${NAME} repository
+zypper rr ${NAME} &> /dev/null
 
-echo "[OSS]
-name=OSS
+echo "[${NAME}]
+name=${NAME}
 enabled=1
 autorefresh=1
-baseurl=${SCHOOL_UPDATE_URL}/$VERSION_ID
+baseurl=${SCHOOL_UPDATE_URL}/${NAME}/$VERSION_ID
 path=/
 type=rpm-md
 keeppackages=0
