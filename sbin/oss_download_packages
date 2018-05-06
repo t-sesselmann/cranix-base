@@ -5,7 +5,7 @@
 
 PACKAGES=$@
 
-
+mkdir /run/lock/oss-api/
 echo "$PACKAGES" > /run/lock/oss-api/oss_download_packages
 while [ -e /var/run/zypp.pid ]
 do
