@@ -62,3 +62,12 @@ def unBlockInput():
     return True
 
   return True
+
+#Gets the screen shot
+def getScreenShot():
+  if __grains__['os_family'] == 'Windows':
+    os.system('C:\Windows\ClientControl\ClientControl.exe getScreenShot C:\screenShot')
+  else:
+    return True
+
+  return True
