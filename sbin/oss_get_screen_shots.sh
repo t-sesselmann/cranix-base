@@ -8,7 +8,7 @@ do
 	if [ "$SCHOOL_DEBUG" = "yes" ]; then
 		echo $CLIENTS
 	fi
-        salt --async -L $CLIENTS  cmd.run "C:\\Windows\\ClientControl\\tools\\GetScreenShot.exe C:\\screenShot" &> /dev/null
+        salt --async -L $CLIENTS  cmd.run "C:\\Windows\\ClientControl\\ClientControl.exe getScreenShot C:\\screenShot" &> /dev/null
         sleep 2
         salt --async -L $CLIENTS  cp.push "C:\\screenShot" &> /dev/null
 	sleep 1
