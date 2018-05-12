@@ -7,4 +7,21 @@ compress
 /var/log/oss-api.log {
 	nocreate
 	size=+2048k
+        postrotate
+		/usr/bin/systemctl restart oss-api
+	endscript
+}
+/var/log/cephalix-api.log {
+	nocreate
+	size=+2048k
+        postrotate
+		/usr/bin/systemctl restart cephalix-api
+	endscript
+}
+/var/log/ubs-api.log {
+	nocreate
+	size=+2048k
+        postrotate
+		/usr/bin/systemctl restart ubs-api
+	endscript
 }
