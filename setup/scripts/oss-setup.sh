@@ -482,10 +482,12 @@ chmod 600 /root/.my.cnf
     chmod 1770 "$SCHOOL_HOME_BASE/profiles"
 
     ########################################################################
-    log "Create Certificates"
-    /usr/share/oss/tools/create_server_certificates.sh -N CA
-    /usr/share/oss/tools/create_server_certificates.sh -N admin
-    /usr/share/oss/tools/create_server_certificates.sh -N schoolserver
+    if [ ! -e /etc/ssl/servercerts/cacert.pem ]; then
+	log "Create Certificates"
+	/usr/share/oss/tools/create_server_certificates.sh -N CA
+	/usr/share/oss/tools/create_server_certificates.sh -N admin
+	/usr/share/oss/tools/create_server_certificates.sh -N schoolserver
+    fi
 
     ########################################################################
     log "Adapt Apache configuration"
