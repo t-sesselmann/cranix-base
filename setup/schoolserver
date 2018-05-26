@@ -101,7 +101,7 @@ SCHOOL_BACKUP_WITH_HARDLINK="no"
 SCHOOL_SORT_HOMES="yes"
 
 ## Type:        string readonly
-## Default:     "172.16.1.1 172.16.1.25"
+## Default:     "172.28.1.0/24"
 # IP-network for new and not registered clients.
 SCHOOL_ANON_DHCP_NET="172.28.1.0/24"
 
@@ -206,24 +206,14 @@ SCHOOL_SERVER_NET="172.16.0.0/24"
 SCHOOL_USE_DHCP="yes"
 
 ## Type:        string readonly
-## Default:     schooladmin
+## Default:     admin
 # The windows netbios name of the OSS.
 SCHOOL_NETBIOSNAME="admin"
-
-## Type:	yesno
-## Default:	no
-# Teachers have read rights in the home directories of  the students.
-SCHOOL_TEACHER_OBSERV_HOME="no"
 
 ## Type:        string(primary)
 ## Default:     gymnasium
 # The type of the school.
 SCHOOL_TYPE="real"
-
-## Type:	yesno readonly
-## Default:	"yes"	
-# The OSS is configured as X-Terminal server.
-SCHOOL_IS_TERMINALSERVER="yes"
 
 ## Type:	string readonly
 ## Default:	EXTIS
@@ -241,14 +231,29 @@ SCHOOL_LANGUAGE="DE"
 SCHOOL_CCODE="DE"
 
 ## Type:        string readonly
-## Default:     
+## Default:
 # DNS Domain of the school.
 SCHOOL_DOMAIN="extis.eu"
+
+## Type:        string readonly
+## Default:	http://repo.cephalix.eu/salt-packages
+# Url to the salt packages
+SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
+
+## Type:        string readonly
+## Default:     http://repo.cephalix.eu/OSS
+# Url to the updates
+SCHOOL_UPDATE_URL="http://repo.cephalix.eu"
 
 ########################################################################
 ## Path:        Network/Server/Settings
 ## Description: Configuration of the OSS: Settings
 ########################################################################
+
+## Type:	yesno
+## Default:	no
+# Teachers have read rights in the home directories of  the students.
+SCHOOL_TEACHER_OBSERV_HOME="no"
 
 ## Type:	yesno
 ## Default:     no
@@ -276,7 +281,7 @@ SCHOOL_ALLOW_MULTIPLE_ALIASES="no"
 SCHOOL_FILE_QUOTA="250"
 
 ## Type:	integer
-## Default:	500
+## Default:	1000
 # The default file system quota for teachers in MB.
 SCHOOL_FILE_TEACHER_QUOTA="1000"
 
@@ -327,11 +332,6 @@ SCHOOL_SUPPORT_MAIL_ADDRESS="oss-support@extis.de"
 
 ## Type:	yesno
 ## Default:     yes	
-# The OSS uses the clone tool for the installation of clients.
-SCHOOL_USE_CTOOL="yes"
-
-## Type:	yesno
-## Default:     yes	
 # If this variable is set to yes, students may login on more than one workstation.
 SCHOOL_ALLOW_STUDENTS_MULTIPLE_LOGIN="no"
 
@@ -346,23 +346,8 @@ SCHOOL_ALLOW_MULTIPLE_LOGIN="yes"
 # Documents Downloads Faworites Pictures Desktop Videos Music
 SCHOOL_MOVE_PROFILE_TO_HOME="yes"
 
-## Type:	string
-## Default:     lrswi	
-# Default rights for group members in their shared folder.
-SCHOOL_GROUP_FOLDER_RIGHTS="lrswi"
-
-## Type:	string
-## Default:     lrswi	
-# Default rights for class members in their shared folder.
-SCHOOL_CLASS_FOLDER_RIGHTS="lrswi"
-
-## Type:        string(ok,no,local_only)
-## Default:     ok     
-# Mail access for users.
-SCHOOL_MAILBOX_ACCESS="ok"
-
 ## Type:        yesno
-## Default:     yes     
+## Default:     no
 # Students may not change password.
 SCHOOL_MAY_NOT_CHANGE_PASSWORD="no"
 
@@ -390,16 +375,6 @@ SCHOOL_STRING_CONVERT_TYPE="telex"
 ## Default:	all groups
 # In which subdirectories in /home will be searched for files when deleting a user.
 SCHOOL_SEARCH_FOR_DELETE="all groups"
-
-## Type:        string readonly
-## Default:	http://repo.cephalix.eu/salt-packages
-# Url to the salt packages
-SCHOOL_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
-
-## Type:        string readonly
-## Default:     http://repo.cephalix.eu/OSS
-# Url to the updates
-SCHOOL_UPDATE_URL="http://repo.cephalix.eu"
 
 ## Type:                integer
 ## Default:             "90"
