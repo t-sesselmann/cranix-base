@@ -20,6 +20,8 @@ proxy="no"
 postsetup="no"
 accounts="no"
 verbose="yes"
+cephalixpw=""
+registerpw=""
 
 
 function usage (){
@@ -38,6 +40,7 @@ function usage (){
 	echo "                --proxy             Setup the proxy server"
 	echo "                --accounts          Create the initial groups and user accounts"
 	echo "                --postsetup         Make additional setups."
+	echo "                --cephalixpwf       Path to the file containing the password for the CEPHALIX user."
 	echo "                --verbose           Verbose"
 	echo "Ex.: ./oss-setup.sh --passwdf=/tmp/oss_passwd --all"
 	exit $1
@@ -65,12 +68,7 @@ function InitGlobalVariable (){
     log " - Read sysconfig file"
     . $sysconfig
 
-    ########################################################################
-    if [ "$passwdf" ]; then
-        log " - Read password file"
-        passwd=`cat $passwdf`
-        log "   passwd = $passwd"
-    fi
+    log "   passwd = $passwd"
 
     ########################################################################
     log " - Set windomain variable"
@@ -306,14 +304,17 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create internal users"
-    cephalixpw=`mktemp XXXXXXXXXX`
+    registerpw=`mktemp XXXXXXXXXX`
+    if [ -z "$cephalixpw" ]; then
+	cephalixpw=`mktemp XXXXXXXXXX`
+    fi
     samba-tool user setexpiry --noexpiry Administrator
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/REGISTERPW/$cephalixpw/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/REGISTERPW/$registerpw/ /opt/oss-java/conf/oss-api.properties
     samba-tool user setexpiry --noexpiry cephalix
-    samba-tool user create register "$cephalixpw"
+    samba-tool user create register "$registerpw"
     samba-tool user setexpiry --noexpiry register
     samba-tool group addmembers "Administrators" register
     samba-tool user create ossreader ossreader
@@ -552,7 +553,16 @@ while [ "$1" != "" ]; do
 	;;
 	--passwdf=* )
 				passwdf=$(echo $1 | sed -e 's/--passwdf=//g');
-				if [ "$passwdf" = '' ]
+				passwd=$( cat $passwdf )
+				if [ ! "$passwd" ]
+				then
+					usage 0
+				fi
+	;;
+	--cephalixpwf=* )
+				cephalixpwf=$(echo $1 | sed -e 's/--cephalixpwf=//g');
+				cephalixpw=$( cat $cephalixpwf )
+				if [ ! "$cephalixpw" ]
 				then
 					usage 0
 				fi
