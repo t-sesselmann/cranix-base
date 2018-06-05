@@ -262,7 +262,7 @@ function SetupDHCP (){
     cp /usr/share/oss/templates/dhcpd.conf /etc/dhcpd.conf
     if [ $SCHOOL_USE_DHCP = "yes" ]; then
         . /etc/sysconfig/dhcpd
-        if [ -z "$/DHCPD_INTERFACE" ]; then
+        if [ -z "$DHCPD_INTERFACE" ]; then
             sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'   /etc/sysconfig/dhcpd
         fi
         systemctl enable dhcpd
