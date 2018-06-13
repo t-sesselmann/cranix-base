@@ -115,6 +115,7 @@ samba-tool user create "$uid" "$password" \
 				--login-shell=/bin/bash \
 				--uid-number=$uidNumber \
 				--gid-number=100 \
+				--mail-address="${uid}@${SCHOOL_DOMAIN}" \
 				$ADDPARAM
 
 if [ $? != 0 ]; then

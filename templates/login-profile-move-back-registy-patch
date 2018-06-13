@@ -1,0 +1,9 @@
+
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "Personal" /d "%USERPROFILE%\Documents" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "{374DE290-123F-4565-9164-39C4925E467B}" /d "%USERPROFILE%\Downloads" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "Favorites" /d "%USERPROFILE%\Favorites" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "My Pictures" /d "%USERPROFILE%\Pictures" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "Desktop" /d "%USERPROFILE%\Desktop" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "My Video" /d "%USERPROFILE%\Videos" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /t REG_EXPAND_SZ /v "My Music" /d "%USERPROFILE%\Music" /f
+

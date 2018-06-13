@@ -21,6 +21,8 @@ fi
 
 if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} = "yes" -a ${SCHOOL_TEACHER_OBSERV_HOME} = "no"  ]; then
 	cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+else 
+	cat /usr/share/oss/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
 defaultPrinter=$( oss_api.sh GET devices/byIP/$I/defaultPrinter )
