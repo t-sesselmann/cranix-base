@@ -26,6 +26,7 @@ PreReq:         salt-master
 PreReq:		filesystem
 Requires:       rsync
 Requires:       samba-ad
+Requires:       perl-JSON-XS
 BuildRequires:  rsync
 #PreReq:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

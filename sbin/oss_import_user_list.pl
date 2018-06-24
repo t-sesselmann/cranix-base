@@ -20,19 +20,19 @@ my %options      = ();
 my $result       = "";
 my $role         = "students";
 my $full         = 0;
-my $lang         = 'EN';
-my $sessionID    = 0;
+my $lang         = 'DE';
 my $input        = '/tmp/userlist.txt';
 my $domain       = `hostname -d`; chomp $domain;
 my $LOGDIR       = "/var/log/";
-my $PIDFILE      = "/var/run/import_user.pid";
+my $PIDFILE      = "/run/oss_import_user.pid";
+my $RUNFILE      = "/run/oss_import_user";
 my $DEBUG        = 0;
 my $mailenabled  = 0;
-my $password     = 0;
+my $password     = "";
 my $mustchange   = 0;
 my $alias        = 0;
-my $notest       = 0;
-my $resetPW      = 0;
+my $test         = 0;
+my $resetPassword= 0;
 my $message      = {};
 my @attr_ext      = ();
 my $cleanClassDirs= 0;
@@ -71,9 +71,8 @@ sub usage
         print "                 Default: no \n";
         print "  --lang         The language of the messages\n";
         print "                 Default: EN \n";
-        print "  --sessionID    The sessionID of the web session started this script.\n";
-        print "  --notest       If this option is not given no changes will be done. The scipt only reports what's to do.\n";
-        print "  --resetPW      If this option is set the password of old user will be reseted too.\n";
+        print "  --test         If this option is given no changes will be done. The scipt only reports what's to do.\n";
+        print "  --resetPassword If this option is set the password of old user will be reseted too.\n";
         print "  --allClasses   The import list contains all classes. Classes which are not in the list will be deleted.\n";
         print "                 This parameter has only affect when role=students\n";
         print "  --cleanClassDirs Remove the content of the directories of the classes.\n";
@@ -135,9 +134,10 @@ sub close_on_error
     my $a = shift;
     print STDERR $a."\n";
     system("rm $PIDFILE");
+    system("rm $RUNFILE");
     system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
     open( LOGIMPORTLIST,">>$output");
-    print LOGIMPORTLIST "---$a";
+    print LOGIMPORTLIST "$a";
     close(LOGIMPORTLIST);
     exit 1;
 }
@@ -221,7 +221,7 @@ $result = GetOptions(\%options,
                         "full",
                         "debug",
                         "alias",
-                        "notest",
+                        "test",
                         "mustchange",
                         "input=s",
                         "role=s",
@@ -229,8 +229,7 @@ $result = GetOptions(\%options,
                         "lang=s",
                         "mailenabled=s",
                         "password=s",
-                        "sessionID=s",
-                        "resetPW",
+                        "resetPassword",
                         "allClasses",
                         "cleanClassDirs",
 			"identifier=s"
@@ -262,13 +261,13 @@ if ( defined($options{'debug'}) )
 {
         $DEBUG = 1;
 }
-if ( defined($options{'notest'}) )
+if ( defined($options{'test'}) )
 {
-        $notest = 1;
+        $test = 1;
 }
-if ( defined($options{'resetPW'}) )
+if ( defined($options{'resetPassword'}) )
 {
-        $resetPW = 1;
+        $resetPassword = 1;
 }
 if ( defined($options{'alias'}) )
 {
@@ -298,10 +297,6 @@ if ( defined($options{'identifier'}) )
 {
        $identifier = $options{'identifier'};
 }
-if ( defined($options{'sessionID'}) )
-{
-        $sessionID = $options{'sessionID'};
-}
 if ( defined($options{'allClasses'}) && $role eq 'students' )
 {
         $allClasses = 1;
@@ -311,6 +306,9 @@ if ( defined($options{'cleanClassDirs'}) && $role eq 'students' )
         $cleanClassDirs = 1;
 }
 
+  open  FILE,">$RUNFILE";
+  print FILE $date;
+  close FILE;
 daemonize($LOGDIR,$PIDFILE,$DEBUG);
 
 if($lang eq "DE" ) {
@@ -370,12 +368,34 @@ while (<IN>) {
 }
 close(IN);
 
-my $SYSADMINSdir = $globals->{HOME_BASE}."/groups/SYSADMINS";
-   $output       = $SYSADMINSdir."/import.$date.log";
+my $IMPORTDIR = $globals->{HOME_BASE}."/groups/SYSADMINS/userimport.$date";
+system("mkdir -pm 770 $IMPORTDIR");
+system("cp $input $IMPORTDIR/userlist.txt");
+$output   = $IMPORTDIR."/import.log";
 
-# Setup the header
-open( OUT, ">>$output");
-print OUT "role=$role,lang=$lang,test=$notest,full=$full,alias=$alias,mustchange=$mustchange,password=$password,mailenabled=$mailenabled\n";
+#private String  role;
+#private String  lang;
+#private String  identifier;
+#private boolean test;
+#private String  password;
+#private boolean mustchange;
+#private boolean full;
+#private boolean allClasses;
+#private boolean cleanClassDirs;
+#private boolean resetPassword;
+# Save the parameters
+open( OUT, ">$IMPORTDIR/parameters.json");
+print OUT '{"role"="'.$role.'"'.
+          ',"lang"="'.$lang.'"'.
+	  ',"identifier"="'.$identifier.'"'.
+	  ',"test"='.($test?"True":"False").
+	  ',"password"="'.$password.'"'.
+	  ',"mustchange"='.($mustchange?"True":"False").
+	  ',"full"='.($full?"True":"False").
+	  ',"allClasses"='.($allClasses?"True":"False").
+	  ',"cleanClassDirs"='.($cleanClassDirs?"True":"False").
+	  ',"resetPassword"='.($resetPassword?"True":"False").
+	  '}';
 close( OUT );
 
 #Now let start to do it
@@ -396,12 +416,16 @@ my $sep           = "";
 my $header        = {};
 
 # Get the list of the classes
-@CLASSES = `oss_api_text.sh GET groups/text/byType/class`;
-@GROUPS  = `oss_api_text.sh GET groups/text/byType/workgroup`;
+@CLASSES = `/usr/sbin/oss_api_text.sh GET groups/text/byType/class`;
+@GROUPS  = `/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup`;
 
 # Get the list of the users
-my $users = decode_json(`oss_api.sh GET users/byRole/$role`);
-
+my $users = `/usr/sbin/oss_api.sh GET users/byRole/$role`;
+$users = eval { decode_json($users) };
+if ($@)
+{
+    close_on_error( "decode_json failed, invalid json. error:$@\n" );
+}
 foreach my $user (@{$users})
 {
    my $i = $user->{'uid'};
@@ -409,6 +433,9 @@ foreach my $user (@{$users})
    my $surName   = $user->{'surName'};
    my $givenName = $user->{'givenName'};
    my $birthday  = $user->{'birthDay'};
+   my @T=localtime($birthday/1000);
+   $birthday = sprintf("%4d-%02d-%02d", $T[5]+1900,$T[4]+1,$T[3]);
+
    Encode::_utf8_on($surName);        #if( ! utf8::is_utf8($sn) );
    Encode::_utf8_on($givenName); #if( ! utf8::is_utf8($givenName) );
    my $key = "$surName-$givenName-$birthday";
@@ -501,7 +528,7 @@ foreach my $i (split /$sep/,$HEADER)
     {
             print STDERR "Unknown attribute $i on place $counter in the header.\n";
             open( OUT, ">>$output");
-            print OUT "---unknown_attr_header<font color='red'>Unknown attribute $i on place $counter in the header</font>\n";
+            print OUT "<font color='red'>Unknown attribute $i on place $counter in the header</font>\n";
             close( OUT );
     }
     $counter++;
@@ -521,6 +548,7 @@ print '$header: '.Dumper($header);
 print '$attr_ext_name: '.Dumper($attr_ext_name);
 foreach my $cl (@CLASSES)
 {
+   chomp $cl;
    $NEWLIST->{$cl}->{'header'} = $HEADER;
 }
 # Only studenst will be sorted in class lists.
@@ -528,15 +556,13 @@ if( $role ne 'students' )
 {
    $NEWLIST->{$role}->{'header'} = $HEADER;
 }
+print '$NEWLIST: '.Dumper($NEWLIST);
 
 
-if( $notest ) {
-	system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no");
+if( !$test ) {
+	system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no");
 }
 # Now we begins du setup the html side
-open( OUT, ">>$output");
-print OUT "---";
-close( OUT );
 foreach my $act_line (@lines)
 {
     # Logging
@@ -558,7 +584,7 @@ foreach my $act_line (@lines)
     }
     my $uid     = undef;
     my $ERROR   = 0;
-    my $ERRORS = 'user: ';
+    my $ERRORS = '';
     my @classes = ();
     my @groups  = ();
     my $MYCLASSES  = "";
@@ -618,7 +644,7 @@ foreach my $act_line (@lines)
             my $cn = uc($c);
             if( !defined $NEWLIST->{$cn}->{'header'} )
             {
-                if( $notest )
+                if( !$test )
                 {
                     my $GROUP             = {};
                     $GROUP->{name}        = $cn;
@@ -626,6 +652,7 @@ foreach my $act_line (@lines)
                     $GROUP->{description} = __('class')." $cn";
 		    write_file("/tmp/add_group.$cn",encode_json($GROUP));
 		    #TODO Check result
+		    print("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn\n");
 		    system("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn");
                     print "  NEW CLASS $cn:\n";
                     $ERRORS .= "<b>Creating new class: $cn</b><br>\n";
@@ -649,14 +676,17 @@ foreach my $act_line (@lines)
         next if( $cn =~ /^\-/ );
         if( !contains($cn,\@GROUPS ))
         {
-            if( $notest )
+            if( !$test )
             {
                     my $GROUP             = {};
                     $GROUP->{cn}          = $cn;
                     $GROUP->{groupType}   = 'workgroup';
                     $GROUP->{description} = "$cn";
 		    write_file("/tmp/add_group.$cn",encode_json($GROUP));
+		    print("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn\n");
 		    system("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn");
+                    print "  NEW GROUP $cn\n";
+                    $ERRORS .= "<b>Creating new group: $cn</b><br>\n";
             }
             else
             {
@@ -686,7 +716,7 @@ foreach my $act_line (@lines)
     }
     else
     {
-       $ERRORS .= "<font color='red'> ".$USER{'givenName'}." ".$USER{'surName'}." ".__('birthday_format_false')."</font>\n";
+       $ERRORS .= "<font color='red'> ".$USER{'givenName'}." ".$USER{'surName'}." ".__('birthday_format_false')." ".$USER{'birthDay'}."</font>\n";
        $ERROR = 1;
     }
 
@@ -716,6 +746,7 @@ foreach my $act_line (@lines)
           if( $ALLUSER{$key} ne $USER{'uid'} )
           {
             $ERRORS .= "<font color='red'> ".$USER{'givenName'}." ".$USER{'surName'}." ".$USER{'birthDay'}.": ".__('same_person')." $uid </font>\n";
+            $ERROR = 1;
           }
        }
     }
@@ -727,12 +758,13 @@ foreach my $act_line (@lines)
         print "  OLD USER $uid\n";
         #First we make the older user
         my @old_classes    = ();
+        print "/usr/sbin/oss_api_text.sh GET users/text/$uid/classes\n";
         foreach my $i ( `/usr/sbin/oss_api_text.sh GET users/text/$uid/classes` )
         {
            push @old_classes, $i;
         }
         $ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__('old_classes').": ".join(" ",@old_classes)." ".__('new_classes').": ".$MYCLASSES;
-        if( $resetPW )
+        if( $resetPassword )
         {
             if( $password )
             {
@@ -740,9 +772,9 @@ foreach my $act_line (@lines)
 	    }
 	}
 	$ERRORS .= "<br>\n";
-        if( $notest )
+        if( !$test )
         {
-                if( $resetPW )
+                if( $resetPassword )
                 {
                     # If a default password was defined we use it
                     if( $password )
@@ -758,23 +790,21 @@ foreach my $act_line (@lines)
                 {
                     @classes = @CLASSES;
                 }
-                else
-                {
-                    @classes = @{$USER{'class'}};
-                }
                 my ($classes_to_del,$classes_to_add) = group_diff(\@old_classes,\@classes);
                 foreach my $g (@$classes_to_del)
                 {
+			print "/usr/sbin/oss_api_text.sh DELETE users/text/$uid/groups/$g\n";
 			my $result = `/usr/sbin/oss_api_text.sh DELETE users/text/$uid/groups/$g`;
 			if( $result ne "OK" ) {
-				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be removed from group:")." ".$g;	
+				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be removed from group:")." ".$g;
 			}
                 }
                 foreach my $g (@$classes_to_add)
                 {
+			print "/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g\n";
 			my $result = `/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g`;
 			if( $result ne "OK" ) {
-				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd group:")." ".$g;	
+				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd group:")." ".$g;
 			}
                 }
                 foreach my $g ( @groups )
@@ -782,16 +812,18 @@ foreach my $act_line (@lines)
                     my $cn = uc($g);
                     if( $cn =~ s/^\-// )
                     {
+			print "/usr/sbin/oss_api_text.sh DELETE users/text/$uid/groups/$cn\n";
 			my $result = `/usr/sbin/oss_api_text.sh DELETE users/text/$uid/groups/$cn`;
 			if( $result ne "OK" ) {
-				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be removed from group:")." ".$cn;	
+				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be removed from group:")." ".$cn;
 			}
                     }
                     else
                     {
+		   print "/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$cn\n";
 			my $result = `/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$cn`;
 			if( $result ne "OK" ) {
-				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd group:")." ".$cn;	
+				$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd group:")." ".$cn;
 			}
                     }
                 }
@@ -849,28 +881,40 @@ foreach my $act_line (@lines)
         print "Befor creating\n".Dumper(\%USER)."Classes:".join(" ",@classes)."\n";
         if( !$ERROR )
         { # If no error accours the user will be created
-            if( $notest )
+            if( !$test )
             {
 		    write_file("/tmp/add_user",encode_json(\%USER));
-		    #TODO Check result
-		    my $result = decode_json(`/usr/sbin/oss_api_post_file.sh users/add /tmp/add_user`);
+		    print "/usr/sbin/oss_api_post_file.sh users/add /tmp/add_user\n";
+		    my $result = `/usr/sbin/oss_api_post_file.sh users/add /tmp/add_user`;
+		    $result = eval { decode_json($result) };
+		    if ($@)
+		    {
+		        close_on_error( "decode_json failed, invalid json. error:$@\n" );
+		    }
                     if( $result->{"code"} eq "OK" )
                     {
                       print $result->{'value'}."\n";
 		      my $id = $result->{'objectId'};
-		      $result = decode_json(`/usr/sbin/oss_api.sh GET users/$id`);
+		      print "/usr/sbin/oss_api.sh GET users/$id\n";
+		      $result = `/usr/sbin/oss_api.sh GET users/$id`;
+                      $result = eval { decode_json($result) };
+                      if ($@)
+                      {
+                          close_on_error( "decode_json failed, invalid json. error:$@\n" );
+                      }
 		      if( ! defined $USER{'uid'} ) {
 		          $USER{'uid'} = $result->{'uid'};
 		      }
                       $uid         = $USER{'uid'};
-                      $ERRORS    .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b> ".__('created')." Login: \"$uid\" ".__('class').":".$MYCLASSES." <br>\n";
+                      $ERRORS    .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b> ".__('created')." ".__('uid').": \"$uid\" ".__('class').":".$MYCLASSES." <br>\n";
 		      foreach my $g (@classes)
 		      {
-		          my $result = `/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g`;
+		          print "/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g\n";
+			  my $result = `/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g`;
 		          if( $result ne "OK" ) {
-		          	$ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd to class:")." ".$g." ";	
+		         $ERRORS .= "  <b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__("Can not be addedd to class:")." ".$g." ";
 		          } else {
-			     print "Add $uid to $g $result\n";
+			     print "  <b>Add $uid to $g $result</b>\n";
 			  }
 		      }
                       push @AKTUID, $uid;
@@ -925,7 +969,7 @@ foreach my $act_line (@lines)
         }
     }
 
-    $ERRORS .= "givenName=".$USER{'givenName'}.";surName=".$USER{'surName'}.";birthday=".$USER{'birthDay'}."\n";
+    #$ERRORS .= "givenName=".$USER{'givenName'}.";surName=".$USER{'surName'}.";birthday=".$USER{'birthDay'}."\n";
     open( OUT, ">>$output");
     print OUT "$ERRORS";
     close( OUT );
@@ -933,8 +977,6 @@ foreach my $act_line (@lines)
 # Logging
 #    print ">>>>>>>>>>>>>>>>DUMP OF THE NEW USER LIST<<<<<<<<<<<<<\n".Dumper($NEWLIST)."\n>>>>>>>>>>>>>>>END DUMP OF THE NEW USER LIST<<<<<<<<<<<<<<<<<<<";
 # Save the user list:
-system("mkdir -pm 770 $SYSADMINSdir/userimport.$date");
-system("cp $input $SYSADMINSdir/userimport.$date/userlist.txt");
 if( $role eq 'students' )
 {
     foreach my $cl (@CLASSES)
@@ -950,7 +992,7 @@ if( $role eq 'students' )
         }
         if( scalar @ClassList > 1 )
         {
-            save_file( \@ClassList, "$SYSADMINSdir/userimport.$date/userlist.$cl.txt" );
+            save_file( \@ClassList, "$IMPORTDIR/userlist.$cl.txt" );
         }
     }
 }
@@ -967,15 +1009,12 @@ else
     }
     if( scalar @List > 1 )
     {
-        save_file( \@List, "$SYSADMINSdir/userimport.$date/userlist.$role.txt" );
+        save_file( \@List, "$IMPORTDIR/userlist.$role.txt" );
     }
 }
 # Delete old students
 if( $role eq 'students' &&  $full )
 {
-    open( OUT, ">>$output");
-    print OUT "---";
-    close( OUT );
     my $ind = {};
     $ind->{$_} = 1 foreach(@AKTUID);
     foreach my $uid (@ALLUID )
@@ -983,8 +1022,9 @@ if( $role eq 'students' &&  $full )
       if(not exists($ind->{$uid}))
       {
             my $delete_old_student = '';
-            if( $notest )
+            if( !$test )
             {
+		    print "/usr/sbin/oss_api_text.sh DELETE users/text/$uid\n";
 		    my $result = `/usr/sbin/oss_api_text.sh DELETE users/text/$uid`;
 		    if( $result ne "OK" ) {
 			$delete_old_student .= "User: <b>".$uid."</b>: ".__("Can not be deleted:");
@@ -1006,39 +1046,47 @@ if( $role eq 'students' &&  $full )
 if( $allClasses )
 {   #Remove Classes which are not in the list
     my $MESSAGE = __("<b>Classes to remove:</b>");
-    foreach my $cn ( `oss_api_text.sh GET groups/text/byType/class` )
+    print "/usr/sbin/oss_api_text.sh GET groups/text/byType/class\n";
+    foreach my $cn ( `/usr/sbin/oss_api_text.sh GET groups/text/byType/class` )
     {
 	next if( defined $ALLCLASSES{$cn} );
-	$MESSAGE .= " $cn";
+	$MESSAGE .= " $cn: ";
+        print "/usr/sbin/oss_api_text.sh DELETE groups/text/$cn\n";
         my $result = `/usr/sbin/oss_api_text.sh DELETE groups/text/$cn`;
 	if( $result ne "OK" ) {
-	    $MESSAGE .= "<b>Group: ".$cn."</b>: ".__("Can not be deleted:");
+	    $MESSAGE .= __("Can not be deleted:");
+	} else {
+	    $MESSAGE .= __("Deleted");
 	}
+	$MESSAGE .= "<br>";
     }
     open( OUT, ">>$output");
     print OUT  "$MESSAGE<br>";
     close( OUT );
 }
-if( $cleanClassDirs && $notest )
+if( $cleanClassDirs && !$test )
 {
     my $MESSAGE = __("<b>Clean up the directories of the classes:</b>");
-    foreach my $cn ( `oss_api_text.sh GET groups/text/byType/class` )
+    print "/usr/sbin/oss_api_text.sh GET groups/text/byType/class\n";
+    foreach my $cn ( `/usr/sbin/oss_api_text.sh GET groups/text/byType/class` )
     {
 	my $path =  $globals->{HOME_BASE}.'/groups/'.$cn;
 	system("rm -rf $path") if( -d $path );
 	system("mkdir -m 3771 $path; chgrp $cn $path; setfacl -d -m g::rwx $path;");
-	$MESSAGE .= " $path";
+	$MESSAGE .= "    $path<br>";
     }
     open( OUT, ">>$output");
     print OUT  "$MESSAGE<br>";
     close( OUT );
 }
 #Some important things to do if it was not a test
-if( $notest )
+if( !$test )
 {
-    system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
+    print("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY\n");
+    system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
     system("systemctl restart squid");
 }
+system("rm $RUNFILE");
 system("rm $PIDFILE");
 system("chown root $input");
 system("chmod 600  $input");
