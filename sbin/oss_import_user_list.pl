@@ -9,6 +9,9 @@ use JSON::XS;
 use Data::Dumper;
 use Getopt::Long;
 use Encode qw(encode decode);
+binmode STDIN, ":encoding(UTF-8)";
+binmode STDOUT, ":encoding(UTF-8)";
+binmode STDERR, ":encoding(UTF-8)";
 use utf8;
 
 # Global variable
@@ -98,6 +101,7 @@ sub save_file($$){
    my $File  = shift;
 
    open OUTPUT, ">$File";
+   binmode OUTPUT, ':encoding(utf8)';
    foreach(@$Lines){
         print OUTPUT $_."\n";
    }
@@ -114,6 +118,8 @@ sub daemonize
     system("touch $logfile; chmod 600 $logfile");
     open STDOUT,">>$logfile";
     open STDERR,">>$logfile";
+    binmode STDERR, ':encoding(utf8)';
+    binmode STDOUT, ':encoding(utf8)';
     chdir "/";
     fork && exit 0;
     print "\n\n----------------------------------------\n";
@@ -137,6 +143,7 @@ sub close_on_error
     system("rm $RUNFILE");
     system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
     open( LOGIMPORTLIST,">>$output");
+    binmode LOGIMPORTLIST, ':encoding(utf8)';
     print LOGIMPORTLIST "$a";
     close(LOGIMPORTLIST);
     exit 1;
@@ -176,6 +183,7 @@ sub write_file($$) {
   my $out  = shift;
   local *F;
   open F, ">$file" || die "Couldn't open file '$file' for writing: $!; aborting";
+  binmode F, ':encoding(utf8)';
   local $/ unless wantarray;
   print F $out;
   close F;
@@ -355,6 +363,7 @@ print "OPTIONS: ".Dumper(\%options);
 
 #READ SYSTEM SETTINGS:
 open IN,$config;
+binmode IN, ':encoding(utf8)';
 while (<IN>) {
      next if (/^#/);
      /$cprefix(.*)="(.*)"/;
@@ -368,9 +377,11 @@ while (<IN>) {
 }
 close(IN);
 
-my $IMPORTDIR = $globals->{HOME_BASE}."/groups/SYSADMINS/userimport.$date";
+my $IMPORTDIR = $globals->{HOME_BASE}."/groups/SYSADMINS/userimports/$date";
 system("mkdir -pm 770 $IMPORTDIR");
-system("cp $input $IMPORTDIR/userlist.txt");
+if( $input ne "$IMPORTDIR/userlist.txt" ) {
+	system("cp $input $IMPORTDIR/userlist.txt");
+}
 $output   = $IMPORTDIR."/import.log";
 
 #private String  role;
@@ -385,16 +396,16 @@ $output   = $IMPORTDIR."/import.log";
 #private boolean resetPassword;
 # Save the parameters
 open( OUT, ">$IMPORTDIR/parameters.json");
-print OUT '{"role"="'.$role.'"'.
-          ',"lang"="'.$lang.'"'.
-	  ',"identifier"="'.$identifier.'"'.
-	  ',"test"='.($test?"True":"False").
-	  ',"password"="'.$password.'"'.
-	  ',"mustchange"='.($mustchange?"True":"False").
-	  ',"full"='.($full?"True":"False").
-	  ',"allClasses"='.($allClasses?"True":"False").
-	  ',"cleanClassDirs"='.($cleanClassDirs?"True":"False").
-	  ',"resetPassword"='.($resetPassword?"True":"False").
+print OUT '{"role":"'.$role.'"'.
+          ',"lang":"'.$lang.'"'.
+	  ',"identifier":"'.$identifier.'"'.
+	  ',"test":'.($test?"true":"false").
+	  ',"password":"'.$password.'"'.
+	  ',"mustchange":'.($mustchange?"true":"false").
+	  ',"full":'.($full?"true":"false").
+	  ',"allClasses":'.($allClasses?"true":"false").
+	  ',"cleanClassDirs":'.($cleanClassDirs?"true":"false").
+	  ',"resetPassword":'.($resetPassword?"true":"false").
 	  '}';
 close( OUT );
 
@@ -476,6 +487,7 @@ $muster =~ s/\|$//;
 
 #-- reading the file in a variable
 open (INPUT, "<$input")  || close_on_error("<font color='red'>". __LINE__ ." ". __('cant_open_file')."</font>" );
+binmode INPUT,':encoding(utf8)';
 while ( <INPUT> )
 {
     Encode::_utf8_on($_);
@@ -528,6 +540,7 @@ foreach my $i (split /$sep/,$HEADER)
     {
             print STDERR "Unknown attribute $i on place $counter in the header.\n";
             open( OUT, ">>$output");
+	    binmode OUT,':encoding(utf8)';
             print OUT "<font color='red'>Unknown attribute $i on place $counter in the header</font>\n";
             close( OUT );
     }
@@ -971,6 +984,7 @@ foreach my $act_line (@lines)
 
     #$ERRORS .= "givenName=".$USER{'givenName'}.";surName=".$USER{'surName'}.";birthday=".$USER{'birthDay'}."\n";
     open( OUT, ">>$output");
+    binmode OUT,':encoding(utf8)';
     print OUT "$ERRORS";
     close( OUT );
 }
@@ -1038,6 +1052,7 @@ if( $role eq 'students' &&  $full )
             }
 
             open( OUT, ">>$output");
+            binmode OUT,':encoding(utf8)';
             print OUT "$delete_old_student";
             close( OUT );
       }
@@ -1061,6 +1076,7 @@ if( $allClasses )
 	$MESSAGE .= "<br>";
     }
     open( OUT, ">>$output");
+    binmode OUT,':encoding(utf8)';
     print OUT  "$MESSAGE<br>";
     close( OUT );
 }
@@ -1076,6 +1092,7 @@ if( $cleanClassDirs && !$test )
 	$MESSAGE .= "    $path<br>";
     }
     open( OUT, ">>$output");
+    binmode OUT,':encoding(utf8)';
     print OUT  "$MESSAGE<br>";
     close( OUT );
 }
