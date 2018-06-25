@@ -399,6 +399,7 @@ open( OUT, ">$IMPORTDIR/parameters.json");
 print OUT '{"role":"'.$role.'"'.
           ',"lang":"'.$lang.'"'.
 	  ',"identifier":"'.$identifier.'"'.
+	  ',"startTime":"'.$date.'"'.
 	  ',"test":'.($test?"true":"false").
 	  ',"password":"'.$password.'"'.
 	  ',"mustchange":'.($mustchange?"true":"false").
