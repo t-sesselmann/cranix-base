@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . /etc/sysconfig/schoolserver
-
+mkdir -p /srv/www/admin/screenShots/
 while /bin/true
 do
         CLIENTS=$( oss_api_text.sh GET devices/allUsedDevices/1 )
@@ -12,7 +12,7 @@ do
         sleep 2
         salt --async -L $CLIENTS  cp.push "C:\\screenShot" &> /dev/null
 	sleep 1
-        for MINION in $( echo $CLIENTS | sed 's/,/ /' )
+        for MINION in $( echo $CLIENTS | sed 's/,/ /g' )
         do
                 if [ -e /var/cache/salt/master/minions/${MINION}/files/screenShot ]; then
 			CLIENT=${MINION/.$SCHOOL_DOMAIN/}
