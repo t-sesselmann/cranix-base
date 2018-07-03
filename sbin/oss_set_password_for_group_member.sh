@@ -3,7 +3,7 @@
 usage() 
 {
 	echo 
-	echo -e "\toss_set_password_for_group_member.sh -g=<group name> -p=<password>"
+	echo -e "\toss_set_password_for_group_member.sh -g=<group name> -p=<password> [ --must-change ]"
 	echo
 	exit 
 }
@@ -13,11 +13,15 @@ do
    case $i in
        -g=*|--group=*)
        GROUP="${i#*=}"
-       shift # past argument=value
+       shift
        ;;
        -p=*|--password=*)
        PASSWORD="${i#*=}"
-       shift # past argument=value
+       shift
+       ;;
+       -m|--must-change)
+       ATTR="${ATTR} --must-change-at-next-login"
+       shift
        ;;
        -h|--help)
            usage
@@ -34,6 +38,6 @@ fi
 for i in $( oss_api_text.sh GET groups/text/$GROUP/members )
 do
 	echo "Proceeding $i"
-	samba-tool user setpassword $i --newpassword="$PASSWORD"
+	samba-tool user setpassword $i --newpassword="$PASSWORD" ${ATTR}
 done
 
