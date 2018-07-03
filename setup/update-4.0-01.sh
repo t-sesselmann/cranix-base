@@ -7,7 +7,7 @@ echo "Patch 4.0-01 already installed"
         exit 0
 fi
 
-echo "Alter TABLE Categories add column publicAccess CHAR(1) DEFAULT 'N' after studentsOnly;" | mysql OSS
+echo "Alter TABLE Categories add column publicAccess CHAR(1) DEFAULT 'Y' after studentsOnly;" | mysql OSS
 
 systemctl restart oss-api
 
