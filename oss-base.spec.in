@@ -28,7 +28,7 @@ Requires:       rsync
 Requires:       samba-ad
 Requires:       perl-JSON-XS
 BuildRequires:  rsync
-#PreReq:
+BuildRequires:	-post-build-checks
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Provides:	openschool-base
@@ -57,22 +57,20 @@ make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
 %post
 %service_add_post oss_salt_event_watcher.service
 %service_add_post oss_get_screen_shots.service
-if [ -e /etc/sysconfig/schoolserver ]; then
-   if [ ${1:-0} -gt 1 ]; then
-       echo "Executing Update Scripts"
-       mkdir -p /var/adm/oss
-       mkdir -p /var/log/oss-update
-       UV=$( echo %{version} | sed -r 's/(...)../\1/' )
-       for i in /usr/share/oss/setup/update-$UV-*
-       do
-           if [ -e $i ]; then
-       	b=$(basename $i)
-       	$i &> /var/log/oss-update/$b
-           fi
-       done
-    else
-    	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
-    fi
+if [ ${1:-0} -gt 1 ]; then
+   echo "Executing Update Scripts"
+   mkdir -p /var/adm/oss
+   mkdir -p /var/log/oss-update
+   UV=$( echo %{version} | sed -r 's/(...)../\1/' )
+   for i in /usr/share/oss/updates/update-$UV-*
+   do
+       if [ -e $i ]; then
+    	b=$(basename $i)
+    	$i &> /var/log/oss-update/$b
+       fi
+   done
+else
+	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
 fi
 %{fillup_only -n schoolserver}
 
