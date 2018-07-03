@@ -29,7 +29,7 @@ install:
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   tools/           $(SHARE)/tools/
-	rsync -a   update/          $(SHARE)/updates/
+	rsync -a   updates/         $(SHARE)/updates/
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
