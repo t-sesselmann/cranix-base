@@ -530,6 +530,9 @@ chmod 600 /root/.my.cnf
     do
     	systemctl enable $i
     done
+    if [ "$SCHOOL_TYPE" = "cephalix"  ]; then
+    	systemctl enable cephalix-api
+    fi
 
     log "End PostSetup"
 
