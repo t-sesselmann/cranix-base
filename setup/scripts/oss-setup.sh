@@ -465,6 +465,7 @@ function PostSetup (){
     log "Make mysql secure"
     cd /root
     password=`mktemp XXXXXXXXXX`
+    echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
     mysqladmin -u root password $password
 echo "[client]
 host=localhost
@@ -472,7 +473,6 @@ user=root
 password=$password" > /root/.my.cnf
 chmod 600 /root/.my.cnf
 
-    echo "grant all on OSS.* to 'claxss'@'localhost'  identified by '$password'" | mysql
     sed -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
     sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/oss-java/conf/oss-api.properties
 
