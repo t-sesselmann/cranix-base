@@ -45,6 +45,7 @@ my $output       = "";
 my $date         = `date +%Y-%m-%d.%H-%M-%S`; chop $date;
 my $attr_ext_name = {};
 my $CHECK_PASSWORD_QUALITY = `oss_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
+my $USERCOUNT    = 0;
 #############################################################################
 ## Subroutines
 #############################################################################
@@ -108,6 +109,26 @@ sub save_file($$){
    close OUTPUT;
 }
 
+sub hash_to_json($) {
+    my $hash = shift;
+    my $json = '{';
+    foreach my $key ( keys %{$hash} ) {
+	my $value = $hash->{$key};
+        $json .= '"'.$key.'":';
+	if( $value eq 'true' ) {
+       $json .= 'true,';
+	} elsif ( $value eq 'false' ) {
+       $json .= 'false,';
+	} elsif ( $value =~ /^\d+$/ ) {
+       $json .= $value.',';
+	} else {
+		$value =~ s/"/\\"/g;
+		$json .= '"'.$value.'",';
+	}
+    }
+    $json =~ s/,$//;
+    $json .= '}';
+}
 sub daemonize
 {
   my ($LOGDIR,$PIDFILE,$debug)=@_;
@@ -378,7 +399,7 @@ while (<IN>) {
 close(IN);
 
 my $IMPORTDIR = $globals->{HOME_BASE}."/groups/SYSADMINS/userimports/$date";
-system("mkdir -pm 770 $IMPORTDIR");
+system("mkdir -pm 770 $IMPORTDIR/tmp");
 if( $input ne "$IMPORTDIR/userlist.txt" ) {
 	system("cp $input $IMPORTDIR/userlist.txt");
 }
@@ -584,18 +605,20 @@ foreach my $act_line (@lines)
     my %USER = ();
     # Setup some standard values
     $USER{'role'}               = $role;
-    if( $mailenabled )
-    {
-      $USER{'mailenabled'} = $mailenabled;
-    }
+    #Not supported at the moment
+    #if( $mailenabled )
+    #{
+    #  $USER{'mailenabled'} = $mailenabled;
+    #}
     if( $mustchange )
     {
-      $USER{'mustchange'} = 'yes';
+      $USER{'mustChange'} = 'true';
     }
-    if( $alias )
-    {
-      $USER{'alias'} = 'yes';
-    }
+    #Not supported at the moment
+    #if( $alias )
+    #{
+    #  $USER{'alias'} = 'true';
+    #}
     my $uid     = undef;
     my $ERROR   = 0;
     my $ERRORS = '';
@@ -664,10 +687,10 @@ foreach my $act_line (@lines)
                     $GROUP->{name}        = $cn;
                     $GROUP->{groupType}   = 'class';
                     $GROUP->{description} = __('class')." $cn";
-		    write_file("/tmp/add_group.$cn",encode_json($GROUP));
+		    write_file("$IMPORTDIR/tmp/add_group.$cn",hash_to_json($GROUP));
 		    #TODO Check result
-		    print("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn\n");
-		    system("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn");
+		    print("/usr/sbin/oss_api_post_file.sh groups/add $IMPORTDIR/tmp/add_group.$cn\n");
+		    system("/usr/sbin/oss_api_post_file.sh groups/add $IMPORTDIR/tmp/add_group.$cn");
                     print "  NEW CLASS $cn:\n";
                     $ERRORS .= "<b>Creating new class: $cn</b><br>\n";
                 }
@@ -696,9 +719,9 @@ foreach my $act_line (@lines)
                     $GROUP->{cn}          = $cn;
                     $GROUP->{groupType}   = 'workgroup';
                     $GROUP->{description} = "$cn";
-		    write_file("/tmp/add_group.$cn",encode_json($GROUP));
-		    print("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn\n");
-		    system("/usr/sbin/oss_api_post_file.sh groups/add /tmp/add_group.$cn");
+		    write_file("$IMPORTDIR/tmp/add_group.$cn",hash_to_json($GROUP));
+		    print("/usr/sbin/oss_api_post_file.sh groups/add $IMPORTDIR/tmp/add_group.$cn\n");
+		    system("/usr/sbin/oss_api_post_file.sh groups/add $IMPORTDIR/tmp/add_group.$cn");
                     print "  NEW GROUP $cn\n";
                     $ERRORS .= "<b>Creating new group: $cn</b><br>\n";
             }
@@ -775,7 +798,8 @@ foreach my $act_line (@lines)
         print "/usr/sbin/oss_api_text.sh GET users/text/$uid/classes\n";
         foreach my $i ( `/usr/sbin/oss_api_text.sh GET users/text/$uid/classes` )
         {
-           push @old_classes, $i;
+	   chomp $i;
+           push @old_classes, uc($i);
         }
         $ERRORS .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b>: ".__('old_classes').": ".join(" ",@old_classes)." ".__('new_classes').": ".$MYCLASSES;
         if( $resetPassword )
@@ -882,7 +906,6 @@ foreach my $act_line (@lines)
                 else
                 {
                     $USER{"uid"} = lc($USER{"uid"});  # uid always lowercase
-                    $USER{"mail"} = $USER{"uid"}."@".$USER{"domain"};
                 }
             }
 
@@ -895,11 +918,13 @@ foreach my $act_line (@lines)
         print "Befor creating\n".Dumper(\%USER)."Classes:".join(" ",@classes)."\n";
         if( !$ERROR )
         { # If no error accours the user will be created
+            $USERCOUNT+=1;
+	    write_file("$IMPORTDIR/tmp/add_user.$USERCOUNT",hash_to_json(\%USER));
             if( !$test )
             {
-		    write_file("/tmp/add_user",encode_json(\%USER));
-		    print "/usr/sbin/oss_api_post_file.sh users/add /tmp/add_user\n";
-		    my $result = `/usr/sbin/oss_api_post_file.sh users/add /tmp/add_user`;
+		    write_file("$IMPORTDIR/tmp/add_user.$USERCOUNT",hash_to_json(\%USER));
+		    print "/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT\n";
+		    my $result = `/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT`;
 		    $result = eval { decode_json($result) };
 		    if ($@)
 		    {
