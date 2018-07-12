@@ -1,7 +1,7 @@
 #!/bin/bash
 
-uid=shift
-template=shift
+uid=$1
+template=$2
 
 if [ -z "$template" ]; then
    template=role=$( oss_api_text.sh GET users/byUid/$uid/role )
