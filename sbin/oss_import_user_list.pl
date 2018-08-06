@@ -926,6 +926,7 @@ foreach my $act_line (@lines)
 		    print "/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT\n";
 		    my $result = `/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT`;
 		    $result = eval { decode_json($result) };
+		    sleep(3);
 		    if ($@)
 		    {
 		        close_on_error( "decode_json failed, invalid json. error:$@\n" );
@@ -946,6 +947,7 @@ foreach my $act_line (@lines)
 		      }
                       $uid         = $USER{'uid'};
                       $ERRORS    .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b> ".__('created')." ".__('uid').": \"$uid\" ".__('class').":".$MYCLASSES." <br>\n";
+		      sleep(3);
 		      foreach my $g (@classes)
 		      {
 		          print "/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g\n";

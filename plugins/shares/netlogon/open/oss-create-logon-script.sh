@@ -19,8 +19,14 @@ else
 	cp /usr/share/oss/templates/login-default.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
+if [ -e /usr/share/oss/templates/copy_and_run_rem_printers ]; then
+	cat /usr/share/oss/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+fi
+
 if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} = "yes" -a ${SCHOOL_TEACHER_OBSERV_HOME} = "no"  ]; then
 	cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	userHome=$( oss_get_home.sh ${U} )
+        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
 else 
 	cat /usr/share/oss/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi

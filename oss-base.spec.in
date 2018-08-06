@@ -69,9 +69,9 @@ if [ ${1:-0} -gt 1 ]; then
     	$i &> /var/log/oss-update/$b
        fi
    done
-else
-	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
 fi
+rsync -av /usr/share/oss/software/oss/ /home/software/oss/
+rsync -av /usr/share/oss/profiles/oss/ /home/profiles/oss/
 %{fillup_only -n schoolserver}
 
 %postun

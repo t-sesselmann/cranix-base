@@ -1,0 +1,3 @@
+copy \\admin\profiles\oss\RemoveAllNetworkPrinters.vbs Z:\RemoveAllNetworkPrinters.vbs
+Z:\RemoveAllNetworkPrinters.vbs
+del /Q /S Z:\RemoveAllNetworkPrinters.vbs
