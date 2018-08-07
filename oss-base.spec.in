@@ -27,6 +27,7 @@ PreReq:		filesystem
 Requires:       rsync
 Requires:       samba-ad
 Requires:       perl-JSON-XS
+Conflicts:	nscd
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
