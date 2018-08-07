@@ -72,7 +72,7 @@ if [ ${1:-0} -gt 1 ]; then
    done
 fi
 rsync -av /usr/share/oss/software/oss/ /home/software/oss/
-rsync -av /usr/share/oss/profiles/oss/ /home/profiles/oss/
+rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
 %{fillup_only -n schoolserver}
 
 %postun
