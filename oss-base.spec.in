@@ -71,8 +71,12 @@ if [ ${1:-0} -gt 1 ]; then
        fi
    done
 fi
-rsync -av /usr/share/oss/software/oss/ /home/software/oss/
-rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
+if [ -e /usr/share/oss/software/oss ]; then
+	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
+fi
+if [ -e /usr/share/oss/profiles ]; then
+	rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
+fi
 %{fillup_only -n schoolserver}
 
 %postun
