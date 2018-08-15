@@ -69,6 +69,7 @@ do
     ;;
     msQuota)
       msQuota="${c}"
+      msQuota=$((msQuota*1024))
     ;;
   esac
 done
@@ -76,7 +77,8 @@ done
 #Set fsquota
 /usr/sbin/oss_set_quota.sh $uid $fsQuota
 
-#TODO hande mailsystem quota
+#Set mailsystem quota
+/usr/sbin/oss_set_mquota.pl $uid $msQuota
 
 if [ "$surName" -a "$givenName" ]
 then
@@ -101,7 +103,7 @@ rm -f $FILE
 
 fi
 
-if [ $mpassword != "no" ]; then
+if [ "$mpassword" != "no" ]; then
     ADDPARAM="--must-change-at-next-login"
 fi
 
