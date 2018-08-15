@@ -74,6 +74,7 @@ do
     ;;
     msQuota)
       msQuota="${c}"
+      msQuota=$((msQuota*1024))
     ;;
   esac
 done
@@ -169,3 +170,7 @@ if [ -z "$fsQuota" ]; then
 fi
 
 /usr/sbin/oss_set_quota.sh $uid $fsQuota
+
+#Set mailsystem quota
+/usr/sbin/oss_set_mquota.pl $uid $msQuota
+
