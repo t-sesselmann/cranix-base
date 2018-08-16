@@ -49,7 +49,11 @@ groups=""
 while read a
 do
   b=${a/:*/}
-  c=${a/$b: /}
+  if [ "$a" != "${b}:" ]; then
+     c=${a/$b: /}
+  else
+     c=""
+  fi
   case $b in
     surName)
       surName="${c}"
