@@ -325,10 +325,21 @@ SCHOOL_STUDENTS_MAY_DOWNLOAD="no"
 # Students may upload at the admin web-site.
 SCHOOL_STUDENTS_MAY_UPLOAD="no"
 
+## Type:        string
+## Default:     https://support.extis.de/support
+# The support URL of the OTRS system the ticket will be sent to via REST-API.
+# If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
+SCHOOL_SUPPORT_MAIL_URL="https://support.extis.de/support"
+
 ## Type:	string
-## Default:	
+## Default:     oss-support@extis.de
 # The support email address.
 SCHOOL_SUPPORT_MAIL_ADDRESS="oss-support@extis.de"
+
+## Type:	string
+## Default:
+# The default email address of the sender of the support tickets
+SCHOOL_SUPPORT_MAIL_FROM=""
 
 ## Type:	yesno
 ## Default:     yes	
