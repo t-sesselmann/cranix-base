@@ -392,3 +392,8 @@ SCHOOL_SEARCH_FOR_DELETE="all groups"
 # oss-api session time out in minutes
 SCHOOL_SESSION_TIMEOUT="90"
 
+## Type:        yesno
+## Default:     yes
+# Remove all network printers from the users profile by the login process
+SCHOOL_CLEAN_UP_PRINTERS="yes"
+
