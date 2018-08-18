@@ -20,7 +20,7 @@ foreach(@pkgs) {
                 }
 		/\s+(.*)$/;
 		$version = uri_escape($1);
-		system("oss_api.sh PUT 'softwares/devicesByName/$hostname/$name/$version'");
+		system("/usr/sbin/oss_api.sh PUT 'softwares/devicesByName/$hostname/$name/$version'");
 	} else {
                 if( /\s+Update for / ) {
                         $update = 1;

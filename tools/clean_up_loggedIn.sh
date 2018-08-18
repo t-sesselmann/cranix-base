@@ -1,4 +1,4 @@
 #!/bin/bash
 
-oss_api.sh DELETE devices/cleanUpLoggedIn
+/usr/sbin/oss_api.sh DELETE devices/cleanUpLoggedIn
 
