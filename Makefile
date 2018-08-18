@@ -39,6 +39,7 @@ install:
 	install -m 644 setup/oss_*.service $(DESTDIR)/usr/lib/systemd/system/
 
 dist:
+	xterm -e git log --raw  &
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
 	mkdir $(PACKAGE)
 	for i in $(TOPACKAGE); do \
