@@ -1022,6 +1022,7 @@ foreach my $act_line (@lines)
 # Save the user list:
 if( $role eq 'students' )
 {
+    my @AllList = ($HEADER);
     foreach my $cl (@CLASSES)
     {
         my @ClassList = ($HEADER);
@@ -1031,12 +1032,17 @@ if( $role eq 'students' )
             {
                 push @ClassList, " ";
                 push @ClassList, $NEWLIST->{$cl}->{$h};
+                push @AllList, $NEWLIST->{$cl}->{$h};
             }
         }
         if( scalar @ClassList > 1 )
         {
             save_file( \@ClassList, "$IMPORTDIR/userlist.$cl.txt" );
         }
+    }
+    if( scalar @AllList > 1 )
+    {
+        save_file( \@AllList, "$IMPORTDIR/all-students.txt" );
     }
 }
 else
