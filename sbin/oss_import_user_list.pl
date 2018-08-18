@@ -462,6 +462,7 @@ if ($@)
 foreach my $user (@{$users})
 {
    my $i = $user->{'uid'};
+   next if( lc($i) eq 'tstudents' );
    push @ALLUID , $i;
    my $surName   = $user->{'surName'};
    my $givenName = $user->{'givenName'};
@@ -1069,7 +1070,7 @@ if( $role eq 'students' &&  $full )
 		    print "/usr/sbin/oss_api_text.sh DELETE users/text/$uid\n";
 		    my $result = `/usr/sbin/oss_api_text.sh DELETE users/text/$uid`;
 		    if( $result ne "OK" ) {
-			$delete_old_student .= "User: <b>".$uid."</b>: ".__("Can not be deleted:");
+			$delete_old_student .= "User: <b>".$uid."</b>: ".__("Can not be deleted:")."<br>\n";
 		    } else {
 	                $delete_old_student .= "uid=$uid#;#message=<b>Login: $uid</b> ".__('deleted')." /home/archiv/$uid.tgz<br>\n";
 		    }
@@ -1101,16 +1102,16 @@ if( $allClasses )
 	} else {
 	    $MESSAGE .= __("Deleted");
 	}
-	$MESSAGE .= "<br>";
+	$MESSAGE .= "<br>\n";
     }
     open( OUT, ">>$output");
     binmode OUT,':encoding(utf8)';
-    print OUT  "$MESSAGE<br>";
+    print OUT  "$MESSAGE";
     close( OUT );
 }
 if( $cleanClassDirs && !$test )
 {
-    my $MESSAGE = __("<b>Clean up the directories of the classes:</b>");
+    my $MESSAGE = __("<b>Clean up the directories of the classes:</b>")."<br>\n";
     print "/usr/sbin/oss_api_text.sh GET groups/text/byType/class\n";
     foreach my $cn ( `/usr/sbin/oss_api_text.sh GET groups/text/byType/class` )
     {
@@ -1118,11 +1119,11 @@ if( $cleanClassDirs && !$test )
 	my $path =  $globals->{HOME_BASE}.'/groups/'.$cn;
 	system("rm -rf $path") if( -d $path );
 	system("mkdir -m 3771 $path; chgrp $cn $path; setfacl -d -m g::rwx $path;");
-	$MESSAGE .= "    $path<br>";
+	$MESSAGE .= "    $path<br>\n";
     }
     open( OUT, ">>$output");
     binmode OUT,':encoding(utf8)';
-    print OUT  "$MESSAGE<br>";
+    print OUT  "$MESSAGE";
     close( OUT );
 }
 #Some important things to do if it was not a test
@@ -1130,7 +1131,7 @@ if( !$test )
 {
     print("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY\n");
     system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
-    system("systemctl restart squid");
+    system("systemctl try-restart squid");
 }
 system("rm $RUNFILE");
 system("rm $PIDFILE");
