@@ -1099,6 +1099,8 @@ if( $allClasses )
     print "/usr/sbin/oss_api_text.sh GET groups/text/byType/class\n";
     foreach my $cn ( `/usr/sbin/oss_api_text.sh GET groups/text/byType/class` )
     {
+	Encode::_utf8_on($cn);
+	chomp $cn;
 	next if( defined $ALLCLASSES{$cn} );
 	$MESSAGE .= " $cn: ";
         print "/usr/sbin/oss_api_text.sh DELETE groups/text/$cn\n";
