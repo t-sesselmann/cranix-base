@@ -47,10 +47,14 @@ fi
 
 samba-tool group delete "$name"
 
+nameUp=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
-gdir=${SCHOOL_HOME_BASE}/groups/${nameLo}
+gdir=${SCHOOL_HOME_BASE}/groups/${nameUp}
 
 if [ -d "$gdir" ]; then
     rm -r $gdir
 fi
 
+if [ -d "${SCHOOL_HOME_BASE}/${nameLo}"   ]; then
+    rm -r "${SCHOOL_HOME_BASE}/${nameLo}" 
+fi
