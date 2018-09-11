@@ -4,6 +4,11 @@
 
 read pw2check
 
+if [ ${#pw2check} -lt 7 ]; then
+	echo "User password must contain minimum 7 characters."
+	exit 1
+fi
+
 if [ ${SCHOOL_CHECK_PASSWORD_QUALITY} = "no" ]; then
         exit 0
 fi
