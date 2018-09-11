@@ -10,6 +10,7 @@ if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
 	exit 1
 fi
 
+zypper rr OSS-4.0-0
 #Save the credentials
 echo "[${SCHOOL_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}
