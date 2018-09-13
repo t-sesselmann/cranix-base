@@ -27,7 +27,7 @@ abort() {
         echo "name: $name" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
         echo "description: $description" >> /var/adm/oss/opentasks/$TASK
-        echo "type: $type" >> /var/adm/oss/opentasks/$TASK
+        echo "groupType: $groupType" >> /var/adm/oss/opentasks/$TASK
 	if [ "$mail" ]; then
 		echo "mail: $mail" >> /var/adm/oss/opentasks/$TASK
 	fi
@@ -37,7 +37,7 @@ abort() {
 
 name=''
 description=''
-type=''
+groupType=''
 mail=''
 
 while read a
@@ -55,8 +55,8 @@ do
     description)
       description="${c}"
     ;;
-    type)
-      type="${c}"
+    groupType)
+      groupType="${c}"
     ;;
     mail)
       mail="${c}"
@@ -68,7 +68,7 @@ name=`echo "$name" | tr "[:lower:]" "[:upper:]"`
 
 echo "name:        $name"
 echo "description: $description"
-echo "type:        $type"
+echo "groupType:   $groupType"
 echo "mail:        $mail"
 #exit
 
@@ -92,7 +92,7 @@ mkdir -p -m 3770 $gdir
 chgrp $gidNumber $gdir
 setfacl -d -m g::rwx $gdir
 
-if [ "$type" = "primary" ]; then
+if [ "$groupType" = "primary" ]; then
    mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
    chgrp $gidNumber ${SCHOOL_HOME_BASE}/${nameLo}
 fi
