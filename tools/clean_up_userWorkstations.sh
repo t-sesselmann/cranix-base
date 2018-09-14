@@ -2,7 +2,7 @@
 
 U=$1
 
-if [ -z "$ROLE" ]; then
+if [ -z "${U}" ]; then
 	echo
 	echo "Usage: /usr/share/oss/tools/clean_up_userWorkstations.sh <uid>"
 	echo
@@ -15,4 +15,5 @@ if [ "${DN}" ]; then
         echo "changetype: modify
 delete: userWorkstations" >> ${tmpldif}
         ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
+	rm -f ${tmpldif}
 fi

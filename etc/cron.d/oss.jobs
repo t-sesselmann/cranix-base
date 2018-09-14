@@ -1,3 +1,5 @@
 -*    * * * * root /usr/share/oss/tools/set_scheduled_access.sh
 -*/10 * * * * root /usr/share/oss/tools/set_dyndns.sh
 -0    7 * * * root /usr/share/oss/tools/clean_up_loggedIn.sh
+-1    7 * * * root /usr/share/oss/tools/clean_up_userWorkstations_for_all.sh &> /dev/null
+30    6 * * * root /usr/share/oss/tools/set_default_access.sh
