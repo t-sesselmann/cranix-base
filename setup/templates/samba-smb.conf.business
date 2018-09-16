@@ -14,6 +14,10 @@
 
 	bind interfaces only = yes
 	interfaces = 127.0.0.1, #IPADDR#
+#oss-radius needs it:
+	ntlm auth = yes
+#oss-webdav needs it:
+        template shell = /bin/bash
 
 [sysvol]
        path = /var/lib/samba/sysvol
