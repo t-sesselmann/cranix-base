@@ -21,7 +21,7 @@ userHome=$( /usr/sbin/oss_get_home.sh $user )
 if [ ! -e $userHome/GROUPS ]; then
         ln -s $SCHOOL_HOME_BASE/groups/LINKED/$user $userHome/GROUPS
 fi
-if [ ! -e $userHome/ALL ]; then
+if [ ! -e $userHome/ALL -a -d $SCHOOL_HOME_BASE/all ]; then
         ln -s $SCHOOL_HOME_BASE/all $userHome/ALL
 fi
 
