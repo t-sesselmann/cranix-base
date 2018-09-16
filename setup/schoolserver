@@ -344,7 +344,7 @@ SCHOOL_SUPPORT_MAIL_FROM=""
 ## Type:	yesno
 ## Default:     yes	
 # If this variable is set to yes, students may login on more than one workstation.
-SCHOOL_ALLOW_STUDENTS_MULTIPLE_LOGIN="no"
+SCHOOL_ALLOW_STUDENTS_MULTIPLE_LOGIN="yes"
 
 ## Type:	yesno
 ## Default:     yes	
