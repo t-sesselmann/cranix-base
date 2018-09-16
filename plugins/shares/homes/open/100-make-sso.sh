@@ -36,3 +36,8 @@ userWorkstations: ${m}" >> ${tmpldif}
         rm -f ${tmpldif}
 
 fi
+
+USERHOME=$( /usr/sbin/oss_get_home.sh ${U} )
+mkdir -m 700 -p $USERHOME/{Export,Import}
+chown ${U} $USERHOME/{Export,Import}
+
