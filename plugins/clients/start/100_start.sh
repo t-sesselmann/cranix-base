@@ -7,7 +7,7 @@ CLIENT=${MINION/.$SCHOOL_DOMAIN/}
 
 #Set the license grains
 IFS=$'\n'
-for i in $( oss_api.sh GET softwares/devicesByName/${CLIENT}/licences )
+for i in $( oss_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
 do
 	salt "$MINION" grains.set $i
 done
