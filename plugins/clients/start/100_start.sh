@@ -9,6 +9,9 @@ CLIENT=${MINION/.$SCHOOL_DOMAIN/}
 IFS=$'\n'
 for i in $( oss_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
 do
+	if [ "${i:0:7}" = '{"code"' ]; then
+		exit
+	fi
 	salt "$MINION" grains.set $i
 done
 
