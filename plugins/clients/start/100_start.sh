@@ -6,14 +6,14 @@ MINION=$1
 CLIENT=${MINION/.$SCHOOL_DOMAIN/}
 
 #Set the license grains
-IFS=$'\n'
-for i in $( oss_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
-do
-	if [ "${i:0:7}" = '{"code"' ]; then
-		exit
-	fi
-	salt "$MINION" grains.set $i
-done
+#IFS=$'\n'
+LICENCES=$( oss_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
+if [ "${LICENCES:0:7}" = '{"code"' ]; then
+                exit
+fi
+if [ "${LICENCES}" ]; then
+        salt "$MINION" grains.setvals ${LICENCES}
+fi
 
 #Apply high state
 salt "$MINION" state.apply &> /dev/null
