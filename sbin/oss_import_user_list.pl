@@ -668,6 +668,10 @@ foreach my $act_line (@lines)
       $MYCLASSES =join(' ',@classes);
       $PRIMERCLASS=$classes[0];
     }
+    if( $PRIMERCLASS eq 'ALL' )
+    {
+        @classes = @CLASSES;
+    }
 
     # If there is no domain defined we use the main mail domain
     #if( !defined $USER{'domain'} )
@@ -825,10 +829,6 @@ foreach my $act_line (@lines)
                     {
                        $USER{'password'} = create_secure_pw();
                     }
-                }
-                if( $PRIMERCLASS eq 'ALL' )
-                {
-                    @classes = @CLASSES;
                 }
                 my ($classes_to_del,$classes_to_add) = group_diff(\@old_classes,\@classes);
                 foreach my $g (@$classes_to_del)
