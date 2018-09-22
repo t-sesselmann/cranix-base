@@ -209,7 +209,7 @@ profilePath: \\\\admin\\profiles\\administrator
     sed    "s/#REALM#/$SCHOOL_DOMAIN/g"          /usr/share/oss/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$SCHOOL_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%'$passwd'
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
     chmod -R 775 /var/lib/printserver/drivers
