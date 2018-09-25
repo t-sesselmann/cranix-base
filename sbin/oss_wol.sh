@@ -12,6 +12,9 @@ fi
 
 if [ -e /sbin/ether-wake ]
 then
-	/sbin/ether-wake -i $DHCPD_INTERFACE $MAC
+        for i in $DHCPD_INTERFACE
+        do
+                /sbin/ether-wake -i $i $MAC
+        done
 fi
 
