@@ -19,7 +19,6 @@ Summary:        Base package for the OSS
 Url:            http://oss.cephalix.eu/
 Group:          Productivity/Office/Management
 Source:         %{name}.tar.bz2
-Source1:	vncsnapshot
 BuildArch:      noarch
 PreReq:         cups
 PreReq:         salt
@@ -49,7 +48,6 @@ Obsoletes:	openschool-base
 
 %install
 make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
-install -m 750 %{SOURCE1} %{buildroot}/usr/share/oss/tools/
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
