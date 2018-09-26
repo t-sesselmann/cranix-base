@@ -49,7 +49,7 @@ Obsoletes:	openschool-base
 
 %install
 make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
-install -m 750 %{SOURCE1} %{buildroot}/user/share/oss/tools/
+install -m 750 %{SOURCE1} %{buildroot}/usr/share/oss/tools/
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
