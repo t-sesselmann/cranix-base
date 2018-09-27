@@ -88,12 +88,12 @@ fi
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir=${SCHOOL_HOME_BASE}/groups/${name}
 
-mkdir -p -m 3770 $gdir
-chgrp $gidNumber $gdir
-setfacl -d -m g::rwx $gdir
+mkdir -p -m 3770 "$gdir"
+chgrp $gidNumber "$gdir"
+setfacl -d -m g::rwx "$gdir"
 
 if [ "$groupType" = "primary" ]; then
-   mkdir -m 750 ${SCHOOL_HOME_BASE}/${nameLo}
-   chgrp $gidNumber ${SCHOOL_HOME_BASE}/${nameLo}
+   mkdir -m 750 "${SCHOOL_HOME_BASE}/${nameLo}"
+   chgrp $gidNumber "${SCHOOL_HOME_BASE}/${nameLo}"
 fi
 
