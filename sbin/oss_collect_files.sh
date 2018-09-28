@@ -62,5 +62,8 @@ chown -R $TO "${IMPORT}/${PROJECT}"
 
 if [ "$CLEANUP" = 'y' ]; then
     rm -rf $EXPORT/*
-    rm -rf ${USERHOME}/Import/*
+    role=$( oss_api_text.sh GET users/byUid/${FROM}/role )
+    if [ "${role}" != "teachers" -a "${role}" ]; then
+        rm -rf ${USERHOME}/Import/*
+    fi
 fi
