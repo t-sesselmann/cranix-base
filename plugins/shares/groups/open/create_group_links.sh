@@ -9,8 +9,7 @@ chown $user $SCHOOL_HOME_BASE/groups/LINKED/$user/
 rm -f $SCHOOL_HOME_BASE/groups/LINKED/$user/*
 
 cd "$SCHOOL_HOME_BASE/groups/LINKED/$user/"
-#IFS=$'\n'
-IFS=";"
+IFS=$'\n'
 for GROUP in  $( oss_api_text.sh GET users/byUid/$user/groups )
 do
     g=$( echo $GROUP|tr '[:lower:]' '[:upper:]' )
