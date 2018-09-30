@@ -29,8 +29,6 @@ Requires:       samba-ad
 Requires:       perl-JSON-XS
 Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
-Requires:	ImageMagick
-Requires:	vncsnapshot
 Conflicts:	nscd
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
