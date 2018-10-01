@@ -16,9 +16,11 @@ def event_handler(ret):
        #Start the plugins
        subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","start", ret['data']['id']])
     if fnmatch.fnmatch(ret['tag'], 'salt/presence/change'):
-       if event_log_level == "debug":
-          #At the moment nothing to do
-          print(ret['data'])
+       print "Client lost: " + ret['data']['lost']
+       subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","lost", ret['data']['lost']])
+    if fnmatch.fnmatch(ret['tag'], 'salt/presence/present'):
+       subprocess.call(["/usr/share/oss/plugins/client_plugin_handler.sh","present", ','.join(ret['data']['present'])])
+
 
 opts = salt.config.client_config('/etc/salt/master')
 
