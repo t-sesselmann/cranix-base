@@ -38,17 +38,18 @@ if [ $SORTDIR = "y" ]; then
 else
     TARGET="${IMPORT}/${PROJECT}"
 fi
-mkdir -p -m 700 $TARGET
+mkdir -p -m 700 "${TARGET}"
 
 USERHOME=$( oss_get_home.sh ${FROM} )
 EXPORT="${USERHOME}/Export/"
 
 if [ ! -d $EXPORT ]; then
     echo "The export directory '$EXPORT' does not exists." 1>&2
+    exit 1
 fi
 
 if [ "$SORTDIR" = "y" ]; then
-    cp $EXPORT/* $TARGET/ 
+    cp $EXPORT/* "${TARGET}/"
 else
     IFS=$'\n'
     for i in $EXPORT/*
