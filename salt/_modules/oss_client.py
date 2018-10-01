@@ -63,6 +63,34 @@ def unBlockInput():
 
   return True
 
+#LogOff the current user
+def logOff():
+  if __grains__['os_family'] == 'Windows':
+    processes = os.popen('QWINSTA').readlines()
+    for p in processes:
+      l = p.split()
+      if l[0] == 'console' and len(l) > 3:
+        os.system('LOGOFF '+l[2])
+  else:
+    return True
+
+  return True
+
+
+#Gets the uid of the current user
+def loggedIn():
+  if __grains__['os_family'] == 'Windows':
+    processes = os.popen('QWINSTA').readlines()
+    for p in processes:
+      l = p.split()
+      if l[0] == 'console' and len(l) > 3:
+	return l[1]
+  else:
+    return ""
+
+  return ""
+
+
 #Gets the screen shot
 def getScreenShot():
   if __grains__['os_family'] == 'Windows':
