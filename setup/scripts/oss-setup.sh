@@ -246,6 +246,9 @@ profilePath: \\\\admin\\profiles\\administrator
     chown root:ntp /var/lib/samba/ntp_signd/
     chmod 750      /var/lib/samba/ntp_signd/
 
+    ########################################################################
+    log " - Add default policy"
+    tar -xf /usr/share/oss/setup/templates/pol.tar -C /var/lib/samba/sysvol/${SCHOOL_DOMAIN}/Policies/
     log "End SetupSamba"
 }
 
