@@ -21,9 +21,8 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
 fi
 
 abort() {
-        TASK=$( uuidgen -t )
+        TASK="add_group-$( uuidgen -t )"
         mkdir -p /var/adm/oss/opentasks/
-        echo "add_group" > /var/adm/oss/opentasks/$TASK
         echo "name: $name" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
         echo "description: $description" >> /var/adm/oss/opentasks/$TASK

@@ -20,6 +20,14 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi
 
+abort() {
+        TASK="change_member-$( uuidgen -t )"
+        mkdir -p /var/adm/oss/opentasks/
+        echo "changeType: $changeType" >> /var/adm/oss/opentasks/$TASK
+        echo "group: $group" >> /var/adm/oss/opentasks/$TASK
+        echo "users: $users" >> /var/adm/oss/opentasks/$TASK
+        exit 1
+}
 
 changeType=""
 group=""
@@ -47,4 +55,6 @@ do
 done
 
 samba-tool group $changeType $group $users
-
+if [ $? != 0 ]; then
+   abort
+fi

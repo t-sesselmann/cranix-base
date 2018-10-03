@@ -20,6 +20,13 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi
 
+abort() {
+        TASK="delete_group-$( uuidgen -t )"
+        mkdir -p /var/adm/oss/opentasks/
+        echo "name: $name" >> /var/adm/oss/opentasks/$TASK
+        exit 1
+}
+
 
 name=''
 
@@ -46,6 +53,9 @@ if [ -z "$name" ]; then
 fi
 
 samba-tool group delete "$name"
+if [ $? != 0 ]; then
+   abort
+fi
 
 nameUp=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`

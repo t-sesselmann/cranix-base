@@ -29,9 +29,8 @@ mpassword='no'
 groups=""
 
 abort() {
-        TASK=$( uuidgen -t )
+        TASK="delete_user-$( uuidgen -t )"
 	mkdir -p /var/adm/oss/opentasks/
-        echo "delete_user" > /var/adm/oss/opentasks/$TASK
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
         echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK

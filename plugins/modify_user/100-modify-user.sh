@@ -32,8 +32,8 @@ fsQuota=0
 msQuota=0
 
 abort() {
-	TASK=$( uuidgen -t )
-	echo "modify_user"           >  /var/adm/oss/opentasks/$TASK
+	TASK="modify_user-$( uuidgen -t )"
+	mkdir -p /var/adm/oss/opentasks/
 	echo "uid: $uid"             >> /var/adm/oss/opentasks/$TASK
 	echo "password: $password"   >> /var/adm/oss/opentasks/$TASK
 	echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
