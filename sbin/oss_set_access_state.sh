@@ -10,6 +10,11 @@
 #
 
 
+STATE=$( /usr/sbin/oss_get_access_state.sh $2 $3 )
+if [ "$STATE" = "$1" ]; then
+        exit;
+fi
+
 . /etc/sysconfig/schoolserver 
 
 export NETWORK="$SCHOOL_SERVER/$SCHOOL_NETMASK";
