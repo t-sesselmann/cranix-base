@@ -20,5 +20,5 @@ for software in softwares[minion]:
     os.write(new_file,'{"name"="'+name+'","description"="'+software+'","version"="'+version+'"}')
     os.close(new_file)
     result=json.load(os.popen('/usr/sbin/oss_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))
-    os.reomve(filename)
+    os.remove(filename)
 
