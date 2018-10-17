@@ -17,7 +17,7 @@ for software in softwares[minion]:
     version=softwares[minion][software]
     name=re.sub(version,"",software).strip()
     new_file, filename = tempfile.mkstemp()
-    os.write(new_file,'{"name"="'+name+'","description"="'+software+'","version"="'+version+'"}')
+    os.write(new_file,'{"name":"'+name+'","description":"'+software+'","version":"'+version+'"}')
     os.close(new_file)
     result=json.load(os.popen('/usr/sbin/oss_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))
     os.remove(filename)
