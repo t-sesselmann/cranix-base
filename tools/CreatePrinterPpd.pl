@@ -2,7 +2,7 @@
 
 use strict;
 
-my @ppds = `find /usr/share/cups -name '*ppd.gz'`;
+my @ppds = `find /usr/share/cups -iname '*ppd.gz'`;
 my $printers = {};
 my $drivers  = {};
 foreach my $ppd ( @ppds ) {
