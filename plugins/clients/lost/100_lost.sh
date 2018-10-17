@@ -7,5 +7,6 @@ IFS=","
 for i in ${MINIONS}
 do
    rm -f /var/adm/oss/running/$i
+   rm -f /srv/www/admin/screenShots/$CLIENT.jpg
 done
 
