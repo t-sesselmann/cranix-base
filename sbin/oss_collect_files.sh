@@ -49,7 +49,7 @@ if [ ! -d $EXPORT ]; then
 fi
 
 if [ "$SORTDIR" = "y" ]; then
-    cp $EXPORT/* "${TARGET}/"
+    cp -a $EXPORT/* "${TARGET}/"
 else
     IFS=$'\n'
     for i in $EXPORT/*
