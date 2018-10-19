@@ -27,7 +27,7 @@ registerpw=""
 function usage (){
 	echo "Usage: oss-setup.sh --passwdf=/tmp/oss_pswd [OPTION]"
 	echo "This is the oss setup script."
-	echo 
+	echo
 	echo "Options :"
 	echo "Mandatory parameters :"
 	echo "		--passwdf=<PASSWORDFILE>  Path to the file containing the osspassword."
@@ -96,24 +96,31 @@ function SetupSamba (){
 
     ########################################################################
     log " - Clean up befor samba config"
-    mkdir -p /etc/samba-backup-$logdate 
+    mkdir -p /etc/samba-backup-$logdate
     mv /etc/krb5.conf /etc/krb5.conf.$logdate
     cp -r /etc/samba/ /etc/samba-backup-$logdate
     rm -r /etc/samba/*
 
-    #######################################################################
-    log " - Turn off not used network devices."
-    . /etc/sysconfig/SuSEfirewall2
-    if [ "$FW_DEV_EXT" ]; then
-       ifdown $FW_DEV_EXT
-    fi
-    ifconfig "$FW_DEV_INT:mail" down
-    ifconfig "$FW_DEV_INT:print" down
-    ifconfig "$FW_DEV_INT:proxy" down
+    ########################################################################
+    #log " - Turn off not used network devices."
+    #. /etc/sysconfig/SuSEfirewall2
+    #if [ "$FW_DEV_EXT" ]; then
+    #   ifdown $FW_DEV_EXT
+    #fi
+    #ifconfig "$FW_DEV_INT:mail" down
+    #ifconfig "$FW_DEV_INT:print" down
+    #ifconfig "$FW_DEV_INT:proxy" down
 
     ########################################################################
     log " - Install domain provision"
-    samba-tool domain provision --realm="$SCHOOL_DOMAIN" --domain="$windomain" --adminpass="$passwd" --server-role=dc --use-rfc2307 --host-ip="$SCHOOL_SERVER"
+    samba-tool domain provision --realm="$SCHOOL_DOMAIN" \
+				--domain="$windomain" \
+				--adminpass="$passwd" \
+				--server-role=dc \
+				--use-rfc2307 \
+				--host-ip="$SCHOOL_SERVER" \
+				--option="interfaces=127.0.0.1 $SCHOOL_SERVER" \
+				--option="bind interfaces only=yes"
 
     ########################################################################
     log " - Config resolv.conf"
@@ -213,8 +220,8 @@ profilePath: \\\\admin\\profiles\\administrator
     systemctl enable samba-printserver
     systemctl start  samba-printserver
     chmod -R 775 /var/lib/printserver/drivers
-    chgroup -R 4000000 /var/lib/printserver/drivers
-    setfacl -Rdm g:4000000:rwx /var/lib/printserver/drivers 
+    chgrp -R $sysadmins_gn /var/lib/printserver/drivers
+    setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
 
     #########################################################################
     log " - Some additional samba settings -"
@@ -254,7 +261,7 @@ profilePath: \\\\admin\\profiles\\administrator
 
 function SetupDHCP (){
     log "Start SetupDHCP"
-    sed    "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"                   /usr/share/oss/setup/templates/dhcpd.conf.ini > /usr/share/oss/templates/dhcpd.conf 
+    sed    "s/#SCHOOL_SERVER#/${SCHOOL_SERVER}/g"                   /usr/share/oss/setup/templates/dhcpd.conf.ini > /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_PRINTSERVER#/${SCHOOL_PRINTSERVER}/g"         /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_DOMAIN#/${SCHOOL_DOMAIN}/g"                   /usr/share/oss/templates/dhcpd.conf
     sed -i "s/#SCHOOL_ANON_DHCP_RANGE#/${SCHOOL_ANON_DHCP_RANGE}/g" /usr/share/oss/templates/dhcpd.conf
@@ -303,7 +310,7 @@ function SetupInitialAccounts (){
 	chmod 1770 $SCHOOL_HOME_BASE/all
     fi
     chmod 1775 $SCHOOL_HOME_BASE/software
-    
+
 
     ########################################################################
     log " - Create internal users"
@@ -372,22 +379,22 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create base directory rights"
     case $SCHOOL_TYPE in
-    	cephalix)
-   	    chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
+   cephalix)
+      chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
 	;;
 	business)
-   	    chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
+      chgrp        $sysadmins_gn           $SCHOOL_HOME_BASE/software
 	;;
 	primary)
-   	    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
-   	    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
+      chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
+      setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
 	;;
 	*)
 	    setfacl -m m::rwx                   $SCHOOL_HOME_BASE/all
 	    setfacl -m g:$teachers_gn:rwx       $SCHOOL_HOME_BASE/all
 	    setfacl -m g:$students_gn:rwx       $SCHOOL_HOME_BASE/all
 	    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/all
-	    
+
 	    chgrp        $teachers_gn           $SCHOOL_HOME_BASE/software
 	    setfacl -m g:$students_gn:rx        $SCHOOL_HOME_BASE/software
 	    setfacl -m g:$sysadmins_gn:rwx      $SCHOOL_HOME_BASE/software
@@ -423,7 +430,7 @@ function PostSetup (){
     cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys
     /bin/chmod 600 /root/.ssh/authorized_keys
     echo 'stricthostkeychecking no' > /root/.ssh/config
-    echo '# Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+    echo '# Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 . /etc/os-release
 FQH=`hostname -f`
 PS1="$FQH:\w # "
@@ -460,12 +467,12 @@ unset _bred _sgr0
     done
     mysql < /opt/oss-java/data/oss-objects.sql
     case $SCHOOL_TYPE in
-    	cephalix)
+        cephalix)
             mysql OSS < /opt/oss-java/data/cephalix-objects.sql
             mysql OSS < /opt/oss-java/data/school-INSERT.sql
             mysql OSS < /opt/oss-java/data/cephalix-INSERT.sql
 	;;
-    	business)
+        business)
             mysql OSS < /opt/oss-java/data/business-INSERT.sql
 	;;
 	*)
@@ -542,10 +549,10 @@ chmod 600 /root/.my.cnf
     log "Enable some importent services"
     for i in $( cat /usr/share/oss/setup/services-to-enable )
     do
-    	systemctl enable $i
+        systemctl enable $i
     done
     if [ "$SCHOOL_TYPE" = "cephalix"  ]; then
-    	systemctl enable cephalix-api
+        systemctl enable cephalix-api
     fi
 
     log "End PostSetup"
