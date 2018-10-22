@@ -135,7 +135,7 @@ then
     do
         for uid in $( oss_api.sh GET users/uidsByRole/$cn )
 	do
-	    i=$( /usr/sbin/oss_get_home $uid)
+	    i=$( /usr/sbin/oss_get_home.sh $uid)
 	    /bin/mkdir -p $i
 	    /bin/chmod -R 711 $i
 	    /bin/chown -R $uid  $i
