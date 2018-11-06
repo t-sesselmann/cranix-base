@@ -342,24 +342,34 @@ daemonize($LOGDIR,$PIDFILE,$DEBUG);
 
 if($lang eq "DE" ) {
    $attr_ext_name = {
+        "UID"              => "uid",
         "LOGIN"            => "uid",
 	"BENUTZERKÜRZEL"   => "uid",
 	"BENUTZERKENNUNG"  => "uid",
 	"BENUTZERNAME"     => "uid",
 	"ANMELDENAME"      => "uid",
+	"SURNAME"          => "surName",
 	"NAME"             => "surName",
 	"NACHNAME"         => "surName",
+	"GIVENNAME"        => "givenName",
 	"VORNAME"          => "givenName",
+	"BIRTHDAY"         => "birthDay",
 	"GEBURTSTAG"       => "birthDay",
 	"GEBURTSDATUM"     => "birthDay",
+	"UUID"             => "uuid",
 	"KENNUNG"          => "uuid",
 	"PERSONALNUMMER"   => "uuid",
 	"IDENTIFIKATOR"    => "uuid",
+	"PASSWORD"         => "password",
 	"PASSWORT"         => "password",
+	"CLASS"            => "class",
 	"KLASSE"           => "class",
+	"GROUP"            => "group",
 	"GRUPPE"           => "group",
+	"MSQUOTA"          => "msQuota",
 	"E-MAIL-QUOTA"     => "msQuota",
 	"MAIL-QUOTA"       => "msQuota",
+	"FSQUOTA"          => "fsQuota",
 	"FESTPLATTENQUOTA" => "fsQuota",
 	"DATEI-QUOTA"      => "fsQuota"
    };
@@ -476,6 +486,9 @@ foreach my $user (@{$users})
    my $key = "$surName-$givenName-$birthday";
    if( $identifier ne 'sn-gn-bd' )
    {
+      if( ! defined $user->{$identifier} ) {
+          close_on_error( "<font color='red'>".__LINE__ ." ". __('The identifier must be contained by all user.')."</font>" );
+      }
       $key = $user->{$identifier};
    }
    $key =~ s/\s//g;
