@@ -133,11 +133,14 @@ then
 
     for cn in $( oss_api_text.sh GET groups/text/byType/primary )
     do
+        setfacl -b /home/$cn
+        chmod 755  /home/$cn
         for uid in $( oss_api.sh GET users/uidsByRole/$cn )
 	do
 	    i=$( /usr/sbin/oss_get_home.sh $uid)
 	    /bin/mkdir -p $i
-	    /bin/chmod -R 711 $i
+	    setfacl -Rb $i
+	    /bin/chmod -R 700 $i
 	    /bin/chown -R $uid  $i
 	    echo "Repairing $i"
 	done
