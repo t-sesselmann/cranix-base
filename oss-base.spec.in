@@ -13,7 +13,7 @@
 Name:           oss-base
 Version:       	@VERSION@ 
 Release:        @RELEASE@ 
-License:        Commercial
+License:        GPL-3.0+
 Vendor:		Dipl.Ing. Peter Varkoly <peter@varkoly.de>
 Summary:        Base package for the OSS
 Url:            http://oss.cephalix.eu/
