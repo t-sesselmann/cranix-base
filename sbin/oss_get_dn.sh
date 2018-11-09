@@ -2,5 +2,5 @@
 
 cn=$1
 
-/usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb cn=$cn dn  | grep dn:
+/usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb "(&(!(objectClass=computer))(cn=$cn))" dn  | grep dn:
 

@@ -157,7 +157,7 @@ if [ "$role" = "workstations" ]; then
 	/usr/sbin/oss_get_dn.sh $uid > $tmpldif
 	echo "changetype: modify
 add: userWorkstations
-userWorkstations: $uid" >> $tmpldif
+userWorkstations: ${SCHOOL_NETBIOSNAME},$uid" >> $tmpldif
 	ldbmodify  -H /var/lib/samba/private/sam.ldb $tmpldif
 	samba-tool user setexpiry  --noexpiry $uid
 	rm -f $tmpldif
