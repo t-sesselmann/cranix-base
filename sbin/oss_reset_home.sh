@@ -55,29 +55,17 @@ else
 fi
 /bin/mkdir -p   /home/software
 /bin/chmod 1775 /home/software
-/bin/mkdir -p   /home/students
-/bin/chmod 751  /home/students
-/bin/mkdir -p   /home/teachers
-/bin/chmod 751  /home/teachers
-/bin/mkdir -p   /home/administration
-/bin/chmod 750  /home/workstations
 
 /bin/chgrp 	 templates /home/templates
-/usr/bin/setfacl -b                      /home/all
-/usr/bin/setfacl -m m::rwx               /home/all
-/usr/bin/setfacl -m g:teachers:rwx       /home/all
-/usr/bin/setfacl -m g:students:rwx       /home/all
-/usr/bin/setfacl -m g:administration:rwx /home/all
-/bin/chgrp teachers                      /home/software
-/usr/bin/setfacl -b                      /home/software
-/usr/bin/setfacl -m g:students:rx        /home/software
-/usr/bin/setfacl -m g:administration:rx  /home/software
-/bin/chgrp          students             /home/students
-/bin/chgrp          teachers             /home/teachers
-/bin/chgrp          administration       /home/administration
-/bin/chgrp          workstations         /home/workstations
-/usr/bin/setfacl -b                      /home/workstations
-/usr/bin/setfacl -m g:teachers:rx        /home/workstations
+/usr/bin/setfacl -Rb                       /home/all
+/usr/bin/setfacl -Rm  m::rwx               /home/all
+/usr/bin/setfacl -Rm  g:teachers:rwx       /home/all
+/usr/bin/setfacl -Rm  g:students:rwx       /home/all
+/usr/bin/setfacl -Rm  g:administration:rwx /home/all
+/usr/bin/setfacl -Rdm m::rwx               /home/all
+/usr/bin/setfacl -Rdm g:teachers:rwx       /home/all
+/usr/bin/setfacl -Rdm g:students:rwx       /home/all
+/usr/bin/setfacl -Rdm g:administration:rwx /home/all
 
 if test -d /home/groups/STUDENTS
 then
@@ -142,6 +130,9 @@ then
 	    setfacl -Rb $i
 	    /bin/chmod -R 700 $i
 	    /bin/chown -R $uid  $i
+	    if [ ! -e /home/${SCHOOL_WORKGROUP}/${uid} ]; then
+                ln -s $i /home/${SCHOOL_WORKGROUP}/${uid}
+            fi
 	    echo "Repairing $i"
 	done
     done
