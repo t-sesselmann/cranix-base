@@ -32,6 +32,11 @@ done
 
 . /etc/sysconfig/schoolserver
 
+if [ ${SCHOOL_DEBUG} = "yes" ];  then
+   DATE=$( /usr/share/oss/tools/oss_date.sh )
+   echo "DATE=$DATE FROM=$FROM TO=$TO PROJECT=$PROJECT SORTDIR=$SORTDIR CLEANUP=$CLEANUP" >> /tmp/collectfiles
+fi
+
 IMPORT="$( oss_get_home.sh ${TO} )/Import/"
 if [ $SORTDIR = "y" ]; then
     TARGET="${IMPORT}/${PROJECT}/$FROM"
@@ -46,6 +51,11 @@ EXPORT="${USERHOME}/Export/"
 if [ ! -d $EXPORT ]; then
     echo "The export directory '$EXPORT' does not exists." 1>&2
     exit 1
+fi
+COUNT=$( ls ${EXPORT} | wc | gawk '{ print $1 }' )
+if [ $COUNT -eq 0 ]; then
+   echo "The export directory '$EXPORT' is empty." 1>&2
+   exit 2
 fi
 
 if [ "$SORTDIR" = "y" ]; then
@@ -68,3 +78,5 @@ if [ "$CLEANUP" = 'y' ]; then
         rm -rf ${USERHOME}/Import/*
     fi
 fi
+
+echo $COUNT
