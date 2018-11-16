@@ -159,6 +159,7 @@ function SetupSamba (){
     samba-tool dns add localhost $SCHOOL_DOMAIN backup       A $SCHOOL_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN install      A $SCHOOL_SERVER        -U Administrator%"$passwd"
     samba-tool dns add localhost $SCHOOL_DOMAIN timeserver   A $SCHOOL_SERVER        -U Administrator%"$passwd"
+    samba-tool dns add localhost $SCHOOL_DOMAIN wpad         A $SCHOOL_SERVER        -U Administrator%"$passwd"
     if [ $SCHOOL_NETBIOSNAME != "admin" ]; then
        samba-tool dns add localhost $SCHOOL_DOMAIN admin   A $SCHOOL_SERVER        -U Administrator%"$passwd"
     fi
