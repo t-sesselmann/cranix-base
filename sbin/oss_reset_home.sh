@@ -76,7 +76,7 @@ fi
 
 if [ "$arg" = "-a" -o  "$arg" = "--all" ]
 then
-    for cn in $( oss_api_text.sh GET groups/text/byType/class )
+    for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/class )
     do
         g=$( echo $cn|tr '[:lower:]' '[:upper:]' )
         i=/home/groups/$g
@@ -94,7 +94,7 @@ then
        	   echo "Class $cn do not exists. Can not repair $i"
         fi
     done
-    for cn in $( oss_api_text.sh GET groups/text/byType/workgroup )
+    for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup )
     do
         g=$( echo $cn|tr '[:lower:]' '[:upper:]' )
         i=/home/groups/$g
@@ -119,11 +119,11 @@ then
     setfacl -R -m  o::--- /home/groups/TEACHERS
     chmod -R o-x /home/groups/TEACHERS
 
-    for cn in $( oss_api_text.sh GET groups/text/byType/primary )
+    for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/primary )
     do
         setfacl -b /home/$cn
         chmod 755  /home/$cn
-        for uid in $( oss_api.sh GET users/uidsByRole/$cn )
+        for uid in $( /usr/sbin/oss_api.sh GET users/uidsByRole/$cn )
 	do
 	    i=$( /usr/sbin/oss_get_home.sh $uid)
 	    /bin/mkdir -p $i

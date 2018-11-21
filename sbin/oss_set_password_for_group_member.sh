@@ -35,7 +35,7 @@ done
 if [ -z "$GROUP" -o -z "$PASSWORD" ]; then
 	usage
 fi
-for i in $( oss_api_text.sh GET groups/text/$GROUP/members )
+for i in $( /usr/sbin/oss_api_text.sh GET groups/text/$GROUP/members )
 do
 	echo "Proceeding $i"
 	samba-tool user setpassword $i --newpassword="$PASSWORD" ${ATTR}

@@ -14,6 +14,6 @@ if [ "${DN}" ]; then
         echo "${DN}" > ${tmpldif};
         echo "changetype: modify
 delete: userWorkstations" >> ${tmpldif}
-        ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
+        /usr/bin/ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
 	rm -f ${tmpldif}
 fi

@@ -114,7 +114,7 @@ if ($@)
 {
     die( "decode_json failed, invalid json. error:$@\n" );
 }
-my $CHECK_PASSWORD_QUALITY = `oss_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
+my $CHECK_PASSWORD_QUALITY = `/usr/sbin/oss_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
 system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no");
 foreach my $user (@{$users})
 {

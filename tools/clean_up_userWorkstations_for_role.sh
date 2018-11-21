@@ -8,7 +8,7 @@ if [ -z "$ROLE" ]; then
 	echo
 	exit 1
 fi
-for U in $( oss_api.sh GET users/uidsByRole/${ROLE} )
+for U in $( /usr/sbin/oss_api.sh GET users/uidsByRole/${ROLE} )
 do
         DN=$( oss_get_dn.sh ${U} )
         if [ "${DN}" ]; then
@@ -16,7 +16,7 @@ do
                 echo "${DN}" > ${tmpldif};
                 echo "changetype: modify
 delete: userWorkstations" >> ${tmpldif}
-                ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
+                /usr/bin/ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
 		rm -f ${tmpldif}
         fi
 done
