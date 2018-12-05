@@ -24,6 +24,7 @@ PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
 PreReq:		filesystem
+Requires:       quota
 Requires:       rsync
 Requires:       samba-ad
 Requires:       perl-JSON-XS
