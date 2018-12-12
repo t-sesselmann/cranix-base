@@ -56,16 +56,16 @@ case "$3" in
 		n=0;
 		for l in $( /usr/sbin/iptables -t filter -S forward_ext ); do n=$((n+1)); echo $l | grep -q 'j ACCEPT' && e=$n; done;
 		COMMAND="/usr/sbin/iptables -I forward_ext $e -s $2 ! -d $NETWORK -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED"
-		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_ext $e -d $2 ! -s $NETWORK -j ACCEPT -m state --state RELATED,ESTABLISHED"
-		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_int $i -s $2 ! -d $NETWORK -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED"
-		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_int $i -d $2 ! -s $NETWORK -j ACCEPT -m state --state RELATED,ESTABLISHED"
-		COMMAND="$COMMAND; /usr/sbin/iptables -I POSTROUTING -s $2 ! -d $NETWORK -o ${DEV} -j MASQUERADE -t nat;"
+		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_ext $e -d $2 -j ACCEPT -m state --state RELATED,ESTABLISHED"
+		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_int $i -s $2 -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED"
+		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_int $i -d $2 -j ACCEPT -m state --state RELATED,ESTABLISHED"
+		COMMAND="$COMMAND; /usr/sbin/iptables -I POSTROUTING -s $2 -o ${DEV} -j MASQUERADE -t nat;"
 	else
 		COMMAND="/usr/sbin/iptables -D forward_ext -s $2 ! -d $NETWORK -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED &> /dev/null"
-		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_ext -d $2 ! -s $NETWORK -j ACCEPT -m state --state RELATED,ESTABLISHED &> /dev/null"
-		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_int -s $2 ! -d $NETWORK -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED &> /dev/null"
-		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_int -d $2 ! -s $NETWORK -j ACCEPT -m state --state RELATED,ESTABLISHED &> /dev/null"
-		COMMAND="$COMMAND; while /usr/sbin/iptables -D POSTROUTING -s $2 ! -d $NETWORK -o ${DEV} -j MASQUERADE -t nat ; do false; done &> /dev/null"
+		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_ext -d $2 -j ACCEPT -m state --state RELATED,ESTABLISHED &> /dev/null"
+		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_int -s $2 -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED &> /dev/null"
+		COMMAND="$COMMAND; /usr/sbin/iptables -D forward_int -d $2 -j ACCEPT -m state --state RELATED,ESTABLISHED &> /dev/null"
+		COMMAND="$COMMAND; while /usr/sbin/iptables -D POSTROUTING -s $2 -o ${DEV} -j MASQUERADE -t nat ; do false; done &> /dev/null"
 	fi
 	;;
    proxy|internet|printing|portal)
