@@ -44,6 +44,7 @@ else
     TARGET="${IMPORT}/${PROJECT}"
 fi
 mkdir -p -m 700 "${TARGET}"
+chown -R $TO "${IMPORT}/${PROJECT}"
 
 USERHOME=$( oss_get_home.sh ${FROM} )
 EXPORT="${USERHOME}/Export/"
@@ -64,7 +65,7 @@ else
     IFS=$'\n'
     for i in $EXPORT/*
     do
-       j=$( basename $i )
+       j=$( basename "$i" )
        cp "$i" "${TARGET}/${FROM}-${j}"
     done
 fi
