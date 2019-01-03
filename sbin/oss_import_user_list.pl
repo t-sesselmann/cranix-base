@@ -452,7 +452,6 @@ my @ALLUID     = ();
 my %ALLUSER    = ();
 my @AKTUID     = ();
 my $DOMAIN     = $domain;
-my $PRIMERCLASS= "";
 my @lines      = ();
 my $ret        = '';
 
@@ -462,6 +461,9 @@ my $header        = {};
 
 # Get the list of the classes
 @CLASSES = `/usr/sbin/oss_api_text.sh GET groups/text/byType/class`;
+if( !scalar(@CLASSES) ) {
+	push @CLASSES,'dummy';
+}
 @GROUPS  = `/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup`;
 
 # Get the list of the users
@@ -641,6 +643,7 @@ foreach my $act_line (@lines)
     my @classes = ();
     my @groups  = ();
     my $MYCLASSES  = "";
+    my $PRIMERCLASS = "";
 
     # Pearsing the line
     my @line = split /$sep/, $act_line;
@@ -685,6 +688,9 @@ foreach my $act_line (@lines)
     if( $PRIMERCLASS eq 'ALL' )
     {
         @classes = @CLASSES;
+    }
+    if( ! $PRIMERCLASS ) {
+	$PRIMERCLASS = 'dummy';
     }
 
     # If there is no domain defined we use the main mail domain
