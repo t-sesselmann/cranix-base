@@ -268,7 +268,7 @@ SCHOOL_RESET_REGISTER_PASSWORD="no"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-SCHOOL_MONITOR_SERVICES="amavis apache2 cups dhcpd ntp oss-api oss_get_screenshots oss_salt_event_watcher postfix salt-master samba squid"
+SCHOOL_MONITOR_SERVICES="amavis apache2 cups dhcpd ntpd oss-api oss_get_screenshots oss_salt_event_watcher postfix salt-master samba squid"
 
 ## Type:	yesno
 ## Default:	no
