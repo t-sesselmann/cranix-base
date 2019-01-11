@@ -14,7 +14,7 @@ my $imap = Mail::IMAPClient->new(
   Uid      => 1,
 );
 
-$imap->setquota("user/$user","STORAGE",$quota);
-print $imap->quota("user/$user")."\n";
-print $imap->quota_usage("user/$user")."\n";
+$imap->setquota("user".$imap->separator.$user,"STORAGE",$quota);
+print $imap->quota("user".$imap->separator.$user)."\n";
+print $imap->quota_usage("user".$imap->separator.$user)."\n";
 
