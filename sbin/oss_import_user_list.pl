@@ -945,8 +945,8 @@ foreach my $act_line (@lines)
             if( !$test )
             {
 		    write_file("$IMPORTDIR/tmp/add_user.$USERCOUNT",hash_to_json(\%USER));
-		    print "/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT\n";
-		    my $result = `/usr/sbin/oss_api_post_file.sh users/add $IMPORTDIR/tmp/add_user.$USERCOUNT`;
+		    print "/usr/sbin/oss_api_post_file.sh users/insert $IMPORTDIR/tmp/add_user.$USERCOUNT\n";
+		    my $result = `/usr/sbin/oss_api_post_file.sh users/insert $IMPORTDIR/tmp/add_user.$USERCOUNT`;
 		    $result = eval { decode_json($result) };
 		    sleep(3);
 		    if ($@)
