@@ -20,12 +20,18 @@ netmask=int(os.popen('oss_api_text.sh GET system/configuration/NETMASK').read().
 network=os.popen('oss_api_text.sh GET system/configuration/NETWORK').read().split('.')
 revdomain=""
 if netmask > 23:
+  if ip[0] != network[0] or ip[1] != network[1] or ip[2] != network[2]:
+    os.exit(0)
   revdomain = network[2]+'.'+network[1]+'.'+network[0]+'.IN-ADDR.ARPA'
   rdomain = ip[3]
 elif netmask > 15:
+  if ip[0] != network[0] or ip[1] != network[1]:
+    os.exit(0)  
   revdomain = network[1]+'.'+network[0]+'.IN-ADDR.ARPA'
   rdomain = ip[3]+'.'+ip[2]
 elif netmask > 7:
+  if ip[0] != network[0]:
+    os.exit(0)  
   revdomain = network[0]+'.IN-ADDR.ARPA'
   rdomain = ip[3]+'.'+ip[2]+'.'+ip[1]
 
