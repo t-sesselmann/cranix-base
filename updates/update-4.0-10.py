@@ -27,10 +27,16 @@ for device in devices:
   ip   = device["ip"].split('.')
   name = device["name"]
   if netmask > 23:
+    if ip[0] != network[0] or ip[1] != network[1] or ip[2] != network[2]:
+      next
     rdomain = ip[3]
   elif netmask > 15:
+    if ip[0] != network[0] or ip[1] != network[1]:
+      next
     rdomain = ip[3]+'.'+ip[2]
   elif netmask > 7:
+    if ip[0] != network[0]:
+      next
     rdomain = ip[3]+'.'+ip[2]+'.'+ip[1]
   os.system("samba-tool dns add localhost " + revdomain + " " + rdomain + " PTR " + name + "." + domain + "  -U register%" + passwd )
 
