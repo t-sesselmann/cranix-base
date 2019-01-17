@@ -7,7 +7,7 @@ echo "Patch 4.0-08 already installed"
         exit 0
 fi
 
-/etc/sysconfig/schoolserver
+. /etc/sysconfig/schoolserver
 for uid in $( oss_api.sh GET users/uidsByRole/workstations )
 do
 tmpldif=$( mktemp /tmp/fixwsXXXXXXXX )
