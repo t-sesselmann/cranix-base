@@ -27,7 +27,15 @@ if [ "${SCHOOL_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/oss/templates/copy_
 	cat /usr/share/oss/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
-if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} = "yes" -a ${SCHOOL_TEACHER_OBSERV_HOME} = "no"  ]; then
+if [ "$role" = "students" ]; then
+        if [ "${SCHOOL_MOVE_STUDENTS_PROFILE_TO_HOME}" = "no" ]; then
+                SCHOOL_MOVE_PROFILE_TO_HOME="no"
+        fi
+        if [ ${SCHOOL_TEACHER_OBSERV_HOME} = "yes" ]; then
+                SCHOOL_MOVE_PROFILE_TO_HOME="no"
+        fi
+fi
+if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} ]; then
 	cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 	userHome=$( oss_get_home.sh ${U} )
         install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
