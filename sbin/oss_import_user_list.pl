@@ -46,6 +46,7 @@ my $date         = `date +%Y-%m-%d.%H-%M-%S`; chop $date;
 my $attr_ext_name = {};
 my $CHECK_PASSWORD_QUALITY = `oss_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
 my $USERCOUNT    = 0;
+my $SLEEP        = 2;
 #############################################################################
 ## Subroutines
 #############################################################################
@@ -53,6 +54,7 @@ my $USERCOUNT    = 0;
 sub usage
 {
 
+	print "\n";
         print "import_user_list.pl [<options>]\n";
         print "Options:\n";
         print "  --help         Print this help message\n";
@@ -84,6 +86,9 @@ sub usage
         print "  --identifier   Which attribute(s) will be used to identify an user.\n";
         print "                 Normaly the sn givenName and birthday combination will be used.\n";
         print "                 Possible values are uid or uuid (uniqueidentifier).\n";
+	print "  --sleep        The import script sleeps between creating the user objects not to catch all the resources of OSS.\n;"
+	print "                 The default value is 2 second. You can modify this.\n";
+	print "\n";
 
 }
 
@@ -948,7 +953,7 @@ foreach my $act_line (@lines)
 		    print "/usr/sbin/oss_api_post_file.sh users/insert $IMPORTDIR/tmp/add_user.$USERCOUNT\n";
 		    my $result = `/usr/sbin/oss_api_post_file.sh users/insert $IMPORTDIR/tmp/add_user.$USERCOUNT`;
 		    $result = eval { decode_json($result) };
-		    sleep(3);
+		    sleep($SLEEP);
 		    if ($@)
 		    {
 		        close_on_error( "decode_json failed, invalid json. error:$@\n" );
@@ -967,9 +972,8 @@ foreach my $act_line (@lines)
 		      if( ! defined $USER{'uid'} ) {
 		          $USER{'uid'} = $result->{'uid'};
 		      }
-                      $uid         = $USER{'uid'};
+                      $uid        = $USER{'uid'};
                       $ERRORS    .= "<b>".$USER{'givenName'}." ".$USER{'surName'}."</b> ".__('created')." ".__('uid').": \"$uid\" ".__('class').":".$MYCLASSES." <br>\n";
-		      sleep(3);
 		      foreach my $g (@classes)
 		      {
 		          print "/usr/sbin/oss_api_text.sh PUT users/text/$uid/groups/$g\n";
