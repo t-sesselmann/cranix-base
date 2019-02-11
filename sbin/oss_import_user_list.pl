@@ -86,7 +86,7 @@ sub usage
         print "  --identifier   Which attribute(s) will be used to identify an user.\n";
         print "                 Normaly the sn givenName and birthday combination will be used.\n";
         print "                 Possible values are uid or uuid (uniqueidentifier).\n";
-	print "  --sleep        The import script sleeps between creating the user objects not to catch all the resources of OSS.\n;"
+	print "  --sleep        The import script sleeps between creating the user objects not to catch all the resources of OSS.\n";
 	print "                 The default value is 2 second. You can modify this.\n";
 	print "\n";
 
