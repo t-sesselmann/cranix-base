@@ -1,6 +1,3 @@
 #!/bin/bash
 
-uid=$1
-
-/usr/bin/ldbsearch -H /var/lib/samba/private/sam.ldb uid=$uid unixHomeDirectory  | grep unixHomeDirectory: | sed 's/unixHomeDirectory: //'
-
+oss_api_text.sh GET users/byUid/$1/home 2>/dev/null
