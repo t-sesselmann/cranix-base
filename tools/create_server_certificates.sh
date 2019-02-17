@@ -35,7 +35,7 @@ RANDFILE        = \$dir/private/.rand
 x509_extensions = usr_cert
 
 default_days    = 3600
-default_md      = md5
+default_md      = sha256
 policy          = policy_anything
 
 [ policy_anything ]
