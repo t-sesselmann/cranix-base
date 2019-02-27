@@ -12,9 +12,9 @@ my $imap = Mail::IMAPClient->new(
 );
 while(<>) {
 chomp;
-	my $quota  = $imap->quota("user/$_");
+	my $quota  = $imap->quota("user".$imap->separator."$_");
 	if( defined $quota ) {
-		my $quotau = $imap->quota_usage("user/$_");
+		my $quotau = $imap->quota_usage("user".$imap->separator."$_");
 		print "$_ $quotau $quota\n";
 	}
 }
