@@ -8,9 +8,9 @@ if [ -z "${U}" ]; then
 	echo
 	exit 1
 fi
-DN=$( oss_get_dn.sh ${U} )
+DN=$( /usr/sbin/oss_get_dn.sh ${U} )
 if [ "${DN}" ]; then
-        tmpldif=$( mktemp /tmp/CleanUpWSXXXXXXXX )
+        tmpldif=$( /usr/bin/mktemp /tmp/CleanUpWSXXXXXXXX )
         echo "${DN}" > ${tmpldif};
         echo "changetype: modify
 delete: userWorkstations" >> ${tmpldif}

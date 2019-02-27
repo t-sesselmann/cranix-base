@@ -10,9 +10,9 @@ if [ -z "$ROLE" ]; then
 fi
 for U in $( /usr/sbin/oss_api.sh GET users/uidsByRole/${ROLE} )
 do
-        DN=$( oss_get_dn.sh ${U} )
+        DN=$( /usr/sbin/oss_get_dn.sh ${U} )
         if [ "${DN}" ]; then
-                tmpldif=$( mktemp /tmp/CleanUpWSXXXXXXXX )
+                tmpldif=$( /usr/bin/mktemp /tmp/CleanUpWSXXXXXXXX )
                 echo "${DN}" > ${tmpldif};
                 echo "changetype: modify
 delete: userWorkstations" >> ${tmpldif}

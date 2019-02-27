@@ -77,7 +77,7 @@ while [ "$1" != "" ]; do
     shift
 done
 . /etc/sysconfig/schoolserver
-FILE=`mktemp /tmp/oss_del_user_filesXXX`
+FILE=`/usr/bin/mktemp /tmp/oss_del_user_filesXXX`
 DATUM=`/usr/share/oss/tools/oss_date.sh`
 
 if [ -d $HOMEDIR ]
