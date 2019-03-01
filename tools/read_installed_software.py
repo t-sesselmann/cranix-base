@@ -23,7 +23,9 @@ if type(softwares[minion]) == dict:
      shash['description'] = u'' + software
      shash['version'] = version
      try:
-        os.write(new_file,json.dumps(shash,sort_keys=True,ensure_ascii=False,encoding="utf-8"))
+        fobj = open(new_file,"w",encoding="utf-8")
+        fobj.write(json.dumps(shash,sort_keys=True,ensure_ascii=False,encoding="utf-8"))
+        fobj.close()
      except UnicodeEncodeError:
         print u'Could not write: ' + software
      else:
