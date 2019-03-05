@@ -219,7 +219,7 @@ sub create_secure_pw {
     my $lenght = shift || 10;
     $lenght    = $lenght-2;
     my $pw     = "";
-    my @SIGNS  = ( '#', '+', '$','&','!');
+    my @SIGNS  = ( '#', '+', '$');
     my $start  = int(rand($lenght/2))+3;
     for( my $i=0; $i < $start; $i++)
     {
@@ -285,7 +285,7 @@ if ( defined($options{'help'}) )
 }
 if ( defined($options{'role'}) )
 {
-        $role = $options{'role'};
+        $role = lc($options{'role'});
 }
 if ( defined($options{'full'}) )
 {
@@ -325,7 +325,7 @@ if ( defined($options{'domain'}) )
 }
 if ( defined($options{'lang'}) )
 {
-        $lang = $options{'lang'};
+        $lang = uc($options{'lang'});
 }
 if ( defined($options{'identifier'}) )
 {
