@@ -4,8 +4,9 @@
 
 read pw2check
 
-if [ ${#pw2check} -lt 7 ]; then
-	echo "User password must contain minimum 7 characters."
+MINL=$( samba-tool domain passwordsettings show | grep "Minimum password length:" | sed 's/Minimum password length: //' )
+if [ ${#pw2check} -lt ${MINL} ]; then
+	echo "User password must contain minimum %s characters.##${MINL}"
 	exit 1
 fi
 
