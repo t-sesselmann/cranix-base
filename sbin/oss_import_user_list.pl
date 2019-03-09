@@ -261,6 +261,7 @@ $result = GetOptions(\%options,
                         "role=s",
                         "domain=s",
                         "lang=s",
+                        "sleep=s",
                         "mailenabled=s",
                         "password=s",
                         "resetPassword",
@@ -294,6 +295,10 @@ if ( defined($options{'full'}) )
 if ( defined($options{'debug'}) )
 {
         $DEBUG = 1;
+}
+if ( defined($options{'sleep'}) )
+{
+        $SLEEP = $options{'sleep'};
 }
 if ( defined($options{'test'}) )
 {
