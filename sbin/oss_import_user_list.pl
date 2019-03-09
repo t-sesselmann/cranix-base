@@ -230,7 +230,7 @@ sub create_secure_pw {
           $pw .= pack( "C", int(rand(25)+65) );
         }
     }
-    $pw .= $SIGNS[int(rand(5))];
+    $pw .= $SIGNS[int(rand(3))];
     $pw .= int(rand(8))+2;
     for( my $i=0; $i < $lenght-$start; $i++)
     {
