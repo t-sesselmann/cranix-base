@@ -32,6 +32,7 @@ Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
 Requires:   python-xhtml2pdf
 Requires:   python-unicodecsv
+Requires:   poppler-tools
 Conflicts:	nscd
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
