@@ -1088,7 +1088,7 @@ else
     }
     if( scalar @List > 1 )
     {
-        save_file( \@List, "$IMPORTDIR/userlist.$role.txt" );
+        save_file( \@List, "$IMPORTDIR/all-user.txt" );
     }
 }
 # Delete old students
@@ -1170,6 +1170,7 @@ if( !$test )
     print("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY\n");
     system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
     system("systemctl try-restart squid");
+    system("/usr/share/oss/tools/create_password_files.py $IMPORTDIR");
 }
 system("rm $RUNFILE");
 system("rm $PIDFILE");

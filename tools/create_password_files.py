@@ -24,13 +24,21 @@ def convertHtmlToPdf(sourceHtml, outputFilename):
     # return True on success and False on errors
     return pisaStatus.err
 
-userlit="/home/groups/SYSADMINS/userimports/" + sys.argv[1] + "/all-students.txt"
-if not os.path.isdir( "/home/groups/SYSADMINS/userimports/" + sys.argv[1] + "/passwordfiles" ):
-  os.mkdir( "/home/groups/SYSADMINS/userimports/" + sys.argv[1] + "/passwordfiles", 0770 );
+import_dir= sys.argv[1] + "/"
+user_list = import_dir + "all-students.txt"
+students  = 1
+if not os.path.exists( user_list ):
+    user_list=import_dir + "all-user.txt"
+    students = 0
+if not os.path.exists( import_dir + "/passwordfiles" ):
+  os.mkdir( import_dir + "passwordfiles", 0770 );
 
-with open(userlit) as csvfile:
+all_classes = []
+with open(user_list) as csvfile:
+    #Detect the type of the csv file
     dialect = unicodecsv.Sniffer().sniff(csvfile.read(1024))
     csvfile.seek(0)
+    #Create an array of dicts from it
     unicodecsv.register_dialect('oss',dialect)
     reader = unicodecsv.DictReader(csvfile,dialect='oss')
     for row in reader:
@@ -43,6 +51,20 @@ with open(userlit) as csvfile:
             template = template.replace(field,escape(row[field]))
             if field == "UID" or field == "BENUTZERNAME" or field == "LOGIN":
                 uid=row[field]
-            if field == "CLASS" or field == "KLASSE":
+            if students == 1 and ( field == "CLASS" or field == "KLASSE" ):
                 group=row[field]
-        convertHtmlToPdf(template,"/home/groups/SYSADMINS/userimports/" + sys.argv[1] + "/passwordfiles/" + group + "-" + uid + '.pdf')
+                if group not in all_classes:
+                    all_classes.append(group)
+        if students == 1:
+           convertHtmlToPdf(template, import_dir + "/passwordfiles/" + group + "-" + uid + '.pdf')
+        else:
+           convertHtmlToPdf(template, import_dir + "/passwordfiles/" + uid + '.pdf')
+
+if students == 1:
+  for group in all_classes:
+    os.system("/uYsr/bin/pdfunite " + import_dir + "passwordfiles/" + group + "-*.pdf " + import_dir + "/passwordfiles/" + group + ".pdf")
+    os.system("rm " + import_dir + "passwordfiles/" + group + "-*.pdf" )
+else:
+  os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/*.pdf " + import_dir + "/passwordfiles/ALL-USER.pdf")
+  os.system("rm " + import_dir + "passwordfiles/!(ALL-USER.pdf)")
+
