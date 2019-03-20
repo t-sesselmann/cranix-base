@@ -56,6 +56,7 @@ function log() {
 }
 
 function InitGlobalVariable (){
+
     ########################################################################
     log "Setup ntp"
     mv /etc/ntp.conf /etc/ntp.conf.backup
@@ -69,6 +70,14 @@ function InitGlobalVariable (){
     . $sysconfig
 
     log "   passwd = $passwd"
+
+    ########################################################################
+    log "Register the oss if regcode is valid"
+    echo "185.3.232.240 repo.cephalix.eu" >> /etc/hosts
+    VALID=$( curl -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REGCODE} )
+    if [ $VALID -gt 0 ]; then
+	    /usr/share/oss/tools/register.sh
+    fi
 
     ########################################################################
     log " - Set windomain variable"
