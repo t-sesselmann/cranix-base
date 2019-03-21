@@ -10,7 +10,13 @@ if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
 	exit 1
 fi
 
+VALID=$( curl -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REGCODE} )
+if [  $? > 0 -o ${VALID} -eq 0 ]; then
+	echo "Can not register."
+	exit 1
+fi
 zypper rr OSS-4.0-0
+zypper rr OSS-4.0.1-0
 #Save the credentials
 echo "[${SCHOOL_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}

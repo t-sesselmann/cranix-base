@@ -72,14 +72,6 @@ function InitGlobalVariable (){
     log "   passwd = $passwd"
 
     ########################################################################
-    log "Register the oss if regcode is valid"
-    echo "185.3.232.240 repo.cephalix.eu" >> /etc/hosts
-    VALID=$( curl -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REGCODE} )
-    if [ $VALID -gt 0 ]; then
-	    /usr/share/oss/tools/register.sh
-    fi
-
-    ########################################################################
     log " - Set windomain variable"
     windomain=`echo "$SCHOOL_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
