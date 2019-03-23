@@ -30,9 +30,9 @@ Requires:       samba-ad
 Requires:       perl-JSON-XS
 Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
-Requires:   python-xhtml2pdf
-Requires:   python-unicodecsv
-Requires:   poppler-tools
+Requires:	python-xhtml2pdf
+Requires:	python-unicodecsv
+Requires:	poppler-tools
 Conflicts:	nscd
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
