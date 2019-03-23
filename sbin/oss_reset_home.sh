@@ -87,8 +87,8 @@ then
             chgrp -R $gid  $i
             /usr/bin/setfacl -P -R -b $i
             /bin/chmod -R 3771 $i
-            /usr/bin/setfacl -d -m g::rwx $i
-            /usr/bin/setfacl -P -R -m g::rwx $i
+	    find $i -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
+	    find $i -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
@@ -105,8 +105,8 @@ then
             chgrp -R $gid  $i
             /usr/bin/setfacl -P -R -b $i
             /bin/chmod -R 3771 $i
-            /usr/bin/setfacl -d -m g::rwx $i
-            /usr/bin/setfacl -P -R -m g::rwx $i
+	    find $i -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
+	    find $i -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
@@ -136,5 +136,8 @@ then
 	    echo "Repairing $i"
 	done
     done
+fi
 
+if [ -e /usr/share/oss/tools/custom_reset_home.sh ]; then
+	/usr/share/oss/tools/custom_reset_home.sh
 fi
