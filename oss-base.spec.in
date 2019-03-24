@@ -73,16 +73,16 @@ if [ ${1:-0} -gt 1 ]; then
     	$i &> /var/log/oss-update/$b
        fi
    done
+   if [ ! -e /usr/share/oss/templates/password.html ]; then
+      . /etc/sysconfig/schoolserver
+      sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
+   fi
 fi
 if [ -e /usr/share/oss/software/oss ]; then
 	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
 fi
 if [ -e /usr/share/oss/profiles ]; then
 	rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
-fi
-if [ ! -e /usr/share/oss/templates/password.html ]; then
-   . /etc/sysconfig/schoolserver
-   sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
 fi
 %{fillup_only -n schoolserver}
 

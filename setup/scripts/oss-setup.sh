@@ -557,6 +557,10 @@ chmod 600 /root/.my.cnf
         systemctl enable cephalix-api
     fi
 
+    ########################################################################
+    log "Generate password file templates"
+    sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
+
     log "End PostSetup"
 
 }
