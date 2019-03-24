@@ -62,7 +62,7 @@ with open(user_list) as csvfile:
 
 if students == 1:
   for group in all_classes:
-    os.system("/uYsr/bin/pdfunite " + import_dir + "passwordfiles/" + group + "-*.pdf " + import_dir + "/passwordfiles/" + group + ".pdf")
+    os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/" + group + "-*.pdf " + import_dir + "/passwordfiles/" + group + ".pdf")
     os.system("rm " + import_dir + "passwordfiles/" + group + "-*.pdf" )
 else:
   os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/*.pdf " + import_dir + "/passwordfiles/ALL-USER.pdf")
