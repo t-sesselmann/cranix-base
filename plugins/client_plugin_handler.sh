@@ -8,7 +8,7 @@ client=$2
 if [ -d /usr/share/oss/plugins/clients/$what ]
 then
  cd /usr/share/oss/plugins/clients/$what
- for i in `find -mindepth 1 -maxdepth 1`
+ for i in `find -mindepth 1 -maxdepth 1 | sort`
  do
    /usr/share/oss/plugins/clients/$what/$i $client &
  done

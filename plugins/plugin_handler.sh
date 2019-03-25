@@ -24,7 +24,7 @@ fi
 if [ -d /usr/share/oss/plugins/$what ]
 then
  cd /usr/share/oss/plugins/$what
- for i in `find -mindepth 1 -maxdepth 1` 
+ for i in `find -mindepth 1 -maxdepth 1 | sort` 
  do
    cat $conf | /usr/share/oss/plugins/$what/$i
    if [ "$SCHOOL_DEBUG" = "yes" ]
