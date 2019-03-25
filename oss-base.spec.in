@@ -26,7 +26,11 @@ PreReq:         salt-master
 PreReq:		filesystem
 Requires:       quota
 Requires:       rsync
+%if 0%{?suse_version} >= 1500
+Requires:       samba-ad >= 4.10.0
+%else
 Requires:       samba-ad
+%endif
 Requires:       perl-JSON-XS
 Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
