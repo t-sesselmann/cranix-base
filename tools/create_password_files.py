@@ -7,7 +7,7 @@ import os
 try:
     from html import escape  # python 3.x
 except ImportError:
-    from cgi import escape 
+    from cgi import escape
 
 def convertHtmlToPdf(sourceHtml, outputFilename):
     # open output file for writing (truncated binary)
