@@ -77,6 +77,9 @@ fi
 if [ -e /usr/share/oss/profiles ]; then
 	rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
 fi
+sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
+sed -i 's#OSS/4.0$#OSS/4.0.1#' /etc/zypp/repos.d/OSS.repo
+echo "/usr/sbin/oss_update.sh" | at "now + 20Minutes"
 %{fillup_only -n schoolserver}
 
 %postun
