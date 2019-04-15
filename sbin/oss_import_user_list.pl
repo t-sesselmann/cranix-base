@@ -1082,7 +1082,6 @@ else
     {
         if( $h ne "header" )
         {
-            push @List, " ";
             push @List, $NEWLIST->{$role}->{$h};
         }
     }
