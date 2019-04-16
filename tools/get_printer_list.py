@@ -11,13 +11,13 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
   match = re.search("([\-\w]+):", line)
   if match:
      if "name" in printer:
-       if os.path.isfile("/var/lib/printserver/drivers/x64/3/"+name+".ppd"):
-         printer["windowsDriver"] = True
-       else:
-         printer["windowsDriver"] = False
        printers.append(printer)
      name =  match.group(1)
      printer = { "name": name }
+     if os.path.isfile("/var/lib/printserver/drivers/x64/3/"+name+".ppd"):
+       printer["windowsDriver"] = True
+     else:
+       printer["windowsDriver"] = False
      next
   #Eval queuing
   match = re.search("queuing is (\w+)", line)
@@ -42,5 +42,6 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
      else:
        printer["activeJobs"] = match.group(1)
      next
+printers.append(printer)
 
 print json.dumps(printers)
