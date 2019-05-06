@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) 2017 Péter Varkoly <peter@varkoly.de> - all rights reserved
+# (c) Péter Varkoly <peter@varkoly.de> - all rights reserved
 
 . /etc/sysconfig/schoolserver
 
