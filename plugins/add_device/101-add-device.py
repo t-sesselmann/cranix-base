@@ -48,14 +48,14 @@ elif netmask > 7:
 if os.system("samba-tool dns add localhost " + revdomain + " " + rdomain + " PTR " + name + "." + domain + "  -U register%" + passwd ) != 0:
   TASK = "/var/adm/oss/opentasks/101-add-device-" + os.popen('uuidgen -t').read().rstrip()
   with open(TASK, "w") as f:
-    f.write("ip: "+','.join(ip))
-    f.write("name: "+name)
+    f.write("ip: "+'.'.join(ip) +"\n")
+    f.write("name: "+name +"\n")
     f.write("wlanip: "+wlanip)
 
 if wlanip != []:
   if os.system("samba-tool dns add localhost " + revdomain + " " + revwlan + " PTR " + name + "-wlan." + domain + "  -U register%" + passwd ) != 0:
     TASK = "/var/adm/oss/opentasks/101-add-device-" + os.popen('uuidgen -t').read().rstrip()
     with open(TASK, "w") as f:
-      f.write("ip: "+','.join(ip))
-      f.write("name: "+name)
+      f.write("ip: "+'.'.join(ip) +"\n")
+      f.write("name: "+name +"\n")
       f.write("wlanip: "+wlanip)
