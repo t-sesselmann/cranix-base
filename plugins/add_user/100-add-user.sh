@@ -26,22 +26,22 @@ abort() {
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
         echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
-        echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
-        echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
+        echo "surname: $surname" >> /var/adm/oss/opentasks/$TASK
+        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
-        echo "fsQuota: $fsQuota" >> /var/adm/oss/opentasks/$TASK
-        echo "msQuota: $msQuota" >> /var/adm/oss/opentasks/$TASK
+        echo "fsquota: $fsquota" >> /var/adm/oss/opentasks/$TASK
+        echo "msquota: $msquota" >> /var/adm/oss/opentasks/$TASK
         exit 1
 }
 
-surName=''
-givenName=''
+surname=''
+givenname=''
 role=''
 uid=''
 password=''
 mpassword='no'
-fsQuota=0
-msQuota=0
+fsquota=0
+msquota=0
 groups=""
 
 
@@ -54,11 +54,11 @@ do
      c=""
   fi
   case $b in
-    surName)
-      surName="${c}"
+    surname)
+      surname="${c}"
     ;;
-    givenName)
-      givenName="${c}"
+    givenname)
+      givenname="${c}"
     ;;
     uid)
       uid="${c}"
@@ -72,12 +72,12 @@ do
     mpassword)
       mpassword="${c}"
     ;;
-    fsQuota)
-      fsQuota="${c}"
+    fsquota)
+      fsquota="${c}"
     ;;
-    msQuota)
-      msQuota="${c}"
-      msQuota=$((msQuota*1024))
+    msquota)
+      msquota="${c}"
+      msquota=$((msquota*1024))
     ;;
   esac
 done
@@ -108,8 +108,8 @@ samba-tool user create "$uid" "$password" \
 				--username="$uid" \
 				--uid="$uid" \
 				--password="$password" \
-				--surname="$surName" \
-				--given-name="$givenName" \
+				--surname="$surname" \
+				--given-name="$givenname" \
 				--home-drive="Z:" \
 				--profile-path="$winprofile" \
 				--script-path="$uid.bat" \
@@ -165,15 +165,15 @@ userWorkstations: ${SCHOOL_NETBIOSNAME},$uid" >> $tmpldif
 fi
 
 #Set default quota
-if [ -z "$fsQuota" ]; then
-        fsQuota=$SCHOOL_FILE_QUOTA
+if [ -z "$fsquota" ]; then
+        fsquota=$SCHOOL_FILE_QUOTA
         if [ $role = "teachers" ]; then
-                fsQuota=$SCHOOL_FILE_TEACHER_QUOTA
+                fsquota=$SCHOOL_FILE_TEACHER_QUOTA
         fi
 fi
 
-/usr/sbin/oss_set_quota.sh $uid $fsQuota
+/usr/sbin/oss_set_quota.sh $uid $fsquota
 
 #Set mailsystem quota
-/usr/sbin/oss_set_mquota.pl $uid $msQuota
+/usr/sbin/oss_set_mquota.pl $uid $msquota
 
