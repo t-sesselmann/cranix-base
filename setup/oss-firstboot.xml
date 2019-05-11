@@ -88,7 +88,7 @@
                 </module>
                 <module>
                     <label>Language and Keyboard</label>
-                    <enabled config:type="boolean">true</enabled>
+                    <enabled config:type="boolean">false</enabled>
 		    <!-- step for configuration of both language and keyboard layout (fate#306296) -->
                     <name>firstboot_language_keyboard</name>
                 </module>
@@ -113,7 +113,7 @@
                 </module>
                 <module>
                     <label>License Agreement</label>
-                    <enabled config:type="boolean">fals</enabled>
+                    <enabled config:type="boolean">false</enabled>
                     <name>firstboot_license_novell</name>
                 </module>
                 <module>
@@ -133,7 +133,7 @@
                     <enabled config:type="boolean">false</enabled>
                 </module>
                 <module>
-                    <enabled config:type="boolean">true</enabled>
+                    <enabled config:type="boolean">false</enabled>
                     <name>firstboot_ssh</name>
                 </module>
                 <module>
@@ -148,7 +148,7 @@
                  </module>
                 <module>
                     <label>Time and Date</label>
-                    <enabled config:type="boolean">true</enabled>
+                    <enabled config:type="boolean">false</enabled>
                     <name>firstboot_timezone</name>
                 </module>
                 <module>
@@ -207,7 +207,6 @@
                     <label>Finish Setup</label>
                     <name>inst_congratulate</name>
                 </module>
-
             </modules>
         </workflow>
     </workflows>
