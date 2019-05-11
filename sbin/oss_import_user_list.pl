@@ -261,7 +261,11 @@ $result = GetOptions(\%options,
                         "role=s",
                         "domain=s",
                         "lang=s",
+<<<<<<< HEAD
 			"sleep=s",
+=======
+                        "sleep=s",
+>>>>>>> 0783cf8e565c72f3dbd86e6e9dbba6f2ae86f570
                         "mailenabled=s",
                         "password=s",
                         "resetPassword",
@@ -1082,13 +1086,12 @@ else
     {
         if( $h ne "header" )
         {
-            push @List, " ";
             push @List, $NEWLIST->{$role}->{$h};
         }
     }
     if( scalar @List > 1 )
     {
-        save_file( \@List, "$IMPORTDIR/userlist.$role.txt" );
+        save_file( \@List, "$IMPORTDIR/all-user.txt" );
     }
 }
 # Delete old students
@@ -1170,6 +1173,7 @@ if( !$test )
     print("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY\n");
     system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
     system("systemctl try-restart squid");
+    system("/usr/share/oss/tools/create_password_files.py $IMPORTDIR");
 }
 system("rm $RUNFILE");
 system("rm $PIDFILE");

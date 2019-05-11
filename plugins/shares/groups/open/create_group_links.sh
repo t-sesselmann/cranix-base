@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) 2017 Péter Varkoly <peter@varkoly.de> - all rights reserved
+# (c) Péter Varkoly <peter@varkoly.de> - all rights reserved
 
 . /etc/sysconfig/schoolserver
 
@@ -21,6 +21,9 @@ done
 unset IFS
 
 userHome=$( /usr/sbin/oss_get_home.sh $user )
+if [ -z "${userHome}" -o ${userHome/${SCHOOL_HOME_BASE}/} = ${userHome} ]; then
+	exit 1
+fi
 if [ ! -e $userHome/GROUPS ]; then
         ln -s $SCHOOL_HOME_BASE/groups/LINKED/$user $userHome/GROUPS
 fi

@@ -46,7 +46,7 @@ if [ $? != 0 ]; then
    abort
 fi
 if [ "$wlanip" -a "$wlanmac" ]; then
-	samba-tool dns add localhost $SCHOOL_DOMAIN $name  A $wlanip   -U register%"$passwd"
+	samba-tool dns add localhost $SCHOOL_DOMAIN "${name}-wlan"  A $wlanip   -U register%"$passwd"
 	if [ $? != 0 ]; then
 	   abort
 	fi

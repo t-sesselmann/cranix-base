@@ -56,6 +56,7 @@ function log() {
 }
 
 function InitGlobalVariable (){
+
     ########################################################################
     log "Setup ntp"
     mv /etc/ntp.conf /etc/ntp.conf.backup
@@ -163,6 +164,8 @@ function SetupSamba (){
     if [ $SCHOOL_NETBIOSNAME != "admin" ]; then
        samba-tool dns add localhost $SCHOOL_DOMAIN admin   A $SCHOOL_SERVER        -U Administrator%"$passwd"
     fi
+    /usr/share/oss/setup/scripts/create-revers-domain.py "$passwd" $SCHOOL_DOMAIN $SCHOOL_NETWORK $SCHOOL_NETMASK \
+	   "mailserver:$SCHOOL_MAILSERVER,proxy:$SCHOOL_PROXY,printserver:$SCHOOL_PRINTSERVER,backup:$SCHOOL_BACKUP_SERVER,admin:$SCHOOL_SERVER,router:$SCHOOL_NET_GATEWAY" 
 
     #Add rfc2307 attributes to Administartor
     DN=$( /usr/sbin/oss_get_dn.sh Administrator )
@@ -555,6 +558,10 @@ chmod 600 /root/.my.cnf
     if [ "$SCHOOL_TYPE" = "cephalix"  ]; then
         systemctl enable cephalix-api
     fi
+
+    ########################################################################
+    log "Generate password file templates"
+    sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
 
     log "End PostSetup"
 

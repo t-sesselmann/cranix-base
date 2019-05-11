@@ -36,9 +36,13 @@ if [ "$role" = "students" ]; then
         fi
 fi
 if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} ]; then
-	cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 	userHome=$( oss_get_home.sh ${U} )
-        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
+	if [ -z "${userHome}" -o ${userHome/${SCHOOL_HOME_BASE}/} = ${userHome} ]; then
+                echo "ERROR create-logon-script: '$U' has not home directory"
+        else
+		cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
+	fi
 else 
 	cat /usr/share/oss/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi

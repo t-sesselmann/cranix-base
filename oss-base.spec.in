@@ -26,10 +26,19 @@ PreReq:         salt-master
 PreReq:		filesystem
 Requires:       quota
 Requires:       rsync
+%if 0%{?suse_version} >= 1500
+Requires:	python3-xhtml2pdf
+Requires:	python3-unicodecsv
+Requires:       samba-ad >= 4.10.0
+%else
+Requires:	python-xhtml2pdf
+Requires:	python-unicodecsv
 Requires:       samba-ad
+%endif
 Requires:       perl-JSON-XS
 Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
+Requires:	poppler-tools
 Conflicts:	nscd
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
@@ -70,6 +79,10 @@ if [ ${1:-0} -gt 1 ]; then
     	$i &> /var/log/oss-update/$b
        fi
    done
+   if [ ! -e /usr/share/oss/templates/password.html ]; then
+      . /etc/sysconfig/schoolserver
+      sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
+   fi
 fi
 if [ -e /usr/share/oss/software/oss ]; then
 	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
