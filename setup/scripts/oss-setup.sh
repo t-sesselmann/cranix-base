@@ -454,6 +454,17 @@ unset _bred _sgr0
     SERVER_NETMASK=$( echo $SCHOOL_SERVER_NET | gawk -F '/' '{ print $2 }' )
     ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
+
+    /usr/bin/firewall-cmd --permanent --new-zone=ANON_DHCP
+    /usr/bin/firewall-cmd --permanent --zone=${name} --set-description="Zone for Room ANON_DHCP"
+    /usr/bin/firewall-cmd --permanent --zone=${name} --add-source="$SCHOOL_ANON_DHCP_NET"
+    /usr/bin/firewall-cmd --permanent --new-zone=SERVER_NET
+    /usr/bin/firewall-cmd --permanent --zone=${name} --set-description="Zone for Room SERVER_NET"
+    /usr/bin/firewall-cmd --permanent --zone=${name} --add-source="$SCHOOL_SERVER_NET"
+    /usr/bin/firewall-cmd --permanent --new-zone=SCHOOL_NETWORK
+    /usr/bin/firewall-cmd --permanent --zone=${name} --set-description="Zone for Room SCHOOL_NET"
+    /usr/bin/firewall-cmd --permanent --zone=${name} --add-source="${SERVER_NETWORK}/${SERVER_NETMASK}"
+
     for i in /opt/oss-java/data/*-INSERT.sql
     do
 	sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		$i
