@@ -51,10 +51,10 @@ dist:
 	rm -rf $(PACKAGE)
 	sed    's/@VERSION@/$(VERSION)/'  $(PACKAGE).spec.in > $(PACKAGE).spec
 	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
-	if [ -d /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE) ] ; then \
-	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); osc up; cd $(HERE);\
+	if [ -d /data1/OSC/home\:varkoly\:OSS-4-1\:leap15.1/$(PACKAGE) ] ; then \
+            cd /data1/OSC/home\:varkoly\:OSS-4-1\:leap15.1/$(PACKAGE); osc up; cd $(HERE);\
 	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
-	    cd /data1/OSC/home\:varkoly\:OSS-4-0/$(PACKAGE); \
+	    cd /data1/OSC/home\:varkoly\:OSS-4-1\:leap15.1/$(PACKAGE); \
 	    osc vc; \
 	    osc ci -m "New Build Version"; \
 	fi
