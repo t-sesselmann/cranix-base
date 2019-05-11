@@ -19,8 +19,8 @@ if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
    exit 3
 fi 
 
-surName=''
-givenName=''
+surname=''
+givenname=''
 role=''
 uid=''
 password=''
@@ -33,8 +33,8 @@ abort() {
 	mkdir -p /var/adm/oss/opentasks/
         echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
         echo "password: $password" >> /var/adm/oss/opentasks/$TASK
-        echo "surName: $surName" >> /var/adm/oss/opentasks/$TASK
-        echo "givenName: $givenName" >> /var/adm/oss/opentasks/$TASK
+        echo "surname: $surname" >> /var/adm/oss/opentasks/$TASK
+        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
         echo "role: $role" >> /var/adm/oss/opentasks/$TASK
         exit 1
 }
@@ -48,11 +48,11 @@ do
      c=""
   fi
   case $b in
-    surName)
-      surName="${c}"
+    surname)
+      surname="${c}"
     ;;
-    givenName)
-      givenName="${c}"
+    givenname)
+      givenname="${c}"
     ;;
     uid)
       uid="${c}"
