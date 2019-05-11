@@ -35,7 +35,7 @@ do
   esac
 done
 
-firewall-cmd  --permanent --new-zone=${name}
-firewall-cmd  --permanent --zone=${name} --set-description="Zone for Room ${name}"
-firewall-cmd  --permanent --zone=${name} --add-source="${startip}/${netmask}"
-
+firewall-cmd --permanent --new-zone=${name}
+firewall-cmd --permanent --zone=${name} --set-description="Zone for Room ${name}"
+firewall-cmd --permanent --zone=${name} --add-source="${startip}/${netmask}"
+firewall-cmd --reload

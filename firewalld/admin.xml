@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ADMIN (HTTPS)</short>
+  <description>External access to the CRANIX admin page.</description>
+  <port protocol="tcp" port="444"/>
+</service>

@@ -4,7 +4,7 @@
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR	= /usr/share/fillup-templates/
-TOPACKAGE       = Makefile etc cups plugins profiles sbin setup salt tools templates updates README.md
+TOPACKAGE       = Makefile cups etc firewalld plugins profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -23,6 +23,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
+	mkdir -p $(DESTDIR)/usr/lib/firewalld/services/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
@@ -37,6 +38,7 @@ install:
 	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_*.service $(DESTDIR)/usr/lib/systemd/system/
+	install -m 755 firewalld/* $(DESTDIR)/usr/lib/firewalld/services/
 
 dist:
 	xterm -e git log --raw  &
@@ -73,26 +75,3 @@ package:        dist
 	cp /usr/src/packages/RPMS/noarch/$(PACKAGE)-*.noarch.rpm /data1/PACKAGES/rpm/noarch/
 	createrepo -p /data1/PACKAGES/
 
-backupinstall:
-	for i in $(REQPACKAGES); do \
-	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
-	    done  
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make backupinstall DESTDIR=$(DESTDIR) SHARE=$(SHARE); \
-	    cd ..;\
-	done
-
-restore:
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make restore; \
-	    cd .. ;\
-	done
-
-state:
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make state DESTDIR=$(DESTDIR) SHARE=$(SHARE); \
-	    cd .. ;\
-	done

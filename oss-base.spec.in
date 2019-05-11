@@ -24,6 +24,7 @@ PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
 PreReq:		filesystem
+PreReq:		firewalld
 Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
@@ -46,10 +47,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Provides:	openschool-base
 Obsoletes:	openschool-base
-
-%if ! %{defined _fillupdir}
-%define _fillupdir /var/adm/fillup-templates
-%endif
 
 %prep
 %setup -q  -n %{name}
@@ -119,6 +116,7 @@ fi
 /usr/share/cups/ipptool/*
 /usr/share/cups/drivers/ps*
 /usr/share/cups/drivers/x64/ps*
+/usr/lib/firewalld/services/*
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
