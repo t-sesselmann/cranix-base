@@ -120,6 +120,7 @@ fi
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
+/usr/lib/firewalld/services/*
 %doc README.md
 
 %description
