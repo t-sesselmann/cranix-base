@@ -5,7 +5,7 @@ abort() {
         TASK="add_room-$( uuidgen -t )"
         mkdir -p /var/adm/oss/opentasks/
         echo "name: $name" >> /var/adm/oss/opentasks/$TASK
-        echo "start: $start" >> /var/adm/oss/opentasks/$TASK
+        echo "startip: $startip" >> /var/adm/oss/opentasks/$TASK
         echo "netmask: $netmask" >> /var/adm/oss/opentasks/$TASK
         echo "hwconf: $hwconf" >> /var/adm/oss/opentasks/$TASK
         exit 1
