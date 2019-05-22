@@ -74,26 +74,3 @@ package:        dist
 	cp /usr/src/packages/RPMS/noarch/$(PACKAGE)-*.noarch.rpm /data1/PACKAGES/rpm/noarch/
 	createrepo -p /data1/PACKAGES/
 
-backupinstall:
-	for i in $(REQPACKAGES); do \
-	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
-	    done  
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make backupinstall DESTDIR=$(DESTDIR) SHARE=$(SHARE); \
-	    cd ..;\
-	done
-
-restore:
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make restore; \
-	    cd .. ;\
-	done
-
-state:
-	for i in $(SUBDIRS); do \
-	    cd $$i; \
-	    make state DESTDIR=$(DESTDIR) SHARE=$(SHARE); \
-	    cd .. ;\
-	done

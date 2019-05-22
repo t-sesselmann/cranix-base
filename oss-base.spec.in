@@ -27,12 +27,8 @@ PreReq:		filesystem
 Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
-Requires:	python3-xhtml2pdf
-Requires:	python3-unicodecsv
 Requires:       samba-ad >= 4.10.0
 %else
-Requires:	python-xhtml2pdf
-Requires:	python-unicodecsv
 Requires:       samba-ad
 %endif
 Requires:       perl-JSON-XS
