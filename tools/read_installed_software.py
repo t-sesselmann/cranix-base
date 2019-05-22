@@ -23,11 +23,11 @@ if type(softwares[minion]) == dict:
      shash['description'] = u'' + software
      shash['version'] = version
      try:
-        fobj = open(new_file,"w",encoding="utf-8")
+        fobj = open(filename,"w")
         fobj.write(json.dumps(shash,sort_keys=True,ensure_ascii=False,encoding="utf-8"))
         fobj.close()
      except UnicodeEncodeError:
-        print u'Could not write: ' + software
+        print u'Could not write software'
      else:
         os.close(new_file)
         result=json.load(os.popen('/usr/sbin/oss_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))
