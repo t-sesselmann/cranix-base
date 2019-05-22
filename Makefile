@@ -10,6 +10,7 @@ RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
 REQPACKAGES     = $(shell cat REQPACKAGES)
 HERE            = $(shell pwd)
+REPO		= /data1/OSC/home:varkoly:OSS-4-0:stable/
 PACKAGE         = oss-base
 
 install:
@@ -51,10 +52,10 @@ dist:
 	rm -rf $(PACKAGE)
 	sed    's/@VERSION@/$(VERSION)/'  $(PACKAGE).spec.in > $(PACKAGE).spec
 	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
-	if [ -d /data1/OSC/home\:varkoly\:OSS-4-0\:stable/$(PACKAGE) ] ; then \
-	    cd /data1/OSC/home\:varkoly\:OSS-4-0\:stable/$(PACKAGE); osc up; cd $(HERE);\
-	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec /data1/OSC/home\:varkoly\:OSS-4-0\:stable/$(PACKAGE); \
-	    cd /data1/OSC/home\:varkoly\:OSS-4-0\:stable/$(PACKAGE); \
+	if [ -d $(REPO)/$(PACKAGE) ] ; then \
+	    cd $(REPO)/$(PACKAGE); osc up; cd $(HERE);\
+	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec $(REPO)/$(PACKAGE); \
+	    cd $(REPO)/$(PACKAGE); \
 	    osc vc; \
 	    osc ci -m "New Build Version"; \
 	fi
