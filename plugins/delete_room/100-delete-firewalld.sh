@@ -36,4 +36,4 @@ do
 done
 
 firewall-cmd  --permanent --delete-zone=${name}
-
+firewall-cmd --reload
