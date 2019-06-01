@@ -22,6 +22,7 @@ fi
 zypper rr ${NAME}-4.0-0
 zypper rr ${NAME}-4.0-1
 zypper rr ${NAME}-4.0.1-0
+zypper rr ${NAME}-${VERSION_ID}-0
 #Save the credentials
 echo "[${SCHOOL_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}
