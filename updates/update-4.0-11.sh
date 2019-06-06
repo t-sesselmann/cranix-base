@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fix the workstation users. It is neccessary for some AD stuff.
+# Fix the services to monitor.
 
 if [ -e "/var/adm/oss/update-4.0-11" ]
 then

@@ -1,9 +1,9 @@
 #!/bin/bash
 # Fix the workstation users. It is neccessary for some AD stuff.
 
-if [ -e "/var/adm/oss/update-4.0-08" ]
+if [ -e "/var/adm/oss/update-4.0-12" ]
 then
-echo "Patch 4.0-08 already installed"
+echo "Patch 4.0-12 already installed"
         exit 0
 fi
 
@@ -18,5 +18,5 @@ userWorkstations: ${SCHOOL_NETBIOSNAME},$uid" >> $tmpldif
         ldbmodify  -H /var/lib/samba/private/sam.ldb $tmpldif
 done
 
-touch /var/adm/oss/update-4.0-08
+touch /var/adm/oss/update-4.0-12
 
