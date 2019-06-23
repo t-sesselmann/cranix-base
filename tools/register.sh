@@ -15,7 +15,7 @@ if [  $? > 0 -o ]; then
         echo "Can not register."
         exit 1
 fi
-if [  -o "${VALID}" = "0" ]; then
+if [ "${VALID}" = "0" ]; then
         echo "Regcode is not valid."
         exit 2
 fi
