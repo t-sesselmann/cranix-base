@@ -261,11 +261,7 @@ $result = GetOptions(\%options,
                         "role=s",
                         "domain=s",
                         "lang=s",
-<<<<<<< HEAD
 			"sleep=s",
-=======
-                        "sleep=s",
->>>>>>> 0783cf8e565c72f3dbd86e6e9dbba6f2ae86f570
                         "mailenabled=s",
                         "password=s",
                         "resetPassword",
