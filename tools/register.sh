@@ -10,8 +10,8 @@ if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
 	exit 1
 fi
 
-VALID=$( curl -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REG_CODE} )
-if [  $? > 0 ]; then
+VALID=$( curl --insecure -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REG_CODE} )
+if [  $? -gt 0 ]; then
         echo "Can not register."
         exit 1
 fi
