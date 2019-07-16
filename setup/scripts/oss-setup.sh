@@ -463,10 +463,10 @@ unset _bred _sgr0
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-description="Zone for SERVER_NET"
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$SCHOOL_SERVER_NET"
     /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
-    /usr/bin/firewall-cmd --permanent --new-zone=SCHOOL_NETWORK
-    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NETWORK --set-description="Zone for SCHOOL_NET"
-    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NETWORK --add-source="${SERVER_NETWORK}/${SERVER_NETMASK}"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
+    /usr/bin/firewall-cmd --permanent --new-zone=SCHOOL_NET
+    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --set-description="Zone for SCHOOL_NET"
+    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --add-source="${SCHOOL_NETWORK}/${SCHOOL_NETMASK}"
+    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --set-target=ACCEPT
 
     for i in /opt/oss-java/data/*-INSERT.sql
     do
