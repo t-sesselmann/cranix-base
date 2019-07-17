@@ -40,7 +40,10 @@ Requires:       perl-JSON-XS
 Requires:	perl-Mail-IMAPClient
 Requires:	perl-DBD-mysql
 Requires:	poppler-tools
+#On oss some packages must not be installed
 Conflicts:	nscd
+Conflicts:	yast2-samba-server
+
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

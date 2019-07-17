@@ -538,6 +538,8 @@ chmod 600 /root/.my.cnf
        sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
        sed -i 's/ Listen 443/ Listen 443\n            Listen 444/' /etc/apache2/listen.conf
     fi
+    mkdir -p /srv/www/oss/
+    sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss-index.html > /srv/www/oss/index.html
     systemctl enable apache2
     systemctl start  apache2
 
@@ -576,6 +578,10 @@ chmod 600 /root/.my.cnf
     ########################################################################
     log "Generate password file templates"
     sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
+
+    ########################################################################
+    log "Enable icons for gnome 3.0"
+    gsettings set org.gnome.desktop.background show-desktop-icons true
 
     log "End PostSetup"
 
