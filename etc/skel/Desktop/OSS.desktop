@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Link
-Name=OSS
+Name=Administration
 Comment=OSS Administration
-Icon=user_system
-URL=https://admin
+Icon=package_settings
+URL=http://admin

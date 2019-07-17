@@ -43,6 +43,8 @@ Requires:	poppler-tools
 #On oss some packages must not be installed
 Conflicts:	nscd
 Conflicts:	yast2-samba-server
+Conflicts:	yast2-dns-server
+Conflicts:	yast2-dhcp-server
 
 BuildRequires:  rsync
 BuildRequires:	-post-build-checks

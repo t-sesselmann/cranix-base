@@ -3,5 +3,5 @@ Version=1.0
 Type=Link
 Name=Portal
 Comment=Schulportal
-Icon=lightsoff-symbolic
-URL=https://schoolserver
+Icon=stock_home
+URL=http://schoolserver
