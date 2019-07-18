@@ -1,4 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+#
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
+#
+
 import json
 import os
 

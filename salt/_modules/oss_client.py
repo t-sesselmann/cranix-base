@@ -1,3 +1,6 @@
+#
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
+#
 import salt
 import os
 

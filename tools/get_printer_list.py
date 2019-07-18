@@ -1,4 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+#
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
+#
+
 import os
 import sys
 import re
@@ -44,4 +48,4 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
      next
 printers.append(printer)
 
-print json.dumps(printers)
+print(json.dumps(printers))

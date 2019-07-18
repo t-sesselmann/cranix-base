@@ -1,4 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+#
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
+#
+
 import json
 import os
 import sys
@@ -7,7 +11,7 @@ import tempfile
 
 minion=sys.argv[1]
 hostname=minion.split('.')[0]
-print hostname
+print(hostname)
 
 softwares=json.load(os.popen('salt --out=json '+minion+' pkg.list_pkgs'))
 
@@ -27,7 +31,7 @@ if type(softwares[minion]) == dict:
         fobj.write(json.dumps(shash,sort_keys=True,ensure_ascii=False,encoding="utf-8"))
         fobj.close()
      except UnicodeEncodeError:
-        print u'Could not write software.'
+        print(u'Could not write software.')
      else:
         os.close(new_file)
         result=json.load(os.popen('/usr/sbin/oss_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))

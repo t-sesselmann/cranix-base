@@ -1,4 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+#
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nuremberg, Germany.  All rights reserved.
+#
 
 from xhtml2pdf import pisa             # import python module
 import sys
