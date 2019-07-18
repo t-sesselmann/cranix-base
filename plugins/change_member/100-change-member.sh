@@ -54,7 +54,7 @@ do
   esac
 done
 
-samba-tool group $changeType $group $users
+samba-tool group $changeType "$group" $users
 if [ $? != 0 ]; then
    abort
 fi
