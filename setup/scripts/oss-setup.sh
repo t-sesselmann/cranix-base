@@ -345,12 +345,18 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create base roles"
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=$sysadmins_gn
+    samba-tool ou create OU=sysadmins
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=$workstations_gn
+    samba-tool ou create OU=workstations
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=$administration_ng
+    samba-tool ou create OU=administration
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=$templates_gn
+    samba-tool ou create OU=templates
     if [ $SCHOOL_TYPE != "business" ]; then
         /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
+        samba-tool ou create OU=students
         /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=$teachers_gn
+        samba-tool ou create OU=teachers
     fi
     samba-tool group addmembers "Sysadmins" register
 

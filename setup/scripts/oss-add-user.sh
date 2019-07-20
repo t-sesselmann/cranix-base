@@ -113,6 +113,8 @@ echo "profile:   $profile"
 echo "role:      $role"
 
 samba-tool user create "$uid" "$password" \
+				--userou="OU=${role}" \
+                                --use-username-as-cn \
 				--username="$uid" \
 				--uid="$uid" \
 				--password="$password" \
@@ -127,7 +129,7 @@ samba-tool user create "$uid" "$password" \
                                 --login-shell=/bin/bash \
                                 --uid-number=$uidNumber \
                                 --gid-number=100 \
-				--use-username-as-cn
+				--mail-address="${uid}@${SCHOOL_DOMAIN}"
 
 #create home diredtory and set permission
 mkdir -p $unixhome

@@ -104,6 +104,7 @@ fi
 uidNumber=$( /usr/share/oss/tools/get_next_id )
 
 samba-tool user create "$uid" "$password" \
+				--userou="OU=${role}" \
 				--use-username-as-cn \
 				--username="$uid" \
 				--uid="$uid" \
