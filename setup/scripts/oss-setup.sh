@@ -589,6 +589,10 @@ chmod 600 /root/.my.cnf
     log "Enable icons for gnome 3.0"
     gsettings set org.gnome.desktop.background show-desktop-icons true
 
+    ########################################################################
+    log "Enable icons for gnome 3.0"
+    sed -i 's#/home  xfs   defaults#/home  xfs   usrquota,grpquota#' /etc/fstab
+    mount -o remount,usrquota,grpquota /home
     log "End PostSetup"
 
 }
