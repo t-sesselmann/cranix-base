@@ -85,6 +85,12 @@ if [ ${1:-0} -gt 1 ]; then
       . /etc/sysconfig/schoolserver
       sed "s/SCHOOLNAME/$SCHOOL_NAME/" /usr/share/oss/templates/password.html.in > /usr/share/oss/templates/password.html
    fi
+else
+   #Set German as default language
+   . etc/sysconfig/language
+   if [ -z ${RC_LANG} ]; then
+      sed -i 's/^RC_LANG=.*/RC_LANG="de_DE.UTF-8"/' etc/sysconfig/language
+   fi
 fi
 if [ -e /usr/share/oss/software/oss ]; then
 	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
