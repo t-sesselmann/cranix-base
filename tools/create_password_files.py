@@ -51,7 +51,10 @@ with open(user_list) as csvfile:
         uid=""
         group=""
         for field in reader.fieldnames:
-            template = template.replace(field,escape(row[field]))
+            to_replace = field
+            if field == "NAME":
+               to_replace = "NACHNAME"
+            template = template.replace(to_replace,escape(row[field]))
             if field == "UID" or field == "BENUTZERNAME" or field == "LOGIN":
                 uid=row[field]
             if students == 1 and ( field == "CLASS" or field == "KLASSE" ):
