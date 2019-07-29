@@ -9,7 +9,7 @@ import sys
 passwd=sys.argv[1]
 domain=sys.argv[2]
 network=sys.argv[3].split('.')
-netmask=sys.argv[4]
+netmask=int(sys.argv[4])
 devices=sys.argv[5].split(',')
 revdomain=""
 if netmask > 23:
