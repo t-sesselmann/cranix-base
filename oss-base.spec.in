@@ -25,6 +25,7 @@ PreReq:         salt
 PreReq:         salt-master
 PreReq:		filesystem
 PreReq:		firewalld
+Requires:	acl
 Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
