@@ -550,17 +550,6 @@ chmod 600 /root/.my.cnf
     systemctl start  apache2
 
     ########################################################################
-    log "Setup SuSEFirewall2"
-    if [ $SCHOOL_ISGATE = "yes" ]; then
-        sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
-        sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
-    else
-        systemctl disable SuSEfirewall2
-    fi
-    sed -i 's/^FW_CUSTOMRULES=/FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"/' /etc/sysconfig/SuSEfirewall2
-    cp /usr/share/oss/setup/templates/SuSEfirewall2-custom /etc/sysconfig/scripts/SuSEfirewall2-custom
-
-    ########################################################################
     log "Setup Cups"
     cp /etc/cups/cupsd.conf.in /etc/cups/cupsd.conf
     sed -i 's/^SystemGroup.*/SystemGroup root lp/' /etc/cups/cups-files.conf

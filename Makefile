@@ -25,6 +25,8 @@ install:
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
 	mkdir -p $(DESTDIR)/usr/lib/firewalld/services/
+	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
+	rm -f setup/schoolserver
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
@@ -36,7 +38,6 @@ install:
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
-	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_*.service $(DESTDIR)/usr/lib/systemd/system/
 	install -m 755 firewalld/* $(DESTDIR)/usr/lib/firewalld/services/
