@@ -542,7 +542,7 @@ chmod 600 /root/.my.cnf
     mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,oss,oss-ssl}
     if [ $SCHOOL_ISGATE = "yes" ]; then
        sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
-       sed -i 's/ Listen 443/ Listen 443\n            Listen 444/' /etc/apache2/listen.conf
+       sed -Ei 's/\s+Listen 443/                Listen 443\n                    Listen 444/' /etc/apache2/listen.conf
     fi
     mkdir -p /srv/www/oss/
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss-index.html > /srv/www/oss/index.html
