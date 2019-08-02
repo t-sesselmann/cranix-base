@@ -99,6 +99,9 @@ fi
 if [ -e /usr/share/oss/profiles ]; then
 	rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
 fi
+
+sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
+
 %{fillup_only -n schoolserver}
 
 %postun
