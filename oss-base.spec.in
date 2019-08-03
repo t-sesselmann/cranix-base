@@ -92,6 +92,8 @@ if [ -e /usr/share/oss/profiles ]; then
 fi
 %{fillup_only -n schoolserver}
 
+sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
+
 %postun
 %service_del_postun oss_salt_event_watcher.service
 
