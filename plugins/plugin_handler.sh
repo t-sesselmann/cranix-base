@@ -5,10 +5,7 @@
 what=$1
 conf=$( mktemp /tmp/ossplugin-XXXXXXXXXX )
 
-while read a
-do
-    echo $a >> $conf
-done
+cat - > $conf
 
 if test -z "$what"
 then
