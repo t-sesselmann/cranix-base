@@ -261,7 +261,7 @@ $result = GetOptions(\%options,
                         "role=s",
                         "domain=s",
                         "lang=s",
-			"sleep=s",
+                        "sleep=s",
                         "mailenabled=s",
                         "password=s",
                         "resetPassword",
@@ -470,11 +470,11 @@ my $sep           = "";
 my $header        = {};
 
 # Get the list of the classes
-@CLASSES = `/usr/sbin/oss_api_text.sh GET groups/text/byType/class`;
+@CLASSES = `/usr/sbin/oss_api_text.sh GET groups/text/byType/class | tr [:lower:] [:upper:]`;
 if( !scalar(@CLASSES) ) {
 	push @CLASSES,'dummy';
 }
-@GROUPS  = `/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup`;
+@GROUPS  = `/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup | tr [:lower:] [:upper:]`;
 
 # Get the list of the users
 my $users = `/usr/sbin/oss_api.sh GET users/byRole/$role`;
@@ -831,8 +831,8 @@ foreach my $act_line (@lines)
         print "  OLD USER $uid\n";
         #First we make the older user
         my @old_classes    = ();
-        print "/usr/sbin/oss_api_text.sh GET users/text/$uid/classes\n";
-        foreach my $i ( `/usr/sbin/oss_api_text.sh GET users/text/$uid/classes` )
+        print "/usr/sbin/oss_api_text.sh GET users/text/$uid/classes | tr [:lower:] [:upper:]\n";
+        foreach my $i ( `/usr/sbin/oss_api_text.sh GET users/text/$uid/classes | tr [:lower:] [:upper:]` )
         {
 	   chomp $i;
            push @old_classes, uc($i);
@@ -1109,9 +1109,7 @@ if( $role eq 'students' &&  $full )
 		    } else {
 	                $delete_old_student .= "uid=$uid#;#message=<b>Login: $uid</b> ".__('deleted')." /home/archiv/$uid.tgz<br>\n";
 		    }
-            }
-            else
-            {
+            } else {
                     $delete_old_student .= "uid=$uid#;#message=<b>Login: $uid</b> ".__('deleted')."<br>\n";
             }
 
@@ -1133,11 +1131,16 @@ if( $allClasses )
 	next if( defined $ALLCLASSES{$cn} );
 	$MESSAGE .= " $cn: ";
         print "/usr/sbin/oss_api_text.sh DELETE groups/text/$cn\n";
-        my $result = `/usr/sbin/oss_api_text.sh DELETE groups/text/$cn`;
-	if( $result ne "OK" ) {
-	    $MESSAGE .= __("Can not be deleted:");
+	if( !$test )
+	{
+		my $result = `/usr/sbin/oss_api_text.sh DELETE groups/text/$cn`;
+		if( $result ne "OK" ) {
+		    $MESSAGE .= __("Can not be deleted:");
+		} else {
+		    $MESSAGE .= __("Deleted");
+		}
 	} else {
-	    $MESSAGE .= __("Deleted");
+		    $MESSAGE .= __("will be deleted.");
 	}
 	$MESSAGE .= "<br>\n";
     }
