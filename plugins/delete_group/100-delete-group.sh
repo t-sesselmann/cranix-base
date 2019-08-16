@@ -57,7 +57,7 @@ if [ $? != 0 ]; then
    abort
 fi
 
-nameUp=`echo "$name" | tr "[:upper:]" "[:lower:]"`
+nameUp=`echo "$name" | tr "[:lower:]" "[:upper:]"`
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir=${SCHOOL_HOME_BASE}/groups/${nameUp}
 
