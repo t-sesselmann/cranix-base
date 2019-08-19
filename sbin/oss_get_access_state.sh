@@ -10,6 +10,10 @@
 . /etc/sysconfig/schoolserver
 case "$2" in
    direct)
+	if test "$SCHOOL_ISGATE" = "no"; then
+                echo -n '1'
+                exit 0
+	fi
         export DEST=$SCHOOL_NET_GATEWAY
         ;;
    internet|proxy)
