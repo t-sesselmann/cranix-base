@@ -3,15 +3,22 @@
 . /etc/sysconfig/schoolserver
 
 read pw2check
-
-MINL=$( samba-tool domain passwordsettings show | grep "Minimum password length:" | sed 's/Minimum password length: //' )
-if [ $SCHOOL_MINIMAL_PASSWORD_LENGTH -ne $MINL ]; then
-	samba-tool domain passwordsettings set --min-pwd-length=$SCHOOL_MINIMAL_PASSWORD_LENGTH &> /dev/null
-        MINL=$SCHOOL_MINIMAL_PASSWORD_LENGTH
-fi
-if [ ${#pw2check} -lt ${MINL} ]; then
-	echo "User password must contain minimum %s characters.##${MINL}"
-	exit 1
+if [ -e "/var/lib/samba/private/sam.ldb" ]; then
+	#During the installation samba is not installed.
+	MINL=$( samba-tool domain passwordsettings show | grep "Minimum password length:" | sed 's/Minimum password length: //' )
+	if [ $SCHOOL_MINIMAL_PASSWORD_LENGTH -ne $MINL ]; then
+		samba-tool domain passwordsettings set --min-pwd-length=$SCHOOL_MINIMAL_PASSWORD_LENGTH &> /dev/null
+		MINL=$SCHOOL_MINIMAL_PASSWORD_LENGTH
+	fi
+	if [ ${#pw2check} -lt ${MINL} ]; then
+		echo "User password must contain minimum %s characters.##${MINL}"
+		exit 1
+	fi
+else
+	if [ ${#pw2check} -lt $SCHOOL_MINIMAL_PASSWORD_LENGTH ]; then
+		echo "User password must contain minimum %s characters.##${SCHOOL_MINIMAL_PASSWORD_LENGTH}"
+		exit 1
+	fi
 fi
 
 if [ ${SCHOOL_CHECK_PASSWORD_QUALITY} = "no" ]; then
