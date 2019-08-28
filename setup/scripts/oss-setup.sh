@@ -552,13 +552,12 @@ chmod 600 /root/.my.cnf
     ########################################################################
     log "Setup Cups"
     cp /etc/cups/cupsd.conf.in /etc/cups/cupsd.conf
-    sed -i 's/^SystemGroup.*/SystemGroup root lp/' /etc/cups/cups-files.conf
-    usermod -a -G lp root
 
     ########################################################################
     log "Prepare roots desktop"
     mkdir -p /root/Desktop/
     cp /etc/skel/Desktop/* /root/Desktop/
+    tar xf /usr/share/oss/setup/templates/needed-files-for-root.tar -C /root/
 
     ########################################################################
     log "Enable some importent services"
