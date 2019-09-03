@@ -30,8 +30,9 @@ Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
 Requires:	python3-xhtml2pdf
-Requires:	python3-unicodecsv
 Requires:       samba-ad >= 4.10.0
+Requires:	python3-configobj
+
 %else
 Requires:	python-xhtml2pdf
 Requires:	python-unicodecsv
