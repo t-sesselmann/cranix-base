@@ -7,6 +7,7 @@ do
 done
 
 echo "/var/log/OSS-UPDATE-$DATE" > /var/adm/oss/update-started
+zypper ref 
 zypper --no-gpg-checks --gpg-auto-import-keys -n up --auto-agree-with-licenses $@ 2>&1 | tee /var/log/OSS-UPDATE-$DATE
 
 #Restart all processes which have deleted files
