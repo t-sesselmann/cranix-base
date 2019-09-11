@@ -33,6 +33,7 @@ all_users   = {}
 import_list = {}
 new_user_count  = 1
 new_group_count = 1
+lockfile = '/run/oss_import_user'
 
 date = time.strftime("%Y-%m-%d.%H-%M-%S")
 # read and set some default values
@@ -51,9 +52,11 @@ def init(args):
     global import_dir, required_classes, existing_classes, all_users, import_list
     import_dir = home_base + "/groups/SYSADMINS/userimports/" + date
     os.system('mkdir -pm 770 ' + import_dir + '/tmp' )
-
     #open the output file
     output     = open(import_dir + '/import.log','w')
+    #create lock file
+    with open(lockfile) as f:
+        f.write(date)
     input_file = args.input
     role       = args.role
     password   = args.password
@@ -150,8 +153,8 @@ def close():
         os.system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
     else:
         os.system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
-
-    output.write(print_msg("Import closed","OK"))
+    os.remove(lockfile)
+    output.write(print_msg("Import finished","OK"))
     output.close()
 
 def close_on_error(msg):
@@ -159,6 +162,7 @@ def close_on_error(msg):
         os.system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
     else:
         os.system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
+    os.remove(lockfile)
     output.write(print_error(msg))
     output.close()
 
@@ -224,10 +228,9 @@ def add_user(user,ident):
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
     result = json.load(os.popen('oss_api_post_file.sh users/insert ' + file_name))
-    user_id = result['objectId']
-#    created_user = json.load(os.popen('/usr/sbin/oss_api.sh GET users/{0}'.format(user_id)))
-    import_list[ident][uid]      = result['parameters'][0]
-    import_list[ident][password] = result['parameters'][3]
+    import_list[ident]['id']       = result['objectId']
+    import_list[ident]['uid']      = result['parameters'][0]
+    import_list[ident]['password'] = result['parameters'][3]
     new_user_count = new_user_count + 1
     if debug:
         print(result)

@@ -10,6 +10,7 @@
 # Please submit bugfixes or comments via http://www.cephalix.eu/
 #
 
+%{?!python_module:%define python_module() python-%{**} python3-%{**}}
 Name:           oss-base
 Version:        @VERSION@
 Release:        @RELEASE@ 
