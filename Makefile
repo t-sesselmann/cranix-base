@@ -3,7 +3,8 @@
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-FILLUPDIR	= /usr/share/fillup-templates/
+FILLUPDIR             = /usr/share/fillup-templates/
+PYTHONSITEARCH  = /usr/lib64/python3.6/site-packages/
 TOPACKAGE       = Makefile cups etc firewalld plugins profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
@@ -20,6 +21,7 @@ install:
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins,profiles,updates}
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/$(FILLUPDIR)
+	mkdir -p $(DESTDIR)/$(PYTHONSITEARCH)
 	mkdir -p $(DESTDIR)/etc/YaST2/
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
@@ -37,12 +39,13 @@ install:
 	rsync -a   profiles/        $(SHARE)/profiles/
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
+	rsync -a   python/          $(DESTDIR)/$(PYTHONSITEARCH)/cranix/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_*.service $(DESTDIR)/usr/lib/systemd/system/
 	install -m 755 firewalld/* $(DESTDIR)/usr/lib/firewalld/services/
 
-dist:
+dist: 
 	xterm -e git log --raw  &
 	if [ -e $(PACKAGE) ] ;  then rm -rf $(PACKAGE) ; fi   
 	mkdir $(PACKAGE)
@@ -56,7 +59,7 @@ dist:
 	sed    's/@VERSION@/$(VERSION)/'  $(PACKAGE).spec.in > $(PACKAGE).spec
 	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
 	if [ -d $(REPO)/$(PACKAGE) ] ; then \
-            cd $(REPO)/$(PACKAGE); osc up; cd $(HERE);\
+	   cd $(REPO)/$(PACKAGE); osc up; cd $(HERE);\
 	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec $(REPO)/$(PACKAGE); \
 	    cd $(REPO)/$(PACKAGE); \
 	    osc vc; \
