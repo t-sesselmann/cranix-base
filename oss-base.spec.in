@@ -10,7 +10,8 @@
 # Please submit bugfixes or comments via http://www.cephalix.eu/
 #
 
-%{?!python_module:%define python_module() python-%{**} python3-%{**}}
+%define python_flavor python3
+%pythons
 Name:           oss-base
 Version:        @VERSION@
 Release:        @RELEASE@ 
@@ -30,33 +31,26 @@ PreReq:         apache2
 Requires:       acl
 Requires:       quota
 Requires:       rsync
-%if 0%{?suse_version} >= 1500
-Requires:        python3-xhtml2pdf
-Requires:        samba-ad >= 4.10.0
-Requires:        python3-configobj
-
-%else
-Requires:        python-xhtml2pdf
-Requires:        python-unicodecsv
-Requires:        samba-ad
-%endif
-Requires:        perl-JSON-XS
-Requires:        perl-Mail-IMAPClient
-Requires:        perl-DBD-mysql
-Requires:        poppler-tools
+Requires:       python3-xhtml2pdf
+Requires:       samba-ad >= 4.10.0
+Requires:       python3-configobj
+Requires:       perl-JSON-XS
+Requires:       perl-Mail-IMAPClient
+Requires:       perl-DBD-mysql
+Requires:       poppler-tools
 #On oss some packages must not be installed
-Conflicts:       nscd
-Conflicts:       yast2-samba-server
-Conflicts:       yast2-dns-server
-Conflicts:       yast2-dhcp-server
+Conflicts:      nscd
+Conflicts:      yast2-samba-server
+Conflicts:      yast2-dns-server
+Conflicts:      yast2-dhcp-server
 
-BuildRequires:   rsync
-BuildRequires:   -post-build-checks
-BuildRequires:   python-rpm-macros
-BuildRoot:       %{_tmppath}/%{name}-%{version}-build
+BuildRequires:  rsync
+BuildRequires:  python-rpm-macros
+BuildRequires:  -post-build-checks
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-Provides:        openschool-base
-Obsoletes:       openschool-base
+Provides:       openschool-base
+Obsoletes:      openschool-base
 
 %prep
 %setup -q  -n %{name}
@@ -64,7 +58,7 @@ Obsoletes:       openschool-base
 %build
 
 %install
-make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags} PYTHONSITEARCH=%{python_sitearch}
+make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} PYTHONSITEARCH=%{python_sitearch}
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
