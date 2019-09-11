@@ -123,7 +123,6 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 %config(noreplace) /etc/cron.d/oss*
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
-%config /etc/logrotate.d/oss-*
 %dir    /etc/apache2/vhosts.d/oss
 /etc/apache2/vhosts.d/oss/public_html_*
 /usr/share/oss/
