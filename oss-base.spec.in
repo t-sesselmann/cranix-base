@@ -1,21 +1,21 @@
 #
 # spec file for package oss-base
 #
-# Copyright (c) 2018 Peter Varkoly, Nuernberg, Germany.
+# Copyright (c) Peter Varkoly, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
 # upon. 
 
-# Please submit bugfixes or comments via http://oss.cephalix.eu/
+# Please submit bugfixes or comments via http://www.cephalix.eu/
 #
 
 Name:           oss-base
-Version:       	@VERSION@ 
+Version:        @VERSION@
 Release:        @RELEASE@ 
 License:        GPL-3.0+
-Vendor:		Dipl.Ing. Peter Varkoly <peter@varkoly.de>
-Summary:        Base package for the OSS
+Vendor:         Dipl.Ing. Peter Varkoly <peter@varkoly.de>
+Summary:        Base package for the CRANIX/OSS
 Url:            http://oss.cephalix.eu/
 Group:          Productivity/Office/Management
 Source:         %{name}.tar.bz2
@@ -23,37 +23,39 @@ BuildArch:      noarch
 PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
-PreReq:		filesystem
-PreReq:		firewalld
-Requires:	acl
+PreReq:         filesystem
+PreReq:         firewalld
+PreReq:         apache2
+Requires:       acl
 Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
-Requires:	python3-xhtml2pdf
-Requires:       samba-ad >= 4.10.0
-Requires:	python3-configobj
+Requires:        python3-xhtml2pdf
+Requires:        samba-ad >= 4.10.0
+Requires:        python3-configobj
 
 %else
-Requires:	python-xhtml2pdf
-Requires:	python-unicodecsv
-Requires:       samba-ad
+Requires:        python-xhtml2pdf
+Requires:        python-unicodecsv
+Requires:        samba-ad
 %endif
-Requires:       perl-JSON-XS
-Requires:	perl-Mail-IMAPClient
-Requires:	perl-DBD-mysql
-Requires:	poppler-tools
+Requires:        perl-JSON-XS
+Requires:        perl-Mail-IMAPClient
+Requires:        perl-DBD-mysql
+Requires:        poppler-tools
 #On oss some packages must not be installed
-Conflicts:	nscd
-Conflicts:	yast2-samba-server
-Conflicts:	yast2-dns-server
-Conflicts:	yast2-dhcp-server
+Conflicts:       nscd
+Conflicts:       yast2-samba-server
+Conflicts:       yast2-dns-server
+Conflicts:       yast2-dhcp-server
 
-BuildRequires:  rsync
-BuildRequires:	-post-build-checks
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildRequires:   rsync
+BuildRequires:   -post-build-checks
+BuildRequires:   python-rpm-macros
+BuildRoot:       %{_tmppath}/%{name}-%{version}-build
 
-Provides:	openschool-base
-Obsoletes:	openschool-base
+Provides:        openschool-base
+Obsoletes:       openschool-base
 
 %prep
 %setup -q  -n %{name}
@@ -61,7 +63,7 @@ Obsoletes:	openschool-base
 %build
 
 %install
-make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags}
+make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} %{?_smp_mflags} PYTHONSITEARCH=%{python_sitearch}
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
@@ -79,8 +81,8 @@ if [ ${1:-0} -gt 1 ]; then
    for i in /usr/share/oss/updates/update-$UV-*
    do
        if [ -e $i ]; then
-    	b=$(basename $i)
-    	$i &> /var/log/oss-update/$b
+            b=$(basename $i)
+            $i &> /var/log/oss-update/$b
        fi
    done
    if [ ! -e /usr/share/oss/templates/password.html ]; then
@@ -95,10 +97,10 @@ else
    fi
 fi
 if [ -e /usr/share/oss/software/oss ]; then
-	rsync -av /usr/share/oss/software/oss/ /home/software/oss/
+        rsync -av /usr/share/oss/software/oss/ /home/software/oss/
 fi
 if [ -e /usr/share/oss/profiles ]; then
-	rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
+        rsync -av /usr/share/oss/profiles/     /home/profiles/oss/
 fi
 
 sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
@@ -122,6 +124,8 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 %config /etc/salt/master.d/oss.conf
 %config /etc/skel/Desktop/*
 %config /etc/logrotate.d/oss-*
+%dir    /etc/apache2/vhosts.d/oss
+/etc/apache2/vhosts.d/oss/public_html_*
 /usr/share/oss/
 /usr/sbin/oss*
 /usr/lib/systemd/system/oss_*.service
@@ -133,6 +137,7 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 /usr/share/cups/drivers/ps*
 /usr/share/cups/drivers/x64/ps*
 /usr/lib/firewalld/services/*
+%{python_sitearch}/cranix
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt/_modules
 /srv/salt/_modules/*

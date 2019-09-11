@@ -141,10 +141,6 @@ function SetupSamba (){
     cp /usr/share/oss/setup/templates/nsswitch.conf /etc/nsswitch.conf
 
     ########################################################################
-    log " - Use our enhanced samba.service file."
-    cp /usr/share/oss/setup/templates/samba.service /usr/lib/systemd/system/samba.service
-
-    ########################################################################
     log " - Create linked groups directory "
     mkdir -p -m 755 $SCHOOL_HOME_BASE/groups/LINKED/
     mkdir -p -m 755 $SCHOOL_HOME_BASE/${windomain}
@@ -210,7 +206,6 @@ profilePath: \\\\admin\\profiles\\administrator
     ########################################################################
     log " - Setup printserver "
     cp /usr/share/oss/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
-    cp /usr/share/oss/setup/templates/samba-printserver /etc/sysconfig/
     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
     chgrp -R BUILTIN\\administrators /var/lib/printserver/drivers/*
@@ -233,8 +228,8 @@ profilePath: \\\\admin\\profiles\\administrator
 
     for i in /usr/share/oss/templates/*.ini
     do
-	b=$( basename $i .ini )
-	sed "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g" $i > /usr/share/oss/templates/$b
+        b=$( basename $i .ini )
+        sed "s/#PDC-SERVER#/${SCHOOL_NETBIOSNAME}/g" $i > /usr/share/oss/templates/$b
     done
 
     ########################################################################

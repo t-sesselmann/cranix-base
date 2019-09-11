@@ -1,0 +1,16 @@
+# Access to public_html in the home directory of the sysadmins
+<IfModule mod_userdir.c>
+  UserDir /home/sysadmins/*/public_html
+  UserDir disabled root
+  <Directory /home/sysadmins/*/public_html>
+    AllowOverride FileInfo AuthConfig Limit Indexes
+    Options MultiViews Indexes FollowSymLinks  IncludesNoExec
+    <Limit GET POST OPTIONS PROPFIND>
+        Require all granted
+    </Limit>
+    <LimitExcept GET POST OPTIONS PROPFIND>
+       Require all denied
+    </LimitExcept>
+  </Directory>
+</IfModule>
+

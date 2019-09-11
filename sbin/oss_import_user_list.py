@@ -3,28 +3,17 @@
 import json
 import os
 import sys
-import socket
-import csv
 import time
+import shutil
 import cranix
 from configobj import ConfigObj
 from argparse import ArgumentParser
-# Define some global variables
-date = time.strftime("%Y-%m-%d.%H-%M-%S")
-# read and set some default values
-config = ConfigObj("/opt/oss-java/conf/oss-api.properties")
-passwd = config['de.openschoolserver.dao.User.Register.Password']
-domain = os.popen('oss_api_text.sh GET system/configuration/DOMAIN').read()
-home_base = os.popen('oss_api_text.sh GET system/configuration/HOME_BASE').read()
-roles  = []
-for role in os.popen('oss_api_text.sh GET groups/text/byType/primary').readlines():
-  roles.append(role.strip())
 
 parser = ArgumentParser()
 #String parameter
 parser.add_argument("--input", dest="input", default="/tmp/userlist.txt",
                     help="The import file with full path.")
-parser.add_argument("--role", dest="role", default="students", choices=roles,
+parser.add_argument("--role", dest="role", default="students", choices=cranix.roles,
                     help="Role of the users to import: students|teachers|administration")
 parser.add_argument("--password", dest="password", default="",
                     help="Default value for password.")
@@ -37,7 +26,7 @@ parser.add_argument("--test", dest="test", default=False, action="store_true",
                     help="If this parameter is true no changes will be done. The scipt only reports what would happends.")
 parser.add_argument("--debug", dest="debug", default=False, action="store_true",
                     help="Run in debug mode, no daemonize.")
-parser.add_argument("--mustchange", dest="debug", default=False, action="store_true",
+parser.add_argument("--mustchange", dest="mustchange", default=False, action="store_true",
                     help="If set, the new users must change its password by the first login.")
 parser.add_argument("--reset_password", dest="reset_password", default=False, action="store_true",
                     help="If this option is true the password of old user will be reseted too.")
@@ -46,42 +35,77 @@ parser.add_argument("--all_classes", dest="all_classes", default=False, action="
 parser.add_argument("--clean_class_dirs", dest="clean_class_dirs", default=False, action="store_true",
                     help="Remove the content of the directories of the classes. This parameter has only affect when role=students.")
 #Integer parameter
-parser.add_argument("--slee", dest="sleep", default=2,
+parser.add_argument("--sleep", dest="sleep", default=2,
                     help="The import script sleeps between creating the user objects not to catch all the resources of OSS.")
 
 args = parser.parse_args()
+# Init the import envinroment
+cranix.init(args)
 
-# Now we read the available groups classes and users
-all_classes = []
-all_groups  = []
-all_users   = {}
-for group in os.popen('/usr/sbin/oss_api_text.sh GET groups/text/byType/class').readlines():
-  all_classes.append(group.strip())
-for group in os.popen('/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroups').readlines():
-  all_groups.append(group.strip())
-for user in json.load(os.popen('/usr/sbin/oss_api.sh GET users/byRole/' + args.role )):
-  identifier = ""
-  birthDay = time.strftime("%Y-%m-%d",time.localtime(user['birthDay']/1000))
-  if args.identifier == "sn-gn-bd":
-     identifier = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + birthDay
-  else:
-      identifier = user[args.identifier]
-  all_users[identifier]={}
-  for key in user:
-    all_users[identifier][key] = user[key]
-if args.debug:
-  print(all_users)
+# Now we proceed the user list
+for ident in cranix.import_list:
+    #First we proceed the classes
+    old_user = {}
+    new_user = cranix.import_list[ident]
+    new_user['role'] = args.role
+    old_classes = []
+    new_classes = []
+    if 'class' not in new_user:
+        new_user['classes'] = ''
+    else:
+        new_user['classes'] = new_user['class']
+        if new_user['classes'].upper() == 'ALL':
+            new_classes = cranix.existing_classes
+        else:
+            new_classes = new_user['classes'].split(' ')
+        del new_user['class']
+    if ident in cranix.all_users:
+        old_user = cranix.all_users[ident]
+        old_classes = old_user['classes'].split(' ')
+        cranix.log_debug("Old user",old_user)
+        cranix.log_msg(ident,"Old user. Old classes: " + old_user['classes'] + "New Classes:" + new_user['classes'] )
+        if not args.test:
+            if args.reset_password:
+                password = args.password
+                if password == "":
+                    password = cranix.create_secure_pw
+                old_user['password'] = password
+            cranix.modify_user(old_user,ident)
+    else:
+        cranix.log_debug("New user",new_user)
+        cranix.log_msg(ident,"New user. Classes:" + new_user['classes'])
+        if not args.test:
+             cranix.add_user(new_user,ident)
+    #trate classes
+    for cl in new_user['classes'].split(' '):
+        cl = cl.upper()
+        if cl not in cranix.required_classes:
+            cranix.required_classes.append(cl)
+        if cl not in cranix.existing_classes:
+            cranix.log_msg(cl,"New class")
+            if not args.test:
+                cranix.add_class(cl)
+    if not args.test:
+        cranix.move_user(new_user['uid'],old_classes,new_classes)
+    #TODO trate groups
 
-# Start reading the file
-with open(args.input) as csvfile:
-    #Detect the type of the csv file
-    dialect = csv.Sniffer().sniff(csvfile.read(1024))
-    csvfile.seek(0)
-    #Create an array of dicts from it
-    csv.register_dialect('oss',dialect)
-    reader = csv.DictReader(csvfile,dialect='oss')
-    print(reader.fieldnames)
-    for row in reader:
-      user = {}
-      for key in row:
-        print(cranix.attr_ext_name[key] + " " + row[key])
+if args.full and args.role == 'students':
+    for ident in cranix.all_users:
+        if not ident in cranix.import_list:
+            cranix.log_msg(ident,"User will be deleted")
+            if not args.test:
+                cranix.delete_user(cranix.all_users[ident]['uid'])
+
+if args.all_classes:
+   for c in cranix.existing_classes:
+       if not c in required_classes:
+          cranix.log_msg(c,"Class will be deleted")
+          if not args.test:
+              cranix.delete_class(c)
+   cranix.read_classes()
+
+if not args.test and args.clean_class_dirs:
+    for c in cranix.existing_classes:
+        os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c))
+
+cranix.close()
