@@ -4,7 +4,7 @@
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR             = /usr/share/fillup-templates/
-PYTHONSITEARCH  = /usr/lib64/python3.6/site-packages/
+PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
 TOPACKAGE       = Makefile cups etc firewalld plugins python profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
