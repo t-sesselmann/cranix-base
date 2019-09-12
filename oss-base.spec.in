@@ -11,7 +11,9 @@
 #
 
 %define python_flavor python3
-%pythons
+if !%defined %{python_sitearch}
+%define python_sitearch  /usr/lib64/python3.6/site-packages/
+%endif
 Name:           oss-base
 Version:        @VERSION@
 Release:        @RELEASE@ 
