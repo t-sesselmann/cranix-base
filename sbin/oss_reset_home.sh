@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
 arg=$1
 
@@ -76,37 +76,39 @@ fi
 
 if [ "$arg" = "-a" -o  "$arg" = "--all" ]
 then
+    IFS=$'\n'
     for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/class )
     do
         g=$( echo $cn|tr '[:lower:]' '[:upper:]' )
-        i=/home/groups/$g
-        /bin/mkdir -p  $i
-        gid=`/usr/sbin/oss_get_gidNumber.sh $cn`
+        i="/home/groups/$g"
+        /bin/mkdir -p  "$i"
+        gid=`/usr/sbin/oss_get_gidNumber.sh "$cn"`
         if [ "$gid" ] 
         then
-            chgrp -R $gid  $i
-            /usr/bin/setfacl -P -R -b $i
-            /bin/chmod -R 3771 $i
-	    find $i -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-	    find $i -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+            chgrp -R $gid  "$i"
+            /usr/bin/setfacl -P -R -b "$i"
+            /bin/chmod -R 0770 "$i"
+	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
+	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
         fi
     done
+    IFS=$'\n'
     for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/workgroup )
     do
         g=$( echo $cn|tr '[:lower:]' '[:upper:]' )
-        i=/home/groups/$g
-        /bin/mkdir -p  $i
-        gid=`/usr/sbin/oss_get_gidNumber.sh $cn`
+        i="/home/groups/$g"
+        /bin/mkdir -p  "$i"
+        gid=`/usr/sbin/oss_get_gidNumber.sh "$cn"`
         if [ "$gid" ] 
         then
-            chgrp -R $gid  $i
-            /usr/bin/setfacl -P -R -b $i
-            /bin/chmod -R 3771 $i
-	    find $i -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-	    find $i -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+            chgrp -R $gid  "$i"
+            /usr/bin/setfacl -P -R -b "$i"
+            /bin/chmod -R 0770 "$i"
+	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
+	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
