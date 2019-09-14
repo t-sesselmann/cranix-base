@@ -11,8 +11,8 @@
 #
 
 %define python_flavor python3
-%if ! %{defined python_sitearch}
-%define python_sitearch  /usr/lib/python3.6/site-packages/
+%if ! %{defined python_site}
+%define python_site  /usr/lib/python3.6/site-packages/
 %endif
 Name:           oss-base
 Version:        @VERSION@
@@ -60,7 +60,7 @@ Obsoletes:      openschool-base
 %build
 
 %install
-make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} PYTHONSITEARCH=%{python_sitearch}
+make install DESTDIR=%{buildroot} FILLUPDIR=%{_fillupdir} PYTHONSITEARCH=%{python_site}
 
 %pre
 %service_add_pre oss_salt_event_watcher.service
@@ -133,7 +133,7 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 /usr/share/cups/drivers/ps*
 /usr/share/cups/drivers/x64/ps*
 /usr/lib/firewalld/services/*
-%{python_sitearch}/cranix
+%{python_site}/cranix
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
