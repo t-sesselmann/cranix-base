@@ -50,20 +50,18 @@ for ident in cranix.import_list:
     new_user['role'] = args.role
     old_classes = []
     new_classes = []
-    if 'class' not in new_user:
-        new_user['classes'] = ''
+    if new_user['classes'].upper() == 'ALL':
+        new_classes = cranix.existing_classes
     else:
-        new_user['classes'] = new_user['class']
-        if new_user['classes'].upper() == 'ALL':
-            new_classes = cranix.existing_classes
-        else:
-            new_classes = new_user['classes'].split(' ')
-        del new_user['class']
+        new_classes = new_user['classes'].split(' ')
     if ident in cranix.all_users:
+    # It is an old user
         old_user = cranix.all_users[ident]
+        new_user['id']  = old_user['id']
+        new_user['uid'] = old_user['uid']
         old_classes = old_user['classes'].split(' ')
         cranix.log_debug("Old user",old_user)
-        cranix.log_msg(ident,"Old user. Old classes: " + old_user['classes'] + "New Classes:" + new_user['classes'] )
+        cranix.log_msg(ident,"Old user. Old classes: " + old_user['classes'] + " New Classes:" + new_user['classes'] )
         if not args.test:
             if args.reset_password:
                 password = args.password
@@ -88,6 +86,11 @@ for ident in cranix.import_list:
     if not args.test:
         cranix.move_user(new_user['uid'],old_classes,new_classes)
     #TODO trate groups
+
+# Now we write the user list
+if args.debug:
+    print(cranix.import_list)
+cranix.write_user_list()
 
 if args.full and args.role == 'students':
     for ident in cranix.all_users:

@@ -55,7 +55,7 @@ def init(args):
     #open the output file
     output     = open(import_dir + '/import.log','w')
     #create lock file
-    with open(lockfile) as f:
+    with open(lockfile,'w') as f:
         f.write(date)
     input_file = args.input
     role       = args.role
@@ -81,7 +81,7 @@ def read_classes():
         existing_classes.append(group.strip())
 
 def read_groups():
-    global existing_classes
+    global existing_groups
     for group in os.popen('/usr/sbin/oss_api_text.sh GET groups/text/byType/workgroups').readlines():
         all_groups.append(group.strip())
 
@@ -94,7 +94,7 @@ def read_users():
             user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
         else:
             user_id = user[identifier]
-            user_id = identifier.replace(' ','')
+        user_id = user_id.replace(' ','')
         all_users[user_id]={}
         for key in user:
             all_users[user_id][key] = user[key]
@@ -121,8 +121,8 @@ def read_csv():
             user_id = ''
             for key in row:
                 if init_debug:
-                    print(attr_ext_name[key] + " " + row[key])
-                user[attr_ext_name[key]] = row[key]
+                    print(attr_ext_name[key.upper()] + " " + row[key])
+                user[attr_ext_name[key.upper()]] = row[key]
             try:
                 user['birthDay'] = read_birthday(user['birthDay'])
             except SyntaxError:
@@ -136,6 +136,7 @@ def read_csv():
                 if not identifier in user:
                     raise SyntaxError("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
+            user['classes'] = user.get('class','')
             user_id = user_id.replace(' ','')
             import_list[user_id] = user
     if(debug):
@@ -257,29 +258,63 @@ def modify_user(user,ident):
 def move_user(uid,old_classes,new_classes):
     for g in old_classes:
        if not g in new_classes:
-           result = json.load(os.popen('/usr/sbin/oss_api_text.sh DELETE users/text/{0}/groups/{1}'.format(uid,g)))
+           cmd = '/usr/sbin/oss_api_text.sh DELETE users/text/{0}/groups/{1}'.format(uid,g)
+           if debug:
+               print(cmd)
+           result = os.popen(cmd).read()
            if debug:
                print(result)
-           if result['code'] == 'ERROR':
-               log_error(result['value'])
     for g in new_classes:
        if not g in old_classes:
-           result = json.load(os.popen('/usr/sbin/oss_api_text.sh PUT users/text/{0}/groups/{1}'.format(uid,g)))
+           cmd = '/usr/sbin/oss_api_text.sh PUT users/text/{0}/groups/{1}'.format(uid,g)
+           if debug:
+               print(cmd)
+           result = os.popen(cmd).read()
            if debug:
                print(result)
-           if result['code'] == 'ERROR':
-               log_error(result['value'])
 
 def delete_user(uid):
-    result = json.load(os.popen('/usr/sbin/oss_api_text.sh DELETE users/text/{0}'.format(uid)))
+    cmd = '/usr/sbin/oss_api_text.sh DELETE users/text/{0}'.format(uid)
+    if debug:
+        print(cmd)
+    result = os.popen(cmd).read()
     if debug:
         print(result)
-    if result['code'] == 'ERROR':
-        log_error(result['value'])
 
 def delete_class(group):
-    result = json.load(os.popen('/usr/sbin/oss_api_text.sh DELETE groups/text/{0}'.format(group)))
+    cmd = '/usr/sbin/oss_api_text.sh DELETE groups/text/{0}'.format(group)
+    if debug:
+        print(cmd)
+    result = os.popen(cmd).read()
     if debug:
         print(result)
-    if result['code'] == 'ERROR':
-        log_error(result['value'])
+
+def write_user_list():
+    file_name = '{0}/all-{1}.txt'.format(import_dir,'users')
+    if role == 'students':
+        file_name = '{0}/all-{1}.txt'.format(import_dir,role)
+    with open(file_name, 'w') as fp:
+        #TODO Translate header
+        fp.write(';'.join(user_attributes)+"\n")
+        for ident in import_list:
+            line = []
+            for attr in user_attributes:
+                line.append(import_list[ident].get(attr,""))
+            fp.write(';'.join(line)+"\n")
+    if role == 'students':
+        class_files = {}
+        for cl in existing_classes:
+            class_files[cl] = open('{0}/class-{1}.txt'.format(import_dir,cl),'w')
+            #TODO Translate header
+            class_files[cl].write(';'.join(user_attributes)+"\n")
+        for ident in import_list:
+            user = import_list[ident]
+            line = []
+            for attr in user_attributes:
+                line.append(user.get(attr,""))
+            for user_class in user['classes'].split(' '):
+                class_files[user_class].write(';'.join(line)+"\n")
+        for cl in existing_classes:
+            class_files[cl].close()
+
+

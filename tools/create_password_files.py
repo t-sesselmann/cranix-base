@@ -5,7 +5,7 @@
 
 from xhtml2pdf import pisa             # import python module
 import sys
-import unicodecsv
+import csv
 import os
 try:
     from html import escape  # python 3.x
@@ -31,33 +31,31 @@ import_dir= sys.argv[1] + "/"
 user_list = import_dir + "all-students.txt"
 students  = 1
 if not os.path.exists( user_list ):
-    user_list=import_dir + "all-user.txt"
+    user_list=import_dir + "all-users.txt"
     students = 0
 if not os.path.exists( import_dir + "/passwordfiles" ):
-  os.mkdir( import_dir + "passwordfiles", 0770 );
+  os.mkdir( import_dir + "passwordfiles", 0o770 );
 
 all_classes = []
 with open(user_list) as csvfile:
     #Detect the type of the csv file
-    dialect = unicodecsv.Sniffer().sniff(csvfile.read(1024))
+    dialect = csv.Sniffer().sniff(csvfile.read(1024))
     csvfile.seek(0)
     #Create an array of dicts from it
-    unicodecsv.register_dialect('oss',dialect)
-    reader = unicodecsv.DictReader(csvfile,dialect='oss')
+    csv.register_dialect('oss',dialect)
+    reader = csv.DictReader(csvfile,dialect='oss')
     for row in reader:
         fobj = open("/usr/share/oss/templates/password.html","r")
-        template = fobj.read().decode('utf8')
+        template = fobj.read()
         fobj.close()
         uid=""
         group=""
         for field in reader.fieldnames:
-            to_replace = field
-            if field == "NAME":
-               to_replace = "NACHNAME"
+            to_replace = '#'+field+'#'
             template = template.replace(to_replace,escape(row[field]))
-            if field == "UID" or field == "BENUTZERNAME" or field == "LOGIN":
+            if field == "uid":
                 uid=row[field]
-            if students == 1 and ( field == "CLASS" or field == "KLASSE" ):
+            if students == 1 and ( field == "class" ):
                 group=row[field]
                 if group not in all_classes:
                     all_classes.append(group)
