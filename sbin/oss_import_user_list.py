@@ -17,6 +17,8 @@ parser.add_argument("--role", dest="role", default="students", choices=cranix.ro
                     help="Role of the users to import: students|teachers|administration")
 parser.add_argument("--password", dest="password", default="",
                     help="Default value for password.")
+parser.add_argument("--lang", dest="lan", default="DE",
+                    help="Language of the header.")
 parser.add_argument("--identifier", dest="identifier", default="sn-gn-bd", choices=['sn-gn-bd', 'uid', 'uuid'],
                     help="Which attribute(s) will be used to identify an user. Normaly the sn givenName and birthday combination will be used (sn-gn-bd). Possible values are uid or uuid (uniqueidentifier).")
 #Boolean parameter
