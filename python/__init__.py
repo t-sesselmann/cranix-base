@@ -50,6 +50,11 @@ def init(args):
     global output, input_file, role, password, identifier, full, test, debug, mustchange
     global reset_password, all_classes, clean_class_dirs, sleep
     global import_dir, required_classes, existing_classes, all_users, import_list
+    global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
+    fsQuota        = int(os.popen('oss_api_text.sh GET system/configuration/FILE_QUOTA').read())
+    fsTeacherQuota = int(os.popen('oss_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
+    msQuota        = int(os.popen('oss_api_text.sh GET system/configuration/MAIL_QUOTA').read())
+    msTeacherQuota = int(os.popen('oss_api_text.sh GET system/configuration/MAIL_TEACHER_QUOTA').read())
     import_dir = home_base + "/groups/SYSADMINS/userimports/" + date
     os.system('mkdir -pm 770 ' + import_dir + '/tmp' )
     #open the output file
@@ -57,6 +62,9 @@ def init(args):
     #create lock file
     with open(lockfile,'w') as f:
         f.write(date)
+    #write the parameter
+    with open(import_dir +'/parameters.json','w') as f:
+        json.dump(args.__dict__,f,ensure_ascii=False)
     input_file = args.input
     role       = args.role
     password   = args.password
@@ -94,7 +102,7 @@ def read_users():
             user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
         else:
             user_id = user[identifier]
-        user_id = user_id.replace(' ','')
+        user_id = user_id.replace(' ','_')
         all_users[user_id]={}
         for key in user:
             all_users[user_id][key] = user[key]
@@ -137,7 +145,7 @@ def read_csv():
                     raise SyntaxError("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
             user['classes'] = user.get('class','')
-            user_id = user_id.replace(' ','')
+            user_id = user_id.replace(' ','_')
             import_list[user_id] = user
     if(debug):
         print("All user in the list:")
@@ -169,9 +177,11 @@ def close_on_error(msg):
 
 def log_error(msg):
     output.write(print_error(msg))
+    output.flush()
 
 def log_msg(title,msg):
     output.write(print_msg(title,msg))
+    output.flush()
 
 def add_group(name):
     global new_group_count
@@ -225,6 +235,22 @@ def add_user(user,ident):
     if 'class' in user:
         user['classes'] = user['class']
         del user['class']
+    #Set default file system quota 
+    if not 'fsQuota' in user:
+        if role == 'teachers':
+            user['fsQuota'] = fsTeacherQuota
+        elif role == 'sysadmins':
+            user['fsQuota'] = 0
+        else:
+            user['fsQuota'] = fsQuota
+    #Set default mail system quota 
+    if not 'msQuota' in user:
+        if role == 'teachers':
+            user['msQuota'] = msTeacherQuota
+        elif role == 'sysadmins':
+            user['msQuota'] = 0
+        else:
+            user['msQuota'] = msQuota
     file_name = '{0}/tmp/user_add.{1}'.format(import_dir,new_user_count)
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
@@ -240,6 +266,7 @@ def add_user(user,ident):
     else:
         log_error(result['value'])
         return False
+    time.sleep(sleep)
 
 def modify_user(user,ident):
     if identifier != 'sn-gn-bd':
@@ -290,9 +317,7 @@ def delete_class(group):
         print(result)
 
 def write_user_list():
-    file_name = '{0}/all-{1}.txt'.format(import_dir,'users')
-    if role == 'students':
-        file_name = '{0}/all-{1}.txt'.format(import_dir,role)
+    file_name = '{0}/all-{1}.txt'.format(import_dir,role)
     with open(file_name, 'w') as fp:
         #TODO Translate header
         fp.write(';'.join(user_attributes)+"\n")
@@ -316,5 +341,7 @@ def write_user_list():
                 class_files[user_class].write(';'.join(line)+"\n")
         for cl in existing_classes:
             class_files[cl].close()
+    #Now we start to write the password files
+    os.system('/usr/share/oss/tools/create_password_files.py {0} {1}'.format(import_dir,role))
 
 

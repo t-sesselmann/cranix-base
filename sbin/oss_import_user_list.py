@@ -68,6 +68,8 @@ for ident in cranix.import_list:
                 if password == "":
                     password = cranix.create_secure_pw
                 old_user['password'] = password
+                import_list[ident]['password'] = password
+                old_user['mustChnage'] =  mustchange
             cranix.modify_user(old_user,ident)
     else:
         cranix.log_debug("New user",new_user)
@@ -89,6 +91,7 @@ for ident in cranix.import_list:
 
 # Now we write the user list
 if args.debug:
+    print('Resulted user list')
     print(cranix.import_list)
 cranix.write_user_list()
 
@@ -101,7 +104,7 @@ if args.full and args.role == 'students':
 
 if args.all_classes:
    for c in cranix.existing_classes:
-       if not c in required_classes:
+       if not c in cranix.required_classes:
           cranix.log_msg(c,"Class will be deleted")
           if not args.test:
               cranix.delete_class(c)
@@ -109,6 +112,6 @@ if args.all_classes:
 
 if not args.test and args.clean_class_dirs:
     for c in cranix.existing_classes:
-        os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c))
+        os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c.upper()))
 
 cranix.close()

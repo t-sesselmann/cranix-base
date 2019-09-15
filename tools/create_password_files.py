@@ -28,11 +28,8 @@ def convertHtmlToPdf(sourceHtml, outputFilename):
     return pisaStatus.err
 
 import_dir= sys.argv[1] + "/"
-user_list = import_dir + "all-students.txt"
-students  = 1
-if not os.path.exists( user_list ):
-    user_list=import_dir + "all-users.txt"
-    students = 0
+role      = sys.argv[2]
+user_list = '{0}/all-{1}.txt'.format(import_dir,role)
 if not os.path.exists( import_dir + "/passwordfiles" ):
   os.mkdir( import_dir + "passwordfiles", 0o770 );
 
@@ -55,16 +52,16 @@ with open(user_list) as csvfile:
             template = template.replace(to_replace,escape(row[field]))
             if field == "uid":
                 uid=row[field]
-            if students == 1 and ( field == "class" ):
-                group=row[field]
+            if  ( role == 'students' ) and ( field == "class" ):
+                group=row[field].split(' ')[0]
                 if group not in all_classes:
                     all_classes.append(group)
-        if students == 1:
+        if role == 'students':
            convertHtmlToPdf(template, import_dir + "/passwordfiles/" + group + "-" + uid + '.pdf')
         else:
            convertHtmlToPdf(template, import_dir + "/passwordfiles/" + uid + '.pdf')
 
-if students == 1:
+if role == 'students':
   for group in all_classes:
     os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/" + group + "-*.pdf " + import_dir + "/PASSWORDS-" + group + ".pdf")
 os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/*.pdf " + import_dir + "/PASSWORDS-ALL-USER.pdf")

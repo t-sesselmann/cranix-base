@@ -3,7 +3,7 @@ group=$1
 SCHOOL_HOME_BASE="/home"
 . /etc/sysconfig/schoolserver
 
-nameUp=`echo "$group" | tr "[:upper:]" "[:lower:]"`
+nameUp=`echo "$group" | tr "[:lower:]" "[:upper:]"`
 
 gdir=${SCHOOL_HOME_BASE}/groups/${nameUp}
 
