@@ -48,7 +48,7 @@ for role in os.popen('oss_api_text.sh GET groups/text/byType/primary').readlines
 
 def init(args):
     global output, input_file, role, password, identifier, full, test, debug, mustchange
-    global reset_password, all_classes, clean_class_dirs, sleep
+    global resetPassword, allClasses, cleanClassDirs, sleep
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
     fsQuota        = int(os.popen('oss_api_text.sh GET system/configuration/FILE_QUOTA').read())
@@ -73,9 +73,9 @@ def init(args):
     test       = args.test
     debug      = args.debug
     mustchange = args.mustchange
-    reset_password   = args.reset_password
-    all_classes      = args.all_classes
-    clean_class_dirs = args.clean_class_dirs
+    resetPassword   = args.resetPassword
+    allClasses      = args.allClasses
+    cleanClassDirs = args.cleanClassDirs
     sleep       = args.sleep
 
     read_classes()

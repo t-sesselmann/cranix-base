@@ -30,11 +30,11 @@ parser.add_argument("--debug", dest="debug", default=False, action="store_true",
                     help="Run in debug mode, no daemonize.")
 parser.add_argument("--mustchange", dest="mustchange", default=False, action="store_true",
                     help="If set, the new users must change its password by the first login.")
-parser.add_argument("--reset_password", dest="reset_password", default=False, action="store_true",
+parser.add_argument("--resetPassword", dest="resetPassword", default=False, action="store_true",
                     help="If this option is true the password of old user will be reseted too.")
-parser.add_argument("--all_classes", dest="all_classes", default=False, action="store_true",
+parser.add_argument("--allClasses", dest="allClasses", default=False, action="store_true",
                     help="The import list contains all classes. Classes which are not in the list will be deleted. This parameter has only affect when role=students.")
-parser.add_argument("--clean_class_dirs", dest="clean_class_dirs", default=False, action="store_true",
+parser.add_argument("--cleanClassDirss", dest="cleanClassDirss", default=False, action="store_true",
                     help="Remove the content of the directories of the classes. This parameter has only affect when role=students.")
 #Integer parameter
 parser.add_argument("--sleep", dest="sleep", default=2,
@@ -65,7 +65,7 @@ for ident in cranix.import_list:
         cranix.log_debug("Old user",old_user)
         cranix.log_msg(ident,"Old user. Old classes: " + old_user['classes'] + " New Classes:" + new_user['classes'] )
         if not args.test:
-            if args.reset_password:
+            if args.resetPassword:
                 password = args.password
                 if password == "":
                     password = cranix.create_secure_pw
@@ -104,7 +104,7 @@ if args.full and args.role == 'students':
             if not args.test:
                 cranix.delete_user(cranix.all_users[ident]['uid'])
 
-if args.all_classes:
+if args.allClasses:
    for c in cranix.existing_classes:
        if not c in cranix.required_classes:
           cranix.log_msg(c,"Class will be deleted")
@@ -112,7 +112,7 @@ if args.all_classes:
               cranix.delete_class(c)
    cranix.read_classes()
 
-if not args.test and args.clean_class_dirs:
+if not args.test and args.cleanClassDirss:
     for c in cranix.existing_classes:
         os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c.upper()))
 
