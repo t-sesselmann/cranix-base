@@ -48,7 +48,7 @@ for role in os.popen('oss_api_text.sh GET groups/text/byType/primary').readlines
 
 def init(args):
     global output, input_file, role, password, identifier, full, test, debug, mustchange
-    global resetPassword, allClasses, cleanClassDirs, sleep
+    global resetPassword, allClasses, cleanClassDirs, appendBirthdayToPassword
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
     fsQuota        = int(os.popen('oss_api_text.sh GET system/configuration/FILE_QUOTA').read())
@@ -76,7 +76,7 @@ def init(args):
     resetPassword   = args.resetPassword
     allClasses      = args.allClasses
     cleanClassDirs = args.cleanClassDirs
-    sleep       = args.sleep
+    appendBirthdayToPassword = args.appendBirthdayToPassword
 
     read_classes()
     read_groups()
@@ -232,6 +232,8 @@ def add_user(user,ident):
         user['mustChange'] = True
     if password != "":
         user['password'] = password
+    if appendBirthdayToPassword:
+        user['password'] = password + user['birthDay']
     if 'class' in user:
         user['classes'] = user['class']
         del user['class']
@@ -266,7 +268,6 @@ def add_user(user,ident):
     else:
         log_error(result['value'])
         return False
-    time.sleep(sleep)
 
 def modify_user(user,ident):
     if identifier != 'sn-gn-bd':

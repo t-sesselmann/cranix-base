@@ -17,7 +17,7 @@ parser.add_argument("--role", dest="role", default="students", choices=cranix.ro
                     help="Role of the users to import: students|teachers|administration")
 parser.add_argument("--password", dest="password", default="",
                     help="Default value for password.")
-parser.add_argument("--lang", dest="lan", default="DE",
+parser.add_argument("--lang", dest="lang", default="DE",
                     help="Language of the header.")
 parser.add_argument("--identifier", dest="identifier", default="sn-gn-bd", choices=['sn-gn-bd', 'uid', 'uuid'],
                     help="Which attribute(s) will be used to identify an user. Normaly the sn givenName and birthday combination will be used (sn-gn-bd). Possible values are uid or uuid (uniqueidentifier).")
@@ -34,11 +34,10 @@ parser.add_argument("--resetPassword", dest="resetPassword", default=False, acti
                     help="If this option is true the password of old user will be reseted too.")
 parser.add_argument("--allClasses", dest="allClasses", default=False, action="store_true",
                     help="The import list contains all classes. Classes which are not in the list will be deleted. This parameter has only affect when role=students.")
-parser.add_argument("--cleanClassDirss", dest="cleanClassDirss", default=False, action="store_true",
+parser.add_argument("--appendBirthdayToPassword", dest="appendBirthdayToPassword", default=False, action="store_true",
+                    help="Append the birthday of a user to the password and set this as password.")
+parser.add_argument("--cleanClassDirs", dest="cleanClassDirs", default=False, action="store_true",
                     help="Remove the content of the directories of the classes. This parameter has only affect when role=students.")
-#Integer parameter
-parser.add_argument("--sleep", dest="sleep", default=2,
-                    help="The import script sleeps between creating the user objects not to catch all the resources of OSS.")
 
 args = parser.parse_args()
 # Init the import envinroment
@@ -69,6 +68,8 @@ for ident in cranix.import_list:
                 password = args.password
                 if password == "":
                     password = cranix.create_secure_pw
+                if appendBirthdayToPassword:
+                    password = password + old_user['birthDay']
                 old_user['password'] = password
                 import_list[ident]['password'] = password
                 old_user['mustChnage'] =  mustchange
@@ -95,7 +96,8 @@ for ident in cranix.import_list:
 if args.debug:
     print('Resulted user list')
     print(cranix.import_list)
-cranix.write_user_list()
+if not args.test:
+    cranix.write_user_list()
 
 if args.full and args.role == 'students':
     for ident in cranix.all_users:

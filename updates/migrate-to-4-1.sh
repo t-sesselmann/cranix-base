@@ -19,6 +19,9 @@ do
 		samba-tool user move ${U} OU=${ROLE}
 	done
 done
+# Change the efi boot image in dhcpd
+sed -i s#elilo.efi#efi/grub.efi# /etc/dhcpd.conf
+sed -i s#elilo.efi#efi/grub.efi# /usr/share/oss/templates/dhcpd.conf
 
 # Now we have to create firewalld Zones for the rooms
 /usr/share/oss/updates/migrate-to-4-1.py
