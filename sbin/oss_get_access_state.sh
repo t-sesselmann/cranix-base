@@ -1,41 +1,72 @@
 #!/bin/bash
 #
-# Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Copyright (c) 2009 Peter Varkoly Fuerth, Germany.  All rights reserved.
 #
-# syntax: /usr/sbin/oss_get_access_status room
+# $Id: oss_get_access_status,v 2.1 2007/05/09 21:24:06 pv Exp $
+#
+# syntax: /usr/sbin/oss_get_access_status network direct|proxy|internet|login|printing|portal
 #
 . /etc/sysconfig/schoolserver
+case "$2" in
+   direct)
+	if test "$SCHOOL_ISGATE" = "no"; then
+                echo -n '1'
+                exit 0
+	fi
+        export DEST=$SCHOOL_NET_GATEWAY
+        ;;
+   internet|proxy)
+	if [ "$SCHOOL_USE_TFK" = "yes" ]; then
+		echo -n '1'
+		exit 0
+	fi
+        export DEST=$SCHOOL_PROXY
+        ;;
+   printing)
+        export DEST=$SCHOOL_PRINTSERVER
+        ;;
+   portal)
+        export DEST=$SCHOOL_MAILSERVER
+        ;;
+   login)
+        export DEST=$SCHOOL_SERVER
+        ;;
+esac
 
-STATUS=$( /usr/bin/firewall-cmd --info-zone=$1 )
-DIRECT=$( echo "$STATUS" | grep masquerade: | sed 's/.*masquerade: //' )
-LOGIN=$(  echo "$STATUS" | grep address=\"$SCHOOL_SERVER\" )
-PORTAL=$( echo "$STATUS" | grep address=\"$SCHOOL_MAILSERVER\")
-PROXY=$(  echo "$STATUS" | grep address=\"$SCHOOL_PROXY\"  )
-PRINT=$(  echo "$STATUS" | grep address=\"$SCHOOL_PRINTSERVER\" )
+LOCAL=`ip addr | grep "$DEST/"`
 
-if [ "$DIRECT" = "yes" ]; then
-	echo -n '{"direct":true,'
+case "$2" in
+   direct)
+#TODO
+#We have to mark not full internet access too.
+#E.m. if only some ports or server are enabled
+	if [ "$LOCAL" ]
+	then
+		STATUS=`/usr/sbin/iptables -L -t nat -v -n | grep "MASQUERADE.*all.*$1" | grep -P "0.0.0.0/0|$SCHOOL_NETWORK/"`
+	else
+		STATUS=`ssh $DEST "/usr/sbin/iptables -L -t nat -v -n | grep 'MASQUERADE.*all.*$1' | grep -P '0.0.0.0/0|$SCHOOL_NETWORK/'"`
+	fi
+	if test "$STATUS"
+	then
+	  echo -n '1'
+	else
+	  echo -n '0'
+	fi
+	exit 0
+	;;
+   *)
+	if [ "$LOCAL" ]
+	then
+		STATUS=`/usr/sbin/iptables -L -n -v | grep $2-$1`
+	else
+		STATUS=`ssh $DEST "/usr/sbin/iptables -L -n -v | grep $2-$1"`
+	fi
+	;;
+esac
+if test "$STATUS"
+then
+  echo -n '0'
 else
-	echo -n '{"direct":false,'
-fi
-if [ "$PROXY" ]; then
-	echo -n '"proxy":false,'
-else
-	echo -n '"proxy":true,'
-fi
-if [ "$LOGIN" ]; then
-	echo -n '"login":false,'
-else
-	echo -n '"login":true,'
-fi
-if [ "$PORTAL" ]; then
-	echo -n '"portal":false,'
-else
-	echo -n '"portal":true,'
-fi
-if [ "$PRINT" ]; then
-	echo -n '"print":false}'
-else
-	echo -n '"print":true}'
+  echo -n '1'
 fi

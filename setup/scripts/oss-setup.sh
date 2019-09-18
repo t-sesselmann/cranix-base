@@ -103,16 +103,6 @@ function SetupSamba (){
     rm -r /etc/samba/*
 
     ########################################################################
-    #log " - Turn off not used network devices."
-    #. /etc/sysconfig/SuSEfirewall2
-    #if [ "$FW_DEV_EXT" ]; then
-    #   ifdown $FW_DEV_EXT
-    #fi
-    #ifconfig "$FW_DEV_INT:mail" down
-    #ifconfig "$FW_DEV_INT:print" down
-    #ifconfig "$FW_DEV_INT:proxy" down
-
-    ########################################################################
     log " - Install domain provision"
     samba-tool domain provision --realm="$SCHOOL_DOMAIN" \
 				--domain="$windomain" \
@@ -456,19 +446,6 @@ unset _bred _sgr0
     ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
 
-    /usr/bin/firewall-cmd --permanent --new-zone=ANON_DHCP
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-description="Zone for ANON_DHCP"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --add-source="$SCHOOL_ANON_DHCP_NET"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
-    /usr/bin/firewall-cmd --permanent --new-zone=SERVER_NET
-    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-description="Zone for SERVER_NET"
-    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$SCHOOL_SERVER_NET"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
-    /usr/bin/firewall-cmd --permanent --new-zone=SCHOOL_NET
-    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --set-description="Zone for SCHOOL_NET"
-    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --add-source="${SCHOOL_NETWORK}/${SCHOOL_NETMASK}"
-    /usr/bin/firewall-cmd --permanent --zone=SCHOOL_NET --set-target=ACCEPT
-
     for i in /opt/oss-java/data/*-INSERT.sql
     do
 	sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		$i
@@ -543,6 +520,17 @@ chmod 600 /root/.my.cnf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss-index.html > /srv/www/oss/index.html
     systemctl enable apache2
     systemctl start  apache2
+
+    ########################################################################
+    log "Setup SuSEFirewall2"
+    if [ $SCHOOL_ISGATE = "yes" ]; then
+        sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
+        sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
+    else
+        systemctl disable SuSEfirewall2
+    fi
+    sed -i 's/^FW_CUSTOMRULES=/FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"/' /etc/sysconfig/SuSEfirewall2
+    cp /usr/share/oss/setup/templates/SuSEfirewall2-custom /etc/sysconfig/scripts/SuSEfirewall2-custom
 
     ########################################################################
     log "Setup Cups"

@@ -5,7 +5,7 @@ DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR       = /usr/share/fillup-templates/
 PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
-TOPACKAGE       = Makefile addons cups etc firewalld plugins python profiles sbin setup salt tools templates updates README.md
+TOPACKAGE       = Makefile addons cups etc plugins python profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -22,7 +22,6 @@ install:
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
-	mkdir -p $(DESTDIR)/usr/lib/firewalld/services/
 	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
 	rm -f setup/schoolserver
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
@@ -40,7 +39,6 @@ install:
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
 	install -m 644 setup/oss-firstboot.xml $(DESTDIR)/etc/YaST2/
 	install -m 644 setup/oss_*.service $(DESTDIR)/usr/lib/systemd/system/
-	install -m 755 firewalld/* $(DESTDIR)/usr/lib/firewalld/services/
 
 dist: 
 	xterm -e git log --raw  &

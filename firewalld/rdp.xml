@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-  <short>Remote Desktop (RDP)</short>
-  <description>External access to the CRANIX RDP server.</description>
-  <port protocol="tcp" port="3389"/>
-</service>
-

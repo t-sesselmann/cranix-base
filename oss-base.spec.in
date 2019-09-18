@@ -28,7 +28,7 @@ PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
 PreReq:         filesystem
-PreReq:         firewalld
+PreReq:         SuSEfirewall2
 PreReq:         apache2
 Requires:       acl
 Requires:       quota
@@ -132,12 +132,10 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 /usr/share/cups/ipptool/*
 /usr/share/cups/drivers/ps*
 /usr/share/cups/drivers/x64/ps*
-/usr/lib/firewalld/services/*
 %{python_site}/cranix
 %{_fillupdir}/sysconfig.schoolserver
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
-/usr/lib/firewalld/services/*
 %doc README.md
 
 %description
