@@ -87,7 +87,7 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-            /bin/chmod -R 0770 "$i"
+	    find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
 	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
 	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
@@ -106,7 +106,7 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-            /bin/chmod -R 0770 "$i"
+	    find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
 	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
 	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
             echo "Repairing $i"
@@ -116,7 +116,6 @@ then
     done
 
     #Repaire TEACHERS and SYSADMINS
-    /bin/chmod -R 3770 $i
     setfacl -R -dm o::--- /home/groups/TEACHERS
     setfacl -R -m  o::--- /home/groups/TEACHERS
     chmod -R o-x /home/groups/TEACHERS
