@@ -2,9 +2,6 @@
 # Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
 case $ACTION in
-	listUpdates)
-		zypper lu
-	;;
 	update)
 		/usr/sbin/oss_update.sh
 	;;

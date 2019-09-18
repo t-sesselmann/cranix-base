@@ -2,17 +2,20 @@
 
 case $1 in
         listActions)
-                ACTIONS="listUpdate update shutdown reboot"
+                ACTIONS="update shutdown reboot"
 		echo -n $ACTIONS
                 ;;
         listKeys)
-                echo -n "version systemLoad"
+                echo -n "version systemLoad listUpdate"
                 ;;
         version)
 		/usr/bin/rpm -q --qf "%{VERSION}-%{RELEASE}" oss-base
                 ;;
 	systemLoad)
 		cat /proc/loadavg
+		;;
+	listUpdate)
+		zypper lu
 esac
 
 
