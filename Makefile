@@ -1,23 +1,19 @@
 #
-# Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
+# Copyright (c) Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
-FILLUPDIR             = /usr/share/fillup-templates/
+FILLUPDIR       = /usr/share/fillup-templates/
 PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
-TOPACKAGE       = Makefile cups etc firewalld plugins python profiles sbin setup salt tools templates updates README.md
+TOPACKAGE       = Makefile addons cups etc firewalld plugins python profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
-REQPACKAGES     = $(shell cat REQPACKAGES)
 HERE            = $(shell pwd)
 REPO            = /data1/OSC/home:varkoly:OSS-4-1:leap15.1
 PACKAGE         = oss-base
 
 install:
-	for i in $(REQPACKAGES); do \
-	    rpm -q --quiet $$i || { echo "Missing Required Package $$i"; exit 1; } \
-	done  
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins,profiles,updates}
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/$(FILLUPDIR)
@@ -31,12 +27,13 @@ install:
 	rm -f setup/schoolserver
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
-	rsync -a   templates/       $(SHARE)/templates/
-	rsync -a   setup/           $(SHARE)/setup/
+	rsync -a   addons/          $(SHARE)/addons/
 	rsync -a   plugins/         $(SHARE)/plugins/
+	rsync -a   profiles/        $(SHARE)/profiles/
+	rsync -a   setup/           $(SHARE)/setup/
+	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   tools/           $(SHARE)/tools/
 	rsync -a   updates/         $(SHARE)/updates/
-	rsync -a   profiles/        $(SHARE)/profiles/
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
 	rsync -a   python/          $(DESTDIR)/$(PYTHONSITEARCH)/cranix/
