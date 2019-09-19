@@ -1158,7 +1158,7 @@ if( $cleanClassDirs && !$test )
 	chomp $cn;
 	my $path =  $globals->{HOME_BASE}.'/groups/'.$cn;
 	system("rm -rf $path") if( -d $path );
-	system("mkdir -m 3771 $path; chgrp $cn $path; setfacl -d -m g::rwx $path;");
+	system("mkdir -m 0770 $path; chgrp $cn $path; setfacl -d -m g::rwx $path;");
 	$MESSAGE .= "    $path<br>\n";
     }
     open( OUT, ">>$output");

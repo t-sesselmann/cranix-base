@@ -108,7 +108,7 @@ samba-tool group add "$name" --description="$description" --gid-number=$gidNumbe
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir=${SCHOOL_HOME_BASE}/groups/${name}
 
-mkdir -p -m 3770 $gdir
+mkdir -p -m 770 $gdir
 chgrp $gidNumber $gdir
 setfacl -d -m g::rwx $gdir
 
