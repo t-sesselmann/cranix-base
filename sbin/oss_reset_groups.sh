@@ -19,21 +19,21 @@ then
         /bin/chmod    0777   /home/all
 else
         /bin/chmod    0770   /home/all
+	/usr/bin/setfacl -Rb                       /home/all
+	/usr/bin/setfacl -Rm  m::rwx               /home/all
+	/usr/bin/setfacl -Rm  g:teachers:rwx       /home/all
+	/usr/bin/setfacl -Rm  g:students:rwx       /home/all
+	/usr/bin/setfacl -Rm  g:administration:rwx /home/all
+	/usr/bin/setfacl -Rdm m::rwx               /home/all
+	/usr/bin/setfacl -Rdm g:teachers:rwx       /home/all
+	/usr/bin/setfacl -Rdm g:students:rwx       /home/all
+	/usr/bin/setfacl -Rdm g:administration:rwx /home/all
 fi
 /bin/mkdir -p   /home/software
 /bin/chmod 0775 /home/software
 /bin/chmod o-t /home/software /home/all
 
 /bin/chgrp 	 templates /home/templates
-/usr/bin/setfacl -Rb                       /home/all
-/usr/bin/setfacl -Rm  m::rwx               /home/all
-/usr/bin/setfacl -Rm  g:teachers:rwx       /home/all
-/usr/bin/setfacl -Rm  g:students:rwx       /home/all
-/usr/bin/setfacl -Rm  g:administration:rwx /home/all
-/usr/bin/setfacl -Rdm m::rwx               /home/all
-/usr/bin/setfacl -Rdm g:teachers:rwx       /home/all
-/usr/bin/setfacl -Rdm g:students:rwx       /home/all
-/usr/bin/setfacl -Rdm g:administration:rwx /home/all
 
 if test -d /home/groups/STUDENTS
 then
@@ -54,8 +54,7 @@ do
         chgrp -R $gid  "$i"
         /usr/bin/setfacl -P -R -b "$i"
         find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
-        find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-        find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+        find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
         echo "Repairing $i"
     else
    	   echo "Class $cn do not exists. Can not repair $i"
@@ -73,8 +72,7 @@ do
         chgrp -R $gid  "$i"
         /usr/bin/setfacl -P -R -b "$i"
         find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
-        find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-        find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+        find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
         echo "Repairing $i"
     else
    	   echo "Class $cn do not exists. Can not repair $i"
