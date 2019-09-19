@@ -49,6 +49,7 @@ Conflicts:      yast2-dhcp-server
 BuildRequires:  rsync
 BuildRequires:  python-rpm-macros
 BuildRequires:  -post-build-checks
+BuildRequires:  openSUSE-build-key
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Provides:       openschool-base
@@ -137,6 +138,7 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 %dir /srv/salt/_modules
 /srv/salt/_modules/*
 %doc README.md
+/usr/lib/rpm/gnupg/keys/*
 
 %description
 This package contains the basic utilitis to setup configure and manage the OSS base system.
