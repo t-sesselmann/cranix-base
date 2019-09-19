@@ -526,6 +526,7 @@ chmod 600 /root/.my.cnf
     if [ $SCHOOL_ISGATE = "yes" ]; then
         sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
         sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
+        systemctl enable SuSEfirewall2
     else
         systemctl disable SuSEfirewall2
     fi
