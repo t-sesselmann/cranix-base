@@ -7,7 +7,7 @@ if [[ $pw2check =~ [\&§] ]]; then
 	echo "User password must not contain this chracters: &§"
 	exit 6
 fi
-if [ ${pw2check:0:0} = '-' ]; then
+if [ ${pw2check:0:1} = '-' ]; then
 	echo "User password must not start with '-'"
 	exit 6
 fi
