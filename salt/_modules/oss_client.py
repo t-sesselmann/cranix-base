@@ -92,4 +92,20 @@ def loggedIn():
     return ""
 
   return ""
+#Apply the registries which were copied from the server
+#This function makes only sence on Windows clients
+def applyRegs():
+  if __grains__['os_family'] == 'Windows':
+    with os.scandir("C:\\salt\\var\\REGS\\") as it:
+        for entry in it:
+           os.system("regedit /s C:\\salt\\var\\REGS\\" + entry.name)
+  return ""
+
+#Execute the commands which was copied from the server
+def executCommands():
+  if __grains__['os_family'] == 'Windows':
+    with os.scandir("C:\\salt\\var\\COMMANDS\\") as it:
+        for entry in it:
+           os.system("C:\\salt\\var\\COMMANDS\\" + entry.name)
+  return ""
 
