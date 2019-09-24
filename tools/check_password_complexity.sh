@@ -7,6 +7,10 @@ if [[ $pw2check =~ [\&§] ]]; then
 	echo "User password must not contain this chracters: &§"
 	exit 6
 fi
+if [ ${pw2check:0:0} = '-' ]; then
+	echo "User password must not start with '-'"
+	exit 6
+fi
 if [ -e "/var/lib/samba/private/sam.ldb" ]; then
 	#During the installation samba is not installed.
 	MINL=$( samba-tool domain passwordsettings show | grep "Minimum password length:" | sed 's/Minimum password length: //' )
