@@ -4,7 +4,7 @@
 DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR	= /usr/share/fillup-templates/
-TOPACKAGE       = Makefile etc cups plugins profiles sbin setup salt tools templates updates README.md
+TOPACKAGE       = Makefile addons etc cups plugins profiles sbin setup salt tools templates updates README.md
 VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
 RELEASE         = $(shell cat RELEASE )
 NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
@@ -25,6 +25,7 @@ install:
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
+	rsync -a   addons/          $(SHARE)/addons/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   setup/           $(SHARE)/setup/
