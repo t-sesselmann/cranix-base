@@ -23,6 +23,10 @@ zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses 
 zypper -n install --no-recommends sddm
 zypper -n install patterns-kde-kde_plasma
 
+#remove some not used packages
+rpm -e python2-salt
+rpm -e $( rpm -qa "python2*" ) python-html5lib  python-xhtml2pdf python-singledispatch python-backports.functools_lru_cache command-not-found
+
 # Adapt the destkop icons
 cp /etc/skel/Desktop/* /root/Desktop/
 tar xf /usr/share/oss/setup/templates/needed-files-for-root.tar -C /root/
