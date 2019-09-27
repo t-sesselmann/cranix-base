@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Sync the ip addresses from the Devices table into the samba dns server
 # This can be neccessary if someone has made some manual changes
 # Copyright Dipl Ing Peter Varkoly <peter@varkoly.de>
@@ -31,7 +31,7 @@ print("Recreate the reverse zone")
 netmask=int(os.popen('oss_api_text.sh GET system/configuration/NETMASK').read().rstrip())
 network=os.popen('oss_api_text.sh GET system/configuration/NETWORK').read().split('.')
 revdomain=""
-print netmask
+print(netmask)
 if netmask > 23:
   revdomain = network[2]+'.'+network[1]+'.'+network[0]+'.IN-ADDR.ARPA'
 elif netmask > 15 and netmask < 24:

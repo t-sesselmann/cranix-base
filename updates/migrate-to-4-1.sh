@@ -23,6 +23,11 @@ done
 sed -i s#elilo.efi#efi/grub.efi# /etc/dhcpd.conf
 sed -i s#elilo.efi#efi/grub.efi# /usr/share/oss/templates/dhcpd.conf
 
+# Change to kde
+sed -i 's/DISPLAYMANAGER=.*/DISPLAYMANAGER="kdm"/' /etc/sysconfig/displaymanager
+sed -i 's/DEFAULT_WM=.*/DEFAULT_WM="kde"/' /etc/sysconfig/windowmanager
+
+
 # Now we have to create firewalld Zones for the rooms
 /usr/share/oss/updates/migrate-to-4-1.py
 

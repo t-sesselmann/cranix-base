@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #This script rewrites in RSEBS the bad named minions
 import sys
 import os
