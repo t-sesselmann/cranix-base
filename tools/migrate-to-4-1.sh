@@ -20,7 +20,8 @@ gpasswd -d root lp
 sed -i 's/SystemGroup root lp/SystemGroup root/' /etc/cups/cups-files.conf
 zypper ref
 zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
-zypper install --no-recommends sddm
+zypper -n install --no-recommends sddm
+zypper -n install patterns-kde-kde_plasma
 systemctl restart samba
 # Since 4.1 we have OUs
 # We have to create it and move the users into the corresponding OU
