@@ -2,8 +2,8 @@
 # Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
 case $ACTION in
-	migrateTo4.1)
-		/usr/share/oss/tools/migrate-to-4-1.sh
+	migrate-to-4-1)
+		/sbin/startproc -l /var/log/OSS-MIGRATE-TO-4-1.log /usr/share/oss/tools/migrate-to-4-1.sh
 	;;
 	reboot)
 		/usr/bin/systemctl reboot
