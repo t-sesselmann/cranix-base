@@ -99,6 +99,10 @@ if args.debug:
 if not args.test:
     cranix.write_user_list()
 
+if not args.test and args.cleanClassDirss:
+    for c in cranix.existing_classes:
+        os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c.upper()))
+
 if args.full and args.role == 'students':
     for ident in cranix.all_users:
         if not ident in cranix.import_list:
@@ -113,9 +117,5 @@ if args.allClasses:
           if not args.test:
               cranix.delete_class(c)
    cranix.read_classes()
-
-if not args.test and args.cleanClassDirss:
-    for c in cranix.existing_classes:
-        os.system('/usr/sbin/oss_clean_group_directory.sh "{0}"'.format(c.upper()))
 
 cranix.close()

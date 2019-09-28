@@ -52,20 +52,20 @@ then
         /bin/chmod    1777   /home/all
 else
         /bin/chmod    1770   /home/all
+	/usr/bin/setfacl -Rb                       /home/all
+	/usr/bin/setfacl -Rm  m::rwx               /home/all
+	/usr/bin/setfacl -Rm  g:teachers:rwx       /home/all
+	/usr/bin/setfacl -Rm  g:students:rwx       /home/all
+	/usr/bin/setfacl -Rm  g:administration:rwx /home/all
+	/usr/bin/setfacl -Rdm m::rwx               /home/all
+	/usr/bin/setfacl -Rdm g:teachers:rwx       /home/all
+	/usr/bin/setfacl -Rdm g:students:rwx       /home/all
+	/usr/bin/setfacl -Rdm g:administration:rwx /home/all
 fi
 /bin/mkdir -p   /home/software
 /bin/chmod 1775 /home/software
 
 /bin/chgrp 	 templates /home/templates
-/usr/bin/setfacl -Rb                       /home/all
-/usr/bin/setfacl -Rm  m::rwx               /home/all
-/usr/bin/setfacl -Rm  g:teachers:rwx       /home/all
-/usr/bin/setfacl -Rm  g:students:rwx       /home/all
-/usr/bin/setfacl -Rm  g:administration:rwx /home/all
-/usr/bin/setfacl -Rdm m::rwx               /home/all
-/usr/bin/setfacl -Rdm g:teachers:rwx       /home/all
-/usr/bin/setfacl -Rdm g:students:rwx       /home/all
-/usr/bin/setfacl -Rdm g:administration:rwx /home/all
 
 if test -d /home/groups/STUDENTS
 then
@@ -87,9 +87,8 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-            /bin/chmod -R 0770 "$i"
-	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+	    find "$i" -type d -exec o-t,g+rwx {} \;
+	    find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
@@ -106,9 +105,8 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-            /bin/chmod -R 0770 "$i"
-	    find "$i" -type d -exec /usr/bin/setfacl -d -m g:${gid}:rwx {} \;
-	    find "$i" -type d -exec /usr/bin/setfacl -m g:${gid}:rwx {} \;
+	    find "$i" -type d -exec o-t,g+rwx {} \;
+	    find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
             echo "Repairing $i"
         else
        	   echo "Class $cn do not exists. Can not repair $i"
@@ -116,7 +114,7 @@ then
     done
 
     #Repaire TEACHERS and SYSADMINS
-    /bin/chmod -R 3770 $i
+    /bin/chmod -R 770 $i
     setfacl -R -dm o::--- /home/groups/TEACHERS
     setfacl -R -m  o::--- /home/groups/TEACHERS
     chmod -R o-x /home/groups/TEACHERS
