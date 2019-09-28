@@ -31,6 +31,10 @@ rpm -e $( rpm -qa "python2*" ) python-html5lib  python-xhtml2pdf python-singledi
 cp /etc/skel/Desktop/* /root/Desktop/
 tar xf /usr/share/oss/setup/templates/needed-files-for-root.tar -C /root/
 
+# Adapt samba
+cp /usr/share/fillup-templates/sysconfig.samba /etc/sysconfig/samba
+rm /etc/sysconfig/samba-printserver
+cp /usr/share/oss/setup/templates/samba-printserver.service  /usr/lib/systemd/system/samba-printserver.service
 systemctl restart samba
 # Since 4.1 we have OUs
 # We have to create it and move the users into the corresponding OU
@@ -43,4 +47,9 @@ do
 		samba-tool user move ${U} OU=${ROLE}
 	done
 done
+
+passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//' )
+net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%${passwd}
+
+#Reboot the system
 reboot
