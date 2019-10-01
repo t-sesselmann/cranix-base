@@ -31,11 +31,11 @@ if [ "$role" = "students" ]; then
         if [ "${SCHOOL_MOVE_STUDENTS_PROFILE_TO_HOME}" = "no" ]; then
                 SCHOOL_MOVE_PROFILE_TO_HOME="no"
         fi
-        if [ ${SCHOOL_TEACHER_OBSERV_HOME} = "yes" ]; then
+        if [ "${SCHOOL_TEACHER_OBSERV_HOME}" = "yes" ]; then
                 SCHOOL_MOVE_PROFILE_TO_HOME="no"
         fi
 fi
-if [ ${SCHOOL_MOVE_PROFILE_TO_HOME} ]; then
+if [ "${SCHOOL_MOVE_PROFILE_TO_HOME}" = "yes" ]; then
 	userHome=$( oss_get_home.sh ${U} )
 	if [ -z "${userHome}" -o ${userHome/${SCHOOL_HOME_BASE}/} = ${userHome} ]; then
                 echo "ERROR create-logon-script: '$U' has not home directory"
