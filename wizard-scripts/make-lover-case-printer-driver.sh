@@ -21,6 +21,7 @@ do
 	if [ $lower != $i ];
        	then
 		sed -i "s/${i}>/${lower}>/" /etc/cups/printers.conf
+		sed -i "s/Info ${i}$/Info ${lower}/" /etc/cups/printers.conf
 		mv /etc/cups/ppd/$i.ppd /etc/cups/ppd/${lower}.ppd
 		systemctl restart cups
 		sleep 2
