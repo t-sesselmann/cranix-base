@@ -24,6 +24,7 @@ PreReq:         cups
 PreReq:         salt
 PreReq:         salt-master
 PreReq:		filesystem
+Requires:       cron
 Requires:       quota
 Requires:       rsync
 %if 0%{?suse_version} >= 1500
