@@ -33,7 +33,7 @@ install:
 	rsync -a   setup/           $(SHARE)/setup/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   tools/           $(SHARE)/tools/
-	rsync -a   updates/         $(SHARE)/updates/
+	if [ -e updates ]; then rsync -a   updates/         $(SHARE)/updates/; fi
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
 	rsync -a   python/          $(DESTDIR)/$(PYTHONSITEARCH)/cranix/
