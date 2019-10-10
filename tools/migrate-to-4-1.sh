@@ -18,8 +18,15 @@ sed -i 's#OSS/4.0.1#OSS/4.1#'  /etc/zypp/credentials.cat
 
 gpasswd -d root lp
 sed -i 's/SystemGroup root lp/SystemGroup root/' /etc/cups/cups-files.conf
+
+rpm -e --nodeps  $( rpm -qa "python-*" )
+
 zypper ref
-zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
+if ! zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
+then
+	echo "An error accoured during the installation. Contact the support."
+	exit 1
+fi
 zypper -n install --no-recommends sddm
 zypper -n install patterns-kde-kde_plasma
 
