@@ -63,6 +63,33 @@ do
 	done
 done
 
+export HOME="/root/"
+echo "INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.add.students',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.delete.students',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.modify.students',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.add.teachers',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.delete.teachers',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.modify.teachers',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.add.sysadmins',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.delete.sysadmins',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.modify.sysadmins',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.add.workstations',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.delete.workstations',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','user.modify.workstations',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.add.primary',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.delete.primary',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.modify.primary',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.add.class',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.delete.class',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.modify.class',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.add.workgroup',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.delete.workgroup',6);
+INSERT INTO Enumerates VALUES(NULL,'apiAcl','group.modify.workgroup',6);
+INSERT INTO Acls VALUES(NULL,NULL,2,'group.add.workgroup','Y',6);
+INSERT INTO Acls VALUES(NULL,NULL,2,'group.delete.workgroup','Y',6);
+INSERT INTO Acls VALUES(NULL,NULL,2,'group.modify.workgroup','Y',6);
+" | mysql OSS
+
 passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//' )
 net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%${passwd}
 echo "Migration to OSS4-1 was successfull." > /var/adm/oss/migration-4.1-successfull
