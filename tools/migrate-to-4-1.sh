@@ -16,6 +16,13 @@ sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/
 sed -i 's#OSS/4.0.1$#OSS/4.1#' /etc/zypp/repos.d/OSS.repo
 sed -i 's#OSS/4.0.1#OSS/4.1#'  /etc/zypp/credentials.cat
 
+for i in $( grep -l 42.3 /etc/zypp/repos.d/*repo )
+do
+	if [ -e "$i" ]; then
+		sed -i "s/42.3/15.1/" $i
+	fi
+done
+
 gpasswd -d root lp
 sed -i 's/SystemGroup root lp/SystemGroup root/' /etc/cups/cups-files.conf
 
@@ -25,6 +32,7 @@ zypper ref
 if ! zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
 then
 	echo "An error accoured during the installation. Contact the support."
+	echo "An error accoured during the installation. Contact the support!" > /var/adm/oss/migration-4.1-error
 	exit 1
 fi
 zypper -n install --no-recommends sddm
@@ -57,6 +65,7 @@ done
 
 passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//' )
 net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%${passwd}
+echo "Migration to OSS4-1 was successfull." > /var/adm/oss/migration-4.1-successfull
 
 #Reboot the system
 reboot

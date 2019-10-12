@@ -6,8 +6,17 @@ case $1 in
 		echo -n $ACTIONS
                 ;;
         listKeys)
-                echo -n "version systemLoad"
+                echo -n "migrationState version systemLoad listUpdate"
                 ;;
+	migrationState)
+		if [ -e /var/adm/oss/migration-4.1-error ]; then
+			cat /var/adm/oss/migration-4.1-error
+		elif [ -e /var/adm/oss/migration-4.1-success ]; then
+			cat /var/adm/oss/migration-4.1-error
+		else
+			echo "Migration to 4-1 was not started."
+		fi
+		;;
         version)
 		/usr/bin/rpm -q --qf "%{VERSION}-%{RELEASE}" oss-base
                 ;;
