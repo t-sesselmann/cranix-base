@@ -26,7 +26,11 @@ done
 gpasswd -d root lp
 sed -i 's/SystemGroup root lp/SystemGroup root/' /etc/cups/cups-files.conf
 
+#remove python2 packages
 rpm -e --nodeps  $( rpm -qa "python-*" )
+
+#remove recode
+rpm -e --nodeps recode
 
 zypper ref
 if ! zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
@@ -94,5 +98,8 @@ passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/con
 net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%${passwd}
 echo "Migration to OSS4-1 was successfull." > /var/adm/oss/migration-4.1-successfull
 
+if [ -e /var/adm/oss/migration-4.1-error ]: then
+	rm /var/adm/oss/migration-4.1-error
+fi
 #Reboot the system
 reboot
