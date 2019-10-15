@@ -98,7 +98,7 @@ passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/con
 net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%${passwd}
 echo "Migration to OSS4-1 was successfull." > /var/adm/oss/migration-4.1-successfull
 
-if [ -e /var/adm/oss/migration-4.1-error ]: then
+if [ -e /var/adm/oss/migration-4.1-error ]; then
 	rm /var/adm/oss/migration-4.1-error
 fi
 #Reboot the system
