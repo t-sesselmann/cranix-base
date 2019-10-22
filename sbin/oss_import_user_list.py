@@ -72,7 +72,7 @@ for ident in cranix.import_list:
                     password = password + old_user['birthDay']
                 old_user['password'] = password
                 import_list[ident]['password'] = password
-                old_user['mustChnage'] =  mustchange
+                old_user['mustChange'] =  mustchange
             cranix.modify_user(old_user,ident)
     else:
         cranix.log_debug("New user",new_user)
