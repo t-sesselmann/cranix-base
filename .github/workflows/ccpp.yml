@@ -11,5 +11,3 @@ jobs:
     - uses: actions/checkout@v1
     - name: make install
       run: make install DESTDIR=/tmp/test
-    - name: make check
-      run: make check
