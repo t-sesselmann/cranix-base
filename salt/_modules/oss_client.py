@@ -102,7 +102,7 @@ def applyRegs():
   return ""
 
 #Execute the commands which was copied from the server
-def executCommands():
+def executeCommands():
   if __grains__['os_family'] == 'Windows':
     with os.scandir("C:\\salt\\var\\COMMANDS\\") as it:
         for entry in it:
