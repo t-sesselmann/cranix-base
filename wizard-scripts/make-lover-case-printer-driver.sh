@@ -20,11 +20,14 @@ do
 	lower=$( echo $i | tr [:upper:] [:lower:] )
 	if [ $lower != $i ];
        	then
+		systemctl stop cups
 		sed -i "s/${i}>/${lower}>/" /etc/cups/printers.conf
 		sed -i "s/Info ${i}$/Info ${lower}/" /etc/cups/printers.conf
 		mv /etc/cups/ppd/$i.ppd /etc/cups/ppd/${lower}.ppd
-		systemctl restart cups
+		systemctl start cups
 		sleep 2
+		systemctl restart samba-printserver
+		sleep 1
 		/usr/sbin/cupsaddsmb -v -H ${SCHOOL_PRINTSERVER} -U Administrator%"$ADMINPW" $lower
 	fi
 done
