@@ -422,7 +422,7 @@ function PostSetup (){
     cd /root
     /bin/mkdir .ssh
     /usr/bin/ssh-keygen -t rsa -N '' -f .ssh/id_rsa
-    cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys
+    cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
     /bin/chmod 600 /root/.ssh/authorized_keys
     echo 'stricthostkeychecking no' > /root/.ssh/config
     echo '# Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
