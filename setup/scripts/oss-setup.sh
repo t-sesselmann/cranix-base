@@ -421,7 +421,7 @@ function PostSetup (){
     log "Setup ssh key"
     cd /root
     /bin/mkdir .ssh
-    /usr/bin/ssh-keygen -t dsa -N '' -f .ssh/id_dsa
+    /usr/bin/ssh-keygen -t rsa -N '' -f .ssh/id_rsa
     cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys
     /bin/chmod 600 /root/.ssh/authorized_keys
     echo 'stricthostkeychecking no' > /root/.ssh/config
