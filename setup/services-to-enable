@@ -6,6 +6,7 @@ ntpd
 oss-api
 oss_salt_event_watcher
 salt-master
+SuSEfirewall2
 squid
 sshd
 vsftpd
