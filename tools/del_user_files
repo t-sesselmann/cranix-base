@@ -90,7 +90,7 @@ fi
 if [ -d $START ]
 then
 	# Delete the profiles
-	test -d $START/profile/$USERNAME && rm -rf $START/profile/$USERNAME
+	find $START/profiles  -maxdepth 1 -iname "$USERNAME.??" -exec  rm -rf {} \;
 	# Delete the subdirectories of home
 	for i in $SCHOOL_SEARCH_FOR_DELETE
 	do
