@@ -530,7 +530,7 @@ chmod 600 /root/.my.cnf
     else
         systemctl disable SuSEfirewall2
     fi
-    sed -i 's/^FW_CUSTOMRULES=/FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"/' /etc/sysconfig/SuSEfirewall2
+    sed -i 's#^FW_CUSTOMRULES=.*#FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"#' /etc/sysconfig/SuSEfirewall2
     cp /usr/share/oss/setup/templates/SuSEfirewall2-custom /etc/sysconfig/scripts/SuSEfirewall2-custom
 
     ########################################################################
