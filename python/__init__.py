@@ -55,6 +55,7 @@ def init(args):
     fsTeacherQuota = int(os.popen('oss_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
     msQuota        = int(os.popen('oss_api_text.sh GET system/configuration/MAIL_QUOTA').read())
     msTeacherQuota = int(os.popen('oss_api_text.sh GET system/configuration/MAIL_TEACHER_QUOTA').read())
+    os.system("oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     import_dir = home_base + "/groups/SYSADMINS/userimports/" + date
     os.system('mkdir -pm 770 ' + import_dir + '/tmp' )
     #open the output file
@@ -250,20 +251,20 @@ def add_user(user,ident):
         if role == 'teachers':
             user['msQuota'] = msTeacherQuota
         elif role == 'sysadmins':
-            user['msQuota'] = 0
+            user['msQuota'] = -1
         else:
             user['msQuota'] = msQuota
     file_name = '{0}/tmp/user_add.{1}'.format(import_dir,new_user_count)
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
     result = json.load(os.popen('oss_api_post_file.sh users/insert ' + file_name))
-    import_list[ident]['id']       = result['objectId']
-    import_list[ident]['uid']      = result['parameters'][0]
-    import_list[ident]['password'] = result['parameters'][3]
-    new_user_count = new_user_count + 1
     if debug:
         print(result)
     if result['code'] == 'OK':
+        import_list[ident]['id']       = result['objectId']
+        import_list[ident]['uid']      = result['parameters'][0]
+        import_list[ident]['password'] = result['parameters'][3]
+        new_user_count = new_user_count + 1
         return True
     else:
         log_error(result['value'])
@@ -285,6 +286,8 @@ def modify_user(user,ident):
 
 def move_user(uid,old_classes,new_classes):
     for g in old_classes:
+       if g == '' or g.isspace():
+            continue
        if not g in new_classes:
            cmd = '/usr/sbin/oss_api_text.sh DELETE users/text/{0}/groups/{1}'.format(uid,g)
            if debug:
@@ -293,6 +296,8 @@ def move_user(uid,old_classes,new_classes):
            if debug:
                print(result)
     for g in new_classes:
+       if g == '' or g.isspace():
+            continue
        if not g in old_classes:
            cmd = '/usr/sbin/oss_api_text.sh PUT users/text/{0}/groups/{1}'.format(uid,g)
            if debug:
@@ -326,7 +331,7 @@ def write_user_list():
             line = []
             for attr in user_attributes:
                 line.append(import_list[ident].get(attr,""))
-            fp.write(';'.join(line)+"\n")
+            fp.write(';'.join(map(str,line))+"\n")
     if role == 'students':
         class_files = {}
         for cl in existing_classes:
@@ -338,8 +343,8 @@ def write_user_list():
             line = []
             for attr in user_attributes:
                 line.append(user.get(attr,""))
-            for user_class in user['classes'].split(' '):
-                class_files[user_class].write(';'.join(line)+"\n")
+            for user_class in user['classes'].split():
+                class_files[user_class].write(';'.join(map(str,line))+"\n")
         for cl in existing_classes:
             class_files[cl].close()
     #Now we start to write the password files
