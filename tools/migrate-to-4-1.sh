@@ -15,6 +15,7 @@ zypper -n rm $( rpm -qa "*xfce*" )
 sed -i 's/#.*solver.allowVendorChange.*$/solver.allowVendorChange = true/' /etc/zypp/zypp.conf
 sed -i 's#OSS/4.0.1$#OSS/4.1#' /etc/zypp/repos.d/OSS.repo
 sed -i 's#OSS/4.0.1#OSS/4.1#'  /etc/zypp/credentials.cat
+sed -i 's#OSS/4.0#OSS/4.1#'  /etc/zypp/credentials.cat
 
 for i in $( grep -l 42.3 /etc/zypp/repos.d/*repo )
 do
@@ -63,6 +64,9 @@ do
 	samba-tool ou create OU=${ROLE}
 	for U in $( /usr/sbin/oss_api.sh GET users/uidsByRole/${ROLE} )
 	do
+		if [ ${U} = "Administrator" ]; then
+                        continue
+                fi
 		samba-tool user move ${U} OU=${ROLE}
 	done
 done
