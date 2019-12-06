@@ -64,8 +64,10 @@ def init(args):
     with open(lockfile,'w') as f:
         f.write(date)
     #write the parameter
+    args_dict=args.__dict__
+    args_dict["startTime"] = date
     with open(import_dir +'/parameters.json','w') as f:
-        json.dump(args.__dict__,f,ensure_ascii=False)
+        json.dump(args_dict,f,ensure_ascii=False)
     input_file = args.input
     role       = args.role
     password   = args.password
