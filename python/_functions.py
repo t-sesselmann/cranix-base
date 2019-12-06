@@ -12,9 +12,9 @@ def read_birthday(bd):
     if( len(l_bd) != 3 ):
         raise SyntaxError("Bad birthday format:" + bd)
     if(len(l_bd[0]) == 4 ):
-        return "{:4s}-{:2s}-{:2s}".format(l_bd[0],l_bd[1],l_bd[2])
+        return "{:4s}-{:0>2s}-{:0>2s}".format(l_bd[0],l_bd[1],l_bd[2])
     if(len(l_bd[2]) == 4 ):
-        return "{:4s}-{:2s}-{:2s}".format(l_bd[2],l_bd[1],l_bd[1])
+        return "{:4s}-{:0>2s}-{:0>2s}".format(l_bd[2],l_bd[1],l_bd[0])
     raise SyntaxError("Bad birthday format:" + bd)
 
 def create_secure_pw(l):

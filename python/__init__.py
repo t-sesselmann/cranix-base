@@ -120,7 +120,11 @@ def read_csv():
         os.system('cp ' + input_file + ' ' + import_dir + '/userlist.txt')
     with open(input_file) as csvfile:
         #Detect the type of the csv file
-        dialect = csv.Sniffer().sniff(csvfile.read(1024))
+        dialect = ""
+        try:
+            dialect = csv.Sniffer().sniff(csvfile.read(1024))
+        except UnicodeDecodeError:
+            close_on_error('CVS file is not UTF-8')
         csvfile.seek(0)
         #Create an array of dicts from it
         csv.register_dialect('oss',dialect)
@@ -147,7 +151,8 @@ def read_csv():
                 if not identifier in user:
                     raise SyntaxError("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
-            user['classes'] = user.get('class','')
+            #user['classes'] = user.get('class','')
+            #user['class']   = user.get('class','')
             user_id = user_id.replace(' ','_')
             import_list[user_id] = user
     if(debug):
@@ -177,6 +182,7 @@ def close_on_error(msg):
     os.remove(lockfile)
     output.write(print_error(msg))
     output.close()
+    sys.exit(1)
 
 def log_error(msg):
     output.write(print_error(msg))
@@ -237,9 +243,9 @@ def add_user(user,ident):
         user['password'] = password
     if appendBirthdayToPassword:
         user['password'] = password + user['birthDay']
-    if 'class' in user:
-        user['classes'] = user['class']
-        del user['class']
+    #if 'class' in user:
+    #    user['classes'] = user['class']
+    #    del user['class']
     #Set default file system quota 
     if not 'fsQuota' in user:
         if role == 'teachers':
@@ -337,17 +343,20 @@ def write_user_list():
     if role == 'students':
         class_files = {}
         for cl in existing_classes:
-            class_files[cl] = open('{0}/class-{1}.txt'.format(import_dir,cl),'w')
-            #TODO Translate header
-            class_files[cl].write(';'.join(user_attributes)+"\n")
+            try:
+                class_files[cl] = open('{0}/class-{1}.txt'.format(import_dir,cl),'w')
+                class_files[cl].write(';'.join(user_attributes)+"\n")
+            except:
+                log_error("Can not open:" + '{0}/class-{1}.txt'.format(import_dir,cl))
         for ident in import_list:
             user = import_list[ident]
             line = []
             for attr in user_attributes:
                 line.append(user.get(attr,""))
             for user_class in user['classes'].split():
-                class_files[user_class].write(';'.join(map(str,line))+"\n")
-        for cl in existing_classes:
+                if user_class in class_files:
+                    class_files[user_class].write(';'.join(map(str,line))+"\n")
+        for cl in class_files:
             class_files[cl].close()
     #Now we start to write the password files
     os.system('/usr/share/oss/tools/create_password_files.py {0} {1}'.format(import_dir,role))

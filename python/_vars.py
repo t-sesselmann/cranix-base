@@ -2,7 +2,7 @@
 
 # Copyright (c) Peter Varkoly <peter@varkoly.de> All rights reserved.
 
-user_attributes = ( "uid", "surName", "givenName", "birthDay", "uuid", "password", "msQuota", "fsQuota","class","group")
+user_attributes = ( "uid", "surName", "givenName", "birthDay", "uuid", "password", "msQuota", "fsQuota","classes","group")
 
 attr_ext_name = {
      "UID"              : "uid",
@@ -26,8 +26,10 @@ attr_ext_name = {
      "IDENTIFIKATOR"    : "uuid",
      "PASSWORD"         : "password",
      "PASSWORT"         : "password",
-     "CLASS"            : "class",
-     "KLASSE"           : "class",
+     "CLASSES"          : "classes",
+     "CLASS"            : "classes",
+     "KLASSE"           : "classes",
+     "KLASSEN"          : "classes",
      "GROUP"            : "group",
      "GRUPPE"           : "group",
      "MSQUOTA"          : "msQuota",
