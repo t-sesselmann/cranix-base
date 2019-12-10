@@ -59,10 +59,8 @@ function InitGlobalVariable (){
 
     ########################################################################
     log "Setup ntp"
-    mv /etc/ntp.conf /etc/ntp.conf.backup
-    cp /usr/share/oss/setup/templates/ntp.conf /etc/ntp.conf
-    systemctl start ntpd
-    systemctl enable ntpd
+    systemctl start chronyd
+    systemctl enable chronyd
     log "Start InitGlobalVariable"
 
     ########################################################################
@@ -226,9 +224,9 @@ profilePath: \\\\admin\\profiles\\administrator
     log " - Setup our smb.conf file"
     cp /etc/samba/smb.conf /etc/samba/smb.conf-orig
     if [ "$SCHOOL_TYPE" != "business" ]; then
-        sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.business > /etc/samba/smb.conf
-    else
         sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
+    else
+        sed    "s/#NETBIOSNAME#/${SCHOOL_NETBIOSNAME}/g" /usr/share/oss/setup/templates/samba-smb.conf.business > /etc/samba/smb.conf
     fi
     sed -i "s/#REALM#/$REALM/g"                      /etc/samba/smb.conf
     sed -i "s/#SCHOOL_DOMAIN#/$SCHOOL_DOMAIN/g"      /etc/samba/smb.conf
@@ -237,10 +235,13 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s/#IPADDR#/$SCHOOL_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$SCHOOL_HOME_BASE#g"          /etc/samba/smb.conf
 
+    systemctl restart samba
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+
     ########################################################################
     log " - Setup ntp signd directory rights."
-    chown root:ntp /var/lib/samba/ntp_signd/
-    chmod 750      /var/lib/samba/ntp_signd/
+    chown root:chrony /var/lib/samba/ntp_signd/
+    chmod 750         /var/lib/samba/ntp_signd/
 
     ########################################################################
     log " - Add default policy"

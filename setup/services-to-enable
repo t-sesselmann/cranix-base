@@ -2,7 +2,7 @@ apache2
 atd
 clamd
 freshclam
-ntpd
+chronyd
 oss-api
 oss_salt_event_watcher
 salt-master

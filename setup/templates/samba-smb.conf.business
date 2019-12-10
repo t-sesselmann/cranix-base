@@ -120,3 +120,12 @@
 	guest ok=no
 	writable=yes
 
+[salt-repo]
+        comment=Folder for Salt Packages
+        path=/srv/salt/win/repo-ng
+        inherit permissions=Yes
+        browseable=yes
+        guest ok=no
+        writable=yes
+	valid users = @sysadmins
+
