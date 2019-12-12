@@ -151,8 +151,8 @@ def read_csv():
                 if not identifier in user:
                     raise SyntaxError("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
-            #user['classes'] = user.get('class','')
-            #user['class']   = user.get('class','')
+            if not 'classes' in user:
+                user['classes'] = ''
             user_id = user_id.replace(' ','_')
             import_list[user_id] = user
     if(debug):
