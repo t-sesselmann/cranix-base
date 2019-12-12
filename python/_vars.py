@@ -32,6 +32,8 @@ attr_ext_name = {
      "KLASSEN"          : "classes",
      "GROUP"            : "group",
      "GRUPPE"           : "group",
+     "GROUPS"           : "group",
+     "GRUPPEN"          : "group",
      "MSQUOTA"          : "msQuota",
      "E-MAIL-QUOTA"     : "msQuota",
      "MAIL-QUOTA"       : "msQuota",
