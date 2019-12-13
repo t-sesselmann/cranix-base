@@ -36,7 +36,7 @@ if not os.path.exists( import_dir + "/passwordfiles" ):
 all_classes = []
 with open(user_list) as csvfile:
     #Detect the type of the csv file
-    dialect = csv.Sniffer().sniff(csvfile.read(1024))
+    dialect = csv.Sniffer().sniff(csvfile.readline())
     csvfile.seek(0)
     #Create an array of dicts from it
     csv.register_dialect('oss',dialect)

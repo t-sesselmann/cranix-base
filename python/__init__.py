@@ -122,7 +122,7 @@ def read_csv():
         #Detect the type of the csv file
         dialect = ""
         try:
-            dialect = csv.Sniffer().sniff(csvfile.read(1024))
+            dialect = csv.Sniffer().sniff(csvfile.readline())
         except UnicodeDecodeError:
             close_on_error('CVS file is not UTF-8')
         csvfile.seek(0)
