@@ -8,6 +8,10 @@ if [ -z "$template" ]; then
    template="t${template}"
 fi
 
+if [ $uid = $template ]; then
+        exit
+fi
+
 HOMEDIR=$( /usr/sbin/oss_get_home.sh $uid )
 TEMPLATEDIR=$( /usr/sbin/oss_get_home.sh $template )
 
