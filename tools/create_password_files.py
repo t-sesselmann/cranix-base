@@ -52,7 +52,7 @@ with open(user_list) as csvfile:
             template = template.replace(to_replace,escape(row[field]))
             if field == "uid":
                 uid=row[field]
-            if  ( role == 'students' ) and ( field == "class" ):
+            if  ( role == 'students' ) and ( field == "classes" ):
                 group=row[field].split(' ')[0]
                 if group not in all_classes:
                     all_classes.append(group)

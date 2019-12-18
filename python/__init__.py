@@ -135,6 +135,8 @@ def read_csv():
             user = {}
             user_id = ''
             for key in row:
+                if key == '':
+                    continue
                 if init_debug:
                     print(attr_ext_name[key.upper()] + " " + row[key])
                 user[attr_ext_name[key.upper()]] = row[key]
@@ -149,7 +151,7 @@ def read_csv():
                 user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
             else:
                 if not identifier in user:
-                    raise SyntaxError("Import file does not contains the identifier:" + identifier)
+                    close_on_error("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
             if not 'classes' in user:
                 user['classes'] = ''
