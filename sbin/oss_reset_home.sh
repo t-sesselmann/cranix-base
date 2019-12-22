@@ -41,7 +41,7 @@ fi
 /bin/mkdir -p  /home/groups
 /bin/chmod 755 /home/groups
 /bin/mkdir -p  /home/profiles
-setfacl -b     /home/profiles
+/usr/bin/setfacl -b     /home/profiles
 /bin/chmod 1770 /home/profiles
 /bin/chgrp 100  /home/profiles
 /bin/mkdir -p  /home/templates
@@ -87,7 +87,7 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-	    find "$i" -type d -exec o-t,g+rwx {} \;
+	    find "$i" -type d -exec /usr/bin/chmod o-t,g+rwx {} \;
 	    find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
             echo "Repairing $i"
         else
@@ -105,7 +105,7 @@ then
         then
             chgrp -R $gid  "$i"
             /usr/bin/setfacl -P -R -b "$i"
-	    find "$i" -type d -exec o-t,g+rwx {} \;
+	    find "$i" -type d -exec /usr/bin/chmod o-t,g+rwx {} \;
 	    find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
             echo "Repairing $i"
         else
@@ -115,19 +115,19 @@ then
 
     #Repaire TEACHERS and SYSADMINS
     /bin/chmod -R 770 $i
-    setfacl -R -dm o::--- /home/groups/TEACHERS
-    setfacl -R -m  o::--- /home/groups/TEACHERS
-    chmod -R o-x /home/groups/TEACHERS
+    /usr/bin/setfacl -R -dm o::--- /home/groups/TEACHERS
+    /usr/bin/setfacl -R -m  o::--- /home/groups/TEACHERS
+    /usr/bin/chmod -R o-x /home/groups/TEACHERS
 
     for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/primary )
     do
-        setfacl -b /home/$cn
-        chmod 755  /home/$cn
+        /usr/bin/setfacl -b /home/$cn
+        /usr/bin/chmod 755  /home/$cn
         for uid in $( /usr/sbin/oss_api.sh GET users/uidsByRole/$cn )
 	do
 	    i=$( /usr/sbin/oss_get_home.sh $uid)
 	    /bin/mkdir -p $i
-	    setfacl -Rb $i
+	    /usr/bin/setfacl -Rb $i
 	    /bin/chmod -R 700 $i
 	    /bin/chown -R $uid  $i
 	    if [ ! -e /home/${SCHOOL_WORKGROUP}/${uid} ]; then
