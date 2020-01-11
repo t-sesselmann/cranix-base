@@ -33,6 +33,8 @@ rpm -e --nodeps  $( rpm -qa "python-*" )
 #remove recode
 rpm -e --nodeps recode
 
+#remove bad mysql parameter:
+sed -i '/innodb_additional_mem_pool_size/d' /etc/my.cnf
 zypper ref
 if ! zypper --no-gpg-checks --gpg-auto-import-keys -n dup --auto-agree-with-licenses --no-recommends
 then
