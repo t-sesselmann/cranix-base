@@ -67,5 +67,28 @@ keeppackages=0
 
 zypper ar -G /tmp/oss.repo
 
-zypper --gpg-auto-import-keys ref
+#Add customer specific repositories
+for repo in $( /usr/bin/curl --insecure -X GET http://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REG_CODE}/repositories )
+do
+	repoType=$( echo $repo | gawk -F '#' '{ print $1 }' )
+	repoName=$( echo $repo | gawk -F '#' '{ print $2 }' )
+	repoUrl=$(  echo $repo | gawk -F '#' '{ print $3 }' )
+	case $repoType in
+		SALTPKG)
+			zypper -D /srv/salt/repos.d/ ar --refresh --no-gpgcheck ${repoUrl} ${repoName}
+			echo "[${repoUrl}]" >> /etc/zypp/credentials.cat
+			echo "username = ${REPO_USER}" >> /etc/zypp/credentials.cat
+			echo "password = ${REPO_PASSWORD}" >> /etc/zypp/credentials.cat
+			;;
+		SYSTEM)
+			zypper ar --refresh --no-gpgcheck ${repoUrl} ${repoName}
+			echo "[${repoUrl}]" >> /etc/zypp/credentials.cat
+			echo "username = ${REPO_USER}" >> /etc/zypp/credentials.cat
+			echo "password = ${REPO_PASSWORD}" >> /etc/zypp/credentials.cat
+			;;
+		*)
+			echo "Unknown repo"
+	esac
+done
 
+zypper --gpg-auto-import-keys ref
