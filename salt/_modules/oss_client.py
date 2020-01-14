@@ -87,25 +87,28 @@ def loggedIn():
     for p in processes:
       l = p.split()
       if l[0] == 'console' and len(l) > 3:
-	return l[1]
+        return l[1]
   else:
     return ""
 
   return ""
+
 #Apply the registries which were copied from the server
 #This function makes only sence on Windows clients
 def applyRegs():
   if __grains__['os_family'] == 'Windows':
-    with os.scandir("C:\\salt\\var\\REGS\\") as it:
-        for entry in it:
-           os.system("regedit /s C:\\salt\\var\\REGS\\" + entry.name)
-  return ""
+    for r, d, f in os.walk("C:\\salt\\var\\regs\\"):
+      for entry in f:
+        os.system("regedit /s C:\\salt\\var\\regs\\" + entry)
+        print(os.path.join(r,entry))
+  return True
 
 #Execute the commands which was copied from the server
 def executeCommands():
   if __grains__['os_family'] == 'Windows':
-    with os.scandir("C:\\salt\\var\\COMMANDS\\") as it:
-        for entry in it:
-           os.system("C:\\salt\\var\\COMMANDS\\" + entry.name)
-  return ""
+    for r, d, f in os.walk("C:\\salt\\var\\commands\\"):
+      for entry in f:
+        os.system("C:\\salt\\var\\commands\\" + entry)
+        print(os.path.join(r,entry))
+  return True
 
