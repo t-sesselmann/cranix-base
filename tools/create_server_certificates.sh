@@ -190,7 +190,10 @@ fi
 
 #Let us do it
 if [ "$CLEAN" ]; then
+    mv $CPATH/serial /tmp/
     rm -rf $CPATH/
+    mkdir $CPATH/
+    mv /tmp/serial $CPATH/
 fi
 
 umask 077
@@ -198,7 +201,9 @@ if [ ! -d $CPATH/private ]; then
     mkdir -p $CPATH/private
     mkdir -p $CPATH/certs
     mkdir -p $CPATH/newcerts
-    echo "01" > $CPATH/serial
+    if [ ! -e $CPATH/serial ]; then
+        echo "01" > $CPATH/serial
+    fi
     touch $CPATH/index.txt
 fi 
 
