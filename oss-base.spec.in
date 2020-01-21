@@ -40,6 +40,10 @@ Requires:       perl-JSON-XS
 Requires:       perl-Mail-IMAPClient
 Requires:       perl-DBD-mysql
 Requires:       poppler-tools
+Requires:       wol
+Recommends:	iputils
+Recommends:	telnet
+Recommends:	wget
 #On oss some packages must not be installed
 Conflicts:      nscd
 Conflicts:      yast2-samba-server
