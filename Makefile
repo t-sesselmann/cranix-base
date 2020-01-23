@@ -6,9 +6,6 @@ SHARE           = $(DESTDIR)/usr/share/oss/
 FILLUPDIR       = /usr/share/fillup-templates/
 PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
 TOPACKAGE       = Makefile addons cups etc plugins python profiles sbin setup salt tools templates updates README.md
-VERSION         = $(shell test -e ../VERSION && cp ../VERSION VERSION ; cat VERSION)
-RELEASE         = $(shell cat RELEASE )
-NRELEASE        = $(shell echo $(RELEASE) + 1 | bc )
 HERE            = $(shell pwd)
 REPO            = /data1/OSC/home:varkoly:OSS-4-1:leap15.1
 PACKAGE         = oss-base
@@ -53,18 +50,13 @@ dist:
 	tar jcpf $(PACKAGE).tar.bz2 -T files;
 	rm files
 	rm -rf $(PACKAGE)
-	sed    's/@VERSION@/$(VERSION)/'  $(PACKAGE).spec.in > $(PACKAGE).spec
-	sed -i 's/@RELEASE@/$(NRELEASE)/' $(PACKAGE).spec
 	if [ -d $(REPO)/$(PACKAGE) ] ; then \
 	   cd $(REPO)/$(PACKAGE); osc up; cd $(HERE);\
-	    mv $(PACKAGE).tar.bz2 $(PACKAGE).spec $(REPO)/$(PACKAGE); \
-	    cd $(REPO)/$(PACKAGE); \
-	    osc vc; \
-	    osc ci -m "New Build Version"; \
+	   mv $(PACKAGE).tar.bz2 $(REPO)/$(PACKAGE); \
+	   cd $(REPO)/$(PACKAGE); \
+	   osc vc; \
+	   osc ci -m "New Build Version"; \
 	fi
-	echo $(NRELEASE) > RELEASE
-	git commit -a -m "New release"
-	git push
 
 package:        dist
 	rm -rf /usr/src/packages/*
