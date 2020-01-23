@@ -69,11 +69,11 @@ for ident in cranix.import_list:
                 password = args.password
                 if password == "":
                     password = cranix.create_secure_pw
-                if appendBirthdayToPassword:
+                if args.appendBirthdayToPassword:
                     password = password + old_user['birthDay']
                 old_user['password'] = password
-                import_list[ident]['password'] = password
-                old_user['mustChange'] =  mustchange
+                cranix.import_list[ident]['password'] = password
+                old_user['mustChange'] =  args.mustchange
             cranix.modify_user(old_user,ident)
     else:
         cranix.log_debug("New user",new_user)

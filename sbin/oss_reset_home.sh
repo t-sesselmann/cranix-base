@@ -67,6 +67,17 @@ fi
 
 /bin/chgrp 	 templates /home/templates
 
+for cn in $( /usr/sbin/oss_api_text.sh GET groups/text/byType/primary )
+do
+        name=$( echo "$cn" | tr "[:lower:]" "[:upper:]" )
+        if [ "$name" = "STUDENTS" ]
+        then
+                continue
+        fi
+        mkdir -m 770 -p /home/groups/${name}
+        chgrp -R $cn /home/groups/${name}
+done
+
 if test -d /home/groups/STUDENTS
 then
 	/usr/bin/setfacl -b                     /home/groups/STUDENTS
