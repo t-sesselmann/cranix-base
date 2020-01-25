@@ -136,9 +136,9 @@ SCHOOL_IS_DEMO="no"
 SCHOOL_MAILSERVER="172.28.0.3"
 
 ## Type:        string readonly
-## Default:     Extis
+## Default:     CRANIX
 # The name of the school.
-SCHOOL_NAME="EXTIS"
+SCHOOL_NAME="CRANIX"
 
 ## Type:	string readonly
 ## Default:	"16"
@@ -216,9 +216,9 @@ SCHOOL_NETBIOSNAME="admin"
 SCHOOL_TYPE="real"
 
 ## Type:	string readonly
-## Default:	EXTIS
+## Default:	CRANIX
 # The windows domain name of the school.
-SCHOOL_WORKGROUP="EXTIS"
+SCHOOL_WORKGROUP="CRANIX"
 
 ## Type:	string readonly
 ## Default:	"DE"
@@ -233,7 +233,7 @@ SCHOOL_CCODE="DE"
 ## Type:        string readonly
 ## Default:
 # DNS Domain of the school.
-SCHOOL_DOMAIN="extis.eu"
+SCHOOL_DOMAIN="cranix.eu"
 
 ## Type:        string readonly
 ## Default:	http://repo.cephalix.eu/salt-packages
@@ -326,15 +326,15 @@ SCHOOL_STUDENTS_MAY_DOWNLOAD="no"
 SCHOOL_STUDENTS_MAY_UPLOAD="no"
 
 ## Type:        string
-## Default:     https://support.extis.de/support
+## Default:     https://support.cephalix.de/support
 # The support URL of the OTRS system the ticket will be sent to via REST-API.
 # If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
 SCHOOL_SUPPORT_MAIL_URL="https://support.extis.de/support"
 
 ## Type:	string
-## Default:     oss-support@extis.de
+## Default:     support@cephalix.eu
 # The support email address.
-SCHOOL_SUPPORT_MAIL_ADDRESS="oss-support@extis.de"
+SCHOOL_SUPPORT_MAIL_ADDRESS="support@cephalix.eu"
 
 ## Type:	string
 ## Default:
