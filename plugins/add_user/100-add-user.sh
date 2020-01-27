@@ -97,7 +97,7 @@ if [ $mpassword != "no" ]; then
    ADDPARAM=" --must-change-at-next-login"
 fi
 
-if [ "$role" = "workstations"  -o "$role" = "guest" ]; then
+if [ "$role" = "workstations"  -o "$role" = "guests" ]; then
     samba-tool domain passwordsettings set --complexity=off
 fi
 
@@ -176,5 +176,7 @@ fi
 /usr/sbin/oss_set_quota.sh $uid $fsquota
 
 #Set mailsystem quota
-/usr/sbin/oss_set_mquota.pl $uid $msquota
+if [ "$role" != "workstations" -a "$role" != "guests" ]; then
+	/usr/sbin/oss_set_mquota.pl $uid $msquota
+fi
 

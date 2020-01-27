@@ -338,6 +338,7 @@ function SetupInitialAccounts (){
     samba-tool ou create OU=administration
     /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=$templates_gn
     samba-tool ou create OU=templates
+    samba-tool ou create OU=guests
     if [ $SCHOOL_TYPE != "business" ]; then
         /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
         samba-tool ou create OU=students
