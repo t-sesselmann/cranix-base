@@ -94,5 +94,6 @@ setfacl -d -m g::rwx "$gdir"
 if [ "$groupType" = "primary" ]; then
    mkdir -m 750 "${SCHOOL_HOME_BASE}/${nameLo}"
    chgrp $gidNumber "${SCHOOL_HOME_BASE}/${nameLo}"
+   samba-tool ou create OU="${nameLo}"
 fi
 
