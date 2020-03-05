@@ -92,3 +92,6 @@ do
 done
 
 zypper --gpg-auto-import-keys ref
+#We need the OSS packages for the salt packages too
+ln -s /etc/zypp/repos.d/OSS.repo  /srv/salt/repos.d/OSS.repo
+
