@@ -7,8 +7,8 @@ FILLUPDIR       = /usr/share/fillup-templates/
 PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
 TOPACKAGE       = Makefile addons cups etc plugins python profiles sbin setup salt tools templates updates README.md
 HERE            = $(shell pwd)
-REPO            = /data1/OSC/home:varkoly:OSS-4-1:leap15.1
-PACKAGE         = oss-base
+REPO            = /data1/OSC/home:varkoly:CRANIX-4-2
+PACKAGE         = cranix-base
 
 install:
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins,profiles,updates}
