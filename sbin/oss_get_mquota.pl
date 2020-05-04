@@ -3,7 +3,7 @@ use Mail::IMAPClient;
 use strict;
 my $user = shift;
 
-my $passwd=`grep de.openschoolserver.dao.User.Register.Password= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//'`;
+my $passwd=`grep de.openschoolserver.dao.User.Register.Password= /opt/cranix-java/conf/oss-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//'`;
 chomp $passwd;
 my $imap = Mail::IMAPClient->new(
   Server   => 'localhost',

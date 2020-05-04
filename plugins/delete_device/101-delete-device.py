@@ -7,7 +7,7 @@ import json
 import os
 import sys
 from configobj import ConfigObj
-config = ConfigObj("/opt/oss-java/conf/oss-api.properties")
+config = ConfigObj("/opt/cranix-java/conf/oss-api.properties")
 passwd = config['de.openschoolserver.dao.User.Register.Password']
 name=""
 ip=""

@@ -1,11 +1,11 @@
 #!/bin/bash
 # Copyright (c) 2012 Peter Varkoly Nürnberg, Germany.  All rights reserved.
-# oss-backup
+# cranix-backup
 # 
-# $Id: oss-backup,v 1.10 2007/07/18 16:43:22 pv Exp $
+# $Id: cranix-backup,v 1.10 2007/07/18 16:43:22 pv Exp $
 #
 
-LOGFILE=/var/log/oss-backup.log
+LOGFILE=/var/log/cranix-backup.log
 DATE=`date +%Y-%m-%d-%H-%M`
 #TODO Make all variables configurable.
 MYSQLDUMP_OPTIONS="--lock-tables --add-drop-database --add-locks --quote-names --opt --create-options"
@@ -68,7 +68,7 @@ function check_discspace() {
 function LOG() {
 	LOG_DATE=`date "+%b %d %H:%M:%S"`
 	HOST=`hostname`
-	echo "$LOG_DATE $HOST oss-backup: $1" >> $LOGFILE
+	echo "$LOG_DATE $HOST cranix-backup: $1" >> $LOGFILE
 	if [ "$VERBOSE" = "yes" ]; then
 		echo "$1"
 	fi

@@ -6,7 +6,7 @@
 # other global variable
 sysconfig="/etc/sysconfig/schoolserver"
 logdate=`date "+%Y%m%d-%H%M%S"`
-logfile="/var/log/oss-setup.$logdate.log"
+logfile="/var/log/cranix-setup.$logdate.log"
 passwd=""
 windomain=""
 
@@ -25,7 +25,7 @@ registerpw=""
 
 
 function usage (){
-	echo "Usage: oss-setup.sh --passwdf=/tmp/oss_pswd [OPTION]"
+	echo "Usage: cranix-setup.sh --passwdf=/tmp/oss_pswd [OPTION]"
 	echo "This is the oss setup script."
 	echo
 	echo "Options :"
@@ -42,14 +42,14 @@ function usage (){
 	echo "                --postsetup         Make additional setups."
 	echo "                --cephalixpwf       Path to the file containing the password for the CEPHALIX user."
 	echo "                --verbose           Verbose"
-	echo "Ex.: ./oss-setup.sh --passwdf=/tmp/oss_passwd --all"
+	echo "Ex.: ./cranix-setup.sh --passwdf=/tmp/oss_passwd --all"
 	exit $1
 }
 
 function log() {
     LOG_DATE=`date "+%b %d %H:%M:%S"`
     HOST=`hostname`
-    echo "$LOG_DATE $HOST oss-setup: $1" >> "$logfile"
+    echo "$LOG_DATE $HOST cranix-setup: $1" >> "$logfile"
     if [ "$verbose" = "yes" ]; then
 	echo "$1"
     fi
@@ -312,7 +312,7 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/REGISTERPW/$registerpw/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/REGISTERPW/$registerpw/ /opt/cranix-java/conf/oss-api.properties
     samba-tool user setexpiry --noexpiry cephalix
     samba-tool user create register "$registerpw"
     samba-tool user setexpiry --noexpiry register
@@ -330,19 +330,19 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base roles"
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=$sysadmins_gn
+    /usr/share/oss/setup/scripts/cranix-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$SCHOOL_DOMAIN"      --gid-number=$sysadmins_gn
     samba-tool ou create OU=sysadmins
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=$workstations_gn
+    /usr/share/oss/setup/scripts/cranix-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$SCHOOL_DOMAIN"   --gid-number=$workstations_gn
     samba-tool ou create OU=workstations
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=$administration_ng
+    /usr/share/oss/setup/scripts/cranix-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$SCHOOL_DOMAIN" --gid-number=$administration_ng
     samba-tool ou create OU=administration
-    /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=$templates_gn
+    /usr/share/oss/setup/scripts/cranix-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$SCHOOL_DOMAIN"      --gid-number=$templates_gn
     samba-tool ou create OU=templates
     samba-tool ou create OU=guests
     if [ $SCHOOL_TYPE != "business" ]; then
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
+        /usr/share/oss/setup/scripts/cranix-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$SCHOOL_DOMAIN"   --gid-number=$students_gn
         samba-tool ou create OU=students
-        /usr/share/oss/setup/scripts/oss-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=$teachers_gn
+        /usr/share/oss/setup/scripts/cranix-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$SCHOOL_DOMAIN"   --gid-number=$teachers_gn
         samba-tool ou create OU=teachers
     fi
     samba-tool group addmembers "Sysadmins" register
@@ -358,16 +358,16 @@ function SetupInitialAccounts (){
 
     ########################################################################
     #log " - Create admin user"
-    #/usr/share/oss/setup/scripts/oss-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
+    #/usr/share/oss/setup/scripts/cranix-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
     #samba-tool group addmembers "Domain Admins" admin
 
     ########################################################################
     log " - Create base template users"
-    /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=4000011
+    /usr/share/oss/setup/scripts/cranix-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=4000011
     if [ $SCHOOL_TYPE != "business" ]; then
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=4000012
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
-        /usr/share/oss/setup/scripts/oss-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
+        /usr/share/oss/setup/scripts/cranix-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=4000012
+        /usr/share/oss/setup/scripts/cranix-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
+        /usr/share/oss/setup/scripts/cranix-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
     fi
 
     samba-tool domain passwordsettings set --complexity=on
@@ -448,7 +448,7 @@ unset _bred _sgr0
     ANON_NETWORK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $1 }' )
     ANON_NETMASK=$( echo $SCHOOL_ANON_DHCP_NET | gawk -F '/' '{ print $2 }' )
 
-    for i in /opt/oss-java/data/*-INSERT.sql
+    for i in /opt/cranix-java/data/*-INSERT.sql
     do
 	sed -i "s/#SERVER_NETWORK#/${SERVER_NETWORK}/g"		$i
 	sed -i "s/#SERVER_NETMASK#/${SERVER_NETMASK}/g"		$i
@@ -463,18 +463,18 @@ unset _bred _sgr0
 	sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		$i
 	sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		$i
     done
-    mysql < /opt/oss-java/data/oss-objects.sql
+    mysql < /opt/cranix-java/data/oss-objects.sql
     case $SCHOOL_TYPE in
         cephalix)
-            mysql OSS < /opt/oss-java/data/cephalix-objects.sql
-            mysql OSS < /opt/oss-java/data/school-INSERT.sql
-            mysql OSS < /opt/oss-java/data/cephalix-INSERT.sql
+            mysql OSS < /opt/cranix-java/data/cephalix-objects.sql
+            mysql OSS < /opt/cranix-java/data/school-INSERT.sql
+            mysql OSS < /opt/cranix-java/data/cephalix-INSERT.sql
 	;;
         business)
-            mysql OSS < /opt/oss-java/data/business-INSERT.sql
+            mysql OSS < /opt/cranix-java/data/business-INSERT.sql
 	;;
 	*)
-            mysql OSS < /opt/oss-java/data/school-INSERT.sql
+            mysql OSS < /opt/cranix-java/data/school-INSERT.sql
     esac
 
 
@@ -490,8 +490,8 @@ user=root
 password=$password" > /root/.my.cnf
 chmod 600 /root/.my.cnf
 
-    sed -i s/MYSQLPWD/$password/ /opt/oss-java/conf/oss-api.properties
-    sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/oss-java/conf/oss-api.properties
+    sed -i s/MYSQLPWD/$password/ /opt/cranix-java/conf/oss-api.properties
+    sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/cranix-java/conf/oss-api.properties
 
     ########################################################################
     log "Create profile directory"
@@ -513,13 +513,13 @@ chmod 600 /root/.my.cnf
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss_include.conf.ini   > /etc/apache2/vhosts.d/oss_include.conf
-    mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,oss,oss-ssl}
+    mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,oss,cranix-ssl}
     if [ $SCHOOL_ISGATE = "yes" ]; then
        sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
        sed -Ei 's/\s+Listen 443/                Listen 443\n                    Listen 444/' /etc/apache2/listen.conf
     fi
     mkdir -p /srv/www/oss/
-    sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/oss-index.html > /srv/www/oss/index.html
+    sed "s/#DOMAIN#/$SCHOOL_DOMAIN/g" /usr/share/oss/setup/templates/cranix-index.html > /srv/www/oss/index.html
     systemctl enable apache2
     systemctl start  apache2
 

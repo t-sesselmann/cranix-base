@@ -14,9 +14,9 @@
 
 	bind interfaces only = yes
 	interfaces = 127.0.0.1, #IPADDR#
-#oss-radius needs it:
+#cranix-radius needs it:
 	ntlm auth = yes
-#oss-webdav needs it:
+#cranix-webdav needs it:
         template shell = /bin/bash
 
 [sysvol]

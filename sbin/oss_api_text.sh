@@ -10,7 +10,7 @@ if [ "$DATA" ]; then
    DATA=" -d @${DATAFILE}"
 fi
 
-TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
 curl -s -X $METHOD --header 'Content-Type: application/json' --header 'Accept: text/plain' $DATA --header 'Authorization: Bearer '${TOKEN} "http://localhost:9080/api/$CALL"
 if [ "${DATAFILE}" ]; then
     rm ${DATAFILE}

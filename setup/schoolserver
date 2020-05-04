@@ -268,7 +268,7 @@ SCHOOL_RESET_REGISTER_PASSWORD="no"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-SCHOOL_MONITOR_SERVICES="amavis apache2 cups dhcpd ntpd oss-api oss_get_screenshots oss_salt_event_watcher postfix salt-master samba squid"
+SCHOOL_MONITOR_SERVICES="amavis apache2 cups dhcpd ntpd cranix-api oss_get_screenshots oss_salt_event_watcher postfix salt-master samba squid"
 
 ## Type:	yesno
 ## Default:	no
@@ -389,7 +389,7 @@ SCHOOL_SEARCH_FOR_DELETE="all groups"
 
 ## Type:                integer
 ## Default:             "90"
-# oss-api session time out in minutes
+# cranix-api session time out in minutes
 SCHOOL_SESSION_TIMEOUT="90"
 
 ## Type:        yesno

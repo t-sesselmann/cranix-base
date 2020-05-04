@@ -5,8 +5,8 @@
 
 PACKAGES=$@
 
-mkdir -p /run/lock/oss-api/
-echo "$PACKAGES" > /run/lock/oss-api/oss_download_packages
+mkdir -p /run/lock/cranix-api/
+echo "$PACKAGES" > /run/lock/cranix-api/oss_download_packages
 while [ -e /var/run/zypp.pid ]
 do
   ZPID=( cat /var/run/zypp.pid )
@@ -17,6 +17,6 @@ do
      sleep 2
   fi
 done
-/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/oss-download-salt-packages.log  2>&1
-rm -f /run/lock/oss-api/oss_download_packages
+/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/cranix-download-salt-packages.log  2>&1
+rm -f /run/lock/cranix-api/oss_download_packages
 

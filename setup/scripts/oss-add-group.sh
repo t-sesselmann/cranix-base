@@ -12,7 +12,7 @@ mail=''
 
 
 function usage (){
-	echo "Usage: oss-group-user.sh [OPTION]"
+	echo "Usage: cranix-group-user.sh [OPTION]"
 	echo "This is the oss add group script."
 	echo 
 	echo "Options :"
@@ -23,8 +23,8 @@ function usage (){
 	echo "Optional parameters :"
 	echo "          -h,   --help                Display the help."
 	echo "                --mail=<MAIL-ADDRESS> Group's mail address."
-	echo "Ex.: ./oss-add-group.sh --name='testg' --description='Test Group' --type='primary' --mail='testg@domain.com'"
-	echo "Ex.: ./oss-add-group.sh --name='tesztcsop' --description='Teszt Csoport' --type='primary'"
+	echo "Ex.: ./cranix-add-group.sh --name='testg' --description='Test Group' --type='primary' --mail='testg@domain.com'"
+	echo "Ex.: ./cranix-add-group.sh --name='tesztcsop' --description='Teszt Csoport' --type='primary'"
 	exit $1
 }
 

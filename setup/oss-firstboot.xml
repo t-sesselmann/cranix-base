@@ -194,7 +194,7 @@
                 </module>
                 <module>
                     <label>OSS Configuration</label>
-                    <name>oss-setup</name>
+                    <name>cranix-setup</name>
                     <enabled config:type="boolean">true</enabled>
                 </module>
                 <module>

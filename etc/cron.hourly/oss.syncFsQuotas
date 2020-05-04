@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright 2017 Peter Varkoly <peter@varkoly.de>
-
+export PATH="/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin"
 . /etc/sysconfig/schoolserver
 
 EXT3=$( mount | grep "on /home type ext3" )
@@ -8,7 +8,7 @@ if [ "$EXT3" ]; then
 	DEV=$(mount | grep "/home " | gawk '{ print $1 }')
 	export HOME="/root"
 	(
-		for u in $( echo "select uid from Users" | mysql OSS )
+		for u in $( echo "select uid from Users" | /usr/bin/mysql OSS )
 		do
 			echo -n "$u "
 			quota -wl $u | grep $DEV |  gawk  '{ print $2 " " $3 }' | sed s/\*//
@@ -17,6 +17,6 @@ if [ "$EXT3" ]; then
 else
 	xfs_quota -x -c 'report -u -N' /home | grep ${SCHOOL_WORKGROUP} | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
 fi
-TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/oss-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
-curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
+TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+/usr/bin/curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
 

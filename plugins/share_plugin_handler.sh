@@ -19,8 +19,8 @@ do
    test ! -e $i && continue
    if [ "$SCHOOL_DEBUG" = "yes" ]
    then
-      echo "$(date +%Y-%m-%d-%H:%M:%S) $i $U $IP $ARCH $MACH $REALM" >> /var/log/oss-share_plugin_handler.log
-      $i $U $IP $ARCH $MACH $REALM >> /var/log/oss-share_plugin_handler.log  2>&1
+      echo "$(date +%Y-%m-%d-%H:%M:%S) $i $U $IP $ARCH $MACH $REALM" >> /var/log/cranix-share_plugin_handler.log
+      $i $U $IP $ARCH $MACH $REALM >> /var/log/cranix-share_plugin_handler.log  2>&1
    else
       $i $U $IP $ARCH $MACH $REALM
    fi

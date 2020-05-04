@@ -37,7 +37,7 @@ lockfile = '/run/oss_import_user'
 
 date = time.strftime("%Y-%m-%d.%H-%M-%S")
 # read and set some default values
-config    = ConfigObj("/opt/oss-java/conf/oss-api.properties")
+config    = ConfigObj("/opt/cranix-java/conf/oss-api.properties")
 passwd    = config['de.openschoolserver.dao.User.Register.Password']
 domain    = os.popen('oss_api_text.sh GET system/configuration/DOMAIN').read()
 home_base = os.popen('oss_api_text.sh GET system/configuration/HOME_BASE').read()

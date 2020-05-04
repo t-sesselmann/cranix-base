@@ -15,7 +15,7 @@ groups=""
 uidNumber=""
 
 function usage (){
-	echo "Usage: oss-add-user.sh [OPTION]"
+	echo "Usage: cranix-add-user.sh [OPTION]"
 	echo "This is the oss add user script."
 	echo 
 	echo "Options :"
@@ -29,7 +29,7 @@ function usage (){
 	echo "                --password=<PASSORD>  Password"
 	echo "                --rpassword           Generate random password."
 	echo "                --groups              Groups"
-	echo "Ex.: ./oss-add-user.sh --uid='deakzs' --givenname='Zsombor' --surname='Deak' --role='students' --password='Deak123' --groups='wgroup1 10A 10B'"
+	echo "Ex.: ./cranix-add-user.sh --uid='deakzs' --givenname='Zsombor' --surname='Deak' --role='students' --password='Deak123' --groups='wgroup1 10A 10B'"
 	exit $1
 }
 

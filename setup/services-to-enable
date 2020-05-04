@@ -3,7 +3,7 @@ atd
 clamd
 freshclam
 chronyd
-oss-api
+cranix-api
 oss_salt_event_watcher
 salt-master
 SuSEfirewall2

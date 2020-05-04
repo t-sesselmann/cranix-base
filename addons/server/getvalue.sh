@@ -9,7 +9,7 @@ case $1 in
                 echo -n "version systemLoad listUpdate"
                 ;;
         version)
-		/usr/bin/rpm -q --qf "%{VERSION}-%{RELEASE}" oss-base
+		/usr/bin/rpm -q --qf "%{VERSION}-%{RELEASE}" cranix-base
                 ;;
 	systemLoad)
 		cat /proc/loadavg
