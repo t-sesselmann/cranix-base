@@ -17,6 +17,6 @@ if [ "$EXT3" ]; then
 else
 	xfs_quota -x -c 'report -u -N' /home | grep ${SCHOOL_WORKGROUP} | sed "s/${SCHOOL_WORKGROUP}.//" | gawk -f /usr/share/oss/tools/quota.awk > /tmp/quotalist
 fi
-TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/oss-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
 /usr/bin/curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
 

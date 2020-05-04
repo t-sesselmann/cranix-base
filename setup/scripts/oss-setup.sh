@@ -312,7 +312,7 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/REGISTERPW/$registerpw/ /opt/cranix-java/conf/oss-api.properties
+    sed -i s/REGISTERPW/$registerpw/ /opt/cranix-java/conf/cranix-api.properties
     samba-tool user setexpiry --noexpiry cephalix
     samba-tool user create register "$registerpw"
     samba-tool user setexpiry --noexpiry register
@@ -463,7 +463,7 @@ unset _bred _sgr0
 	sed -i "s/#SCHOOL_NETWORK#/${SCHOOL_NETWORK}/g"		$i
 	sed -i "s/#SCHOOL_NETMASK#/${SCHOOL_NETMASK}/g"		$i
     done
-    mysql < /opt/cranix-java/data/oss-objects.sql
+    mysql < /opt/cranix-java/data/cranix-objects.sql
     case $SCHOOL_TYPE in
         cephalix)
             mysql OSS < /opt/cranix-java/data/cephalix-objects.sql
@@ -490,8 +490,8 @@ user=root
 password=$password" > /root/.my.cnf
 chmod 600 /root/.my.cnf
 
-    sed -i s/MYSQLPWD/$password/ /opt/cranix-java/conf/oss-api.properties
-    sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/cranix-java/conf/oss-api.properties
+    sed -i s/MYSQLPWD/$password/ /opt/cranix-java/conf/cranix-api.properties
+    sed -i s/SCHOOL_NETBIOSNAME/${SCHOOL_NETBIOSNAME}/ /opt/cranix-java/conf/cranix-api.properties
 
     ########################################################################
     log "Create profile directory"
