@@ -34,6 +34,6 @@ if type(softwares[minion]) == dict:
         print(u'Could not write software.')
      else:
         os.close(new_file)
-        result=json.load(os.popen('/usr/sbin/oss_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))
+        result=json.load(os.popen('/usr/sbin/crx_api_post_file.sh softwares/devicesByName/'+hostname+' '+filename))
      finally:
         os.remove(filename)

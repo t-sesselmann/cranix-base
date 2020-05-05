@@ -4,11 +4,11 @@ U=$1
 
 if [ -z "${U}" ]; then
 	echo
-	echo "Usage: /usr/share/oss/tools/clean_up_userWorkstations.sh <uid>"
+	echo "Usage: /usr/share/cranix/tools/clean_up_userWorkstations.sh <uid>"
 	echo
 	exit 1
 fi
-DN=$( /usr/sbin/oss_get_dn.sh ${U} )
+DN=$( /usr/sbin/crx_get_dn.sh ${U} )
 if [ "${DN}" ]; then
         tmpldif=$( /usr/bin/mktemp /tmp/CleanUpWSXXXXXXXX )
         echo "${DN}" > ${tmpldif};

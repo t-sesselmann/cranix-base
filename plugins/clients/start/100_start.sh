@@ -3,11 +3,11 @@
 
 MINION=$1
 . /etc/sysconfig/schoolserver
-CLIENT=${MINION/.$SCHOOL_DOMAIN/}
+CLIENT=${MINION/.$CRANIX_DOMAIN/}
 
 #Set the license grains
 #IFS=$'\n'
-LICENCES=$( oss_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
+LICENCES=$( crx_api_text.sh GET softwares/devicesByName/${CLIENT}/licences )
 if [ "${LICENCES:0:7}" = '{"code"' ]; then
                 exit
 fi
@@ -19,5 +19,5 @@ fi
 salt "$MINION" state.apply &> /dev/null
 
 #Now we can read the installed software on the minion
-/usr/share/oss/tools/read_installed_software.py $MINION
+/usr/share/cranix/tools/read_installed_software.py $MINION
 

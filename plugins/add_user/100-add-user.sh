@@ -4,33 +4,33 @@
 #
 
 if [ ! -e /etc/sysconfig/schoolserver ]; then
-   echo "ERROR This ist not an OSS."
+   echo "ERROR This ist not an CRANIX."
    exit 1
 fi
 
 . /etc/sysconfig/schoolserver
 
-if [ -z "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be defined."
+if [ -z "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be defined."
    exit 2
 fi
 
-if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be a directory and must exist."
+if [ ! -d "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be a directory and must exist."
    exit 3
 fi
 
 abort() {
         TASK="add_user-$( uuidgen -t )"
-	mkdir -p /var/adm/oss/opentasks/
-        echo "uid: $uid" >> /var/adm/oss/opentasks/$TASK
-        echo "password: $password" >> /var/adm/oss/opentasks/$TASK
-        echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
-        echo "surname: $surname" >> /var/adm/oss/opentasks/$TASK
-        echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
-        echo "role: $role" >> /var/adm/oss/opentasks/$TASK
-        echo "fsquota: $fsquota" >> /var/adm/oss/opentasks/$TASK
-        echo "msquota: $msquota" >> /var/adm/oss/opentasks/$TASK
+	mkdir -p /var/adm/cranix/opentasks/
+        echo "uid: $uid" >> /var/adm/cranix/opentasks/$TASK
+        echo "password: $password" >> /var/adm/cranix/opentasks/$TASK
+        echo "mpassword: $mpassword" >> /var/adm/cranix/opentasks/$TASK
+        echo "surname: $surname" >> /var/adm/cranix/opentasks/$TASK
+        echo "givenname: $givenname" >> /var/adm/cranix/opentasks/$TASK
+        echo "role: $role" >> /var/adm/cranix/opentasks/$TASK
+        echo "fsquota: $fsquota" >> /var/adm/cranix/opentasks/$TASK
+        echo "msquota: $msquota" >> /var/adm/cranix/opentasks/$TASK
         exit 1
 }
 
@@ -84,13 +84,13 @@ done
 
 skel="/etc/skel"
 
-winprofile="\\\\${SCHOOL_NETBIOSNAME}\\profiles\\$uid"
-winhome="\\\\${SCHOOL_NETBIOSNAME}\\$uid"
+winprofile="\\\\${CRANIX_NETBIOSNAME}\\profiles\\$uid"
+winhome="\\\\${CRANIX_NETBIOSNAME}\\$uid"
 
-if [ $SCHOOL_SORT_HOMES = "yes" ]; then
-        unixhome=${SCHOOL_HOME_BASE}/$role/$uid
+if [ $CRANIX_SORT_HOMES = "yes" ]; then
+        unixhome=${CRANIX_HOME_BASE}/$role/$uid
 else
-        unixhome=${SCHOOL_HOME_BASE}/$uid
+        unixhome=${CRANIX_HOME_BASE}/$uid
 fi
 
 if [ $mpassword != "no" ]; then
@@ -101,7 +101,7 @@ if [ "$role" = "workstations"  -o "$role" = "guests" ]; then
     samba-tool domain passwordsettings set --complexity=off
 fi
 
-uidNumber=$( /usr/share/oss/tools/get_next_id )
+uidNumber=$( /usr/share/cranix/tools/get_next_id )
 
 samba-tool user create "$uid" "$password" \
 				--userou="OU=${role}" \
@@ -115,25 +115,25 @@ samba-tool user create "$uid" "$password" \
 				--profile-path="$winprofile" \
 				--script-path="$uid.bat" \
 				--home-directory="$winhome" \
-				--nis-domain="${SCHOOL_WORKGROUP}" \
+				--nis-domain="${CRANIX_WORKGROUP}" \
 				--unix-home="$unixhome" \
 				--login-shell=/bin/bash \
 				--uid-number=$uidNumber \
 				--gid-number=100 \
-				--mail-address="${uid}@${SCHOOL_DOMAIN}" \
+				--mail-address="${uid}@${CRANIX_DOMAIN}" \
 				$ADDPARAM
 
 if [ $? != 0 ]; then
    abort
 fi
-if [ "${SCHOOL_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
+if [ "${CRANIX_CHECK_PASSWORD_QUALITY}" = "yes" ]; then
    samba-tool domain passwordsettings set --complexity=on
 fi
 
 #create home diredtory copy template user homedirectory and set permission
 mkdir -p $unixhome
-/usr/sbin/oss_copy_template_home.sh $uid
-if [ "$SCHOOL_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
+/usr/sbin/crx_copy_template_home.sh $uid
+if [ "$CRANIX_TEACHER_OBSERV_HOME" = "yes" -a "$role" = "students" ]; then
 	chown -R $uidNumber:TEACHERS "$unixhome"
 	chmod 0770 "$unixhome"
 else
@@ -141,8 +141,8 @@ else
 	chmod 0700 "$unixhome"
 fi
 #Workaround
-if [ $SCHOOL_SORT_HOMES = "yes" ]; then
-        ln -s $unixhome ${SCHOOL_HOME_BASE}/${SCHOOL_WORKGROUP}/$uid
+if [ $CRANIX_SORT_HOMES = "yes" ]; then
+        ln -s $unixhome ${CRANIX_HOME_BASE}/${CRANIX_WORKGROUP}/$uid
 fi
 
 
@@ -155,10 +155,10 @@ samba-tool group addmembers "$role" "$uid"
 #Workstation users password should not expire
 if [ "$role" = "workstations" ]; then
 	tmpldif=$( mktemp /tmp/XXXXXXXX )
-	/usr/sbin/oss_get_dn.sh $uid > $tmpldif
+	/usr/sbin/crx_get_dn.sh $uid > $tmpldif
 	echo "changetype: modify
 add: userWorkstations
-userWorkstations: ${SCHOOL_NETBIOSNAME},$uid" >> $tmpldif
+userWorkstations: ${CRANIX_NETBIOSNAME},$uid" >> $tmpldif
 	ldbmodify  -H /var/lib/samba/private/sam.ldb $tmpldif
 	samba-tool user setexpiry  --noexpiry $uid
 	rm -f $tmpldif
@@ -167,16 +167,16 @@ fi
 
 #Set default quota
 if [ -z "$fsquota" ]; then
-        fsquota=$SCHOOL_FILE_QUOTA
+        fsquota=$CRANIX_FILE_QUOTA
         if [ $role = "teachers" ]; then
-                fsquota=$SCHOOL_FILE_TEACHER_QUOTA
+                fsquota=$CRANIX_FILE_TEACHER_QUOTA
         fi
 fi
 
-/usr/sbin/oss_set_quota.sh $uid $fsquota
+/usr/sbin/crx_set_quota.sh $uid $fsquota
 
 #Set mailsystem quota
 if [ "$role" != "workstations" -a "$role" != "guests" ]; then
-	/usr/sbin/oss_set_mquota.pl $uid $msquota
+	/usr/sbin/crx_set_mquota.pl $uid $msquota
 fi
 

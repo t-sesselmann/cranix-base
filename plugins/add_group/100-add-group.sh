@@ -4,31 +4,31 @@
 #
 
 if [ ! -e /etc/sysconfig/schoolserver ]; then
-   echo "ERROR This ist not an OSS."
+   echo "ERROR This ist not an CRANIX."
    exit 1
 fi
 
 . /etc/sysconfig/schoolserver
 
-if [ -z "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be defined."
+if [ -z "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be defined."
    exit 2
 fi
 
-if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be a directory and must exist."
+if [ ! -d "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be a directory and must exist."
    exit 3
 fi
 
 abort() {
         TASK="add_group-$( uuidgen -t )"
-        mkdir -p /var/adm/oss/opentasks/
-        echo "name: $name" >> /var/adm/oss/opentasks/$TASK
-        echo "password: $password" >> /var/adm/oss/opentasks/$TASK
-        echo "description: $description" >> /var/adm/oss/opentasks/$TASK
-        echo "groupType: $groupType" >> /var/adm/oss/opentasks/$TASK
+        mkdir -p /var/adm/cranix/opentasks/
+        echo "name: $name" >> /var/adm/cranix/opentasks/$TASK
+        echo "password: $password" >> /var/adm/cranix/opentasks/$TASK
+        echo "description: $description" >> /var/adm/cranix/opentasks/$TASK
+        echo "groupType: $groupType" >> /var/adm/cranix/opentasks/$TASK
 	if [ "$mail" ]; then
-		echo "mail: $mail" >> /var/adm/oss/opentasks/$TASK
+		echo "mail: $mail" >> /var/adm/cranix/opentasks/$TASK
 	fi
         exit 1
 }
@@ -76,8 +76,8 @@ if [ "$mail" ]; then
     params="--mail-address=\"$mail\""
 fi
 
-gidNumber=$( /usr/share/oss/tools/get_next_id )
-samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain="${SCHOOL_WORKGROUP}" $params
+gidNumber=$( /usr/share/cranix/tools/get_next_id )
+samba-tool group add "$name" --description="$description" --gid-number=$gidNumber --nis-domain="${CRANIX_WORKGROUP}" $params
 
 if [ $? != 0 ]; then
    abort
@@ -85,15 +85,15 @@ fi
 
 #create diredtory and set permission
 nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
-gdir="${SCHOOL_HOME_BASE}/groups/${name}"
+gdir="${CRANIX_HOME_BASE}/groups/${name}"
 
 mkdir -p -m 0770 "$gdir"
 chgrp $gidNumber "$gdir"
 setfacl -d -m g::rwx "$gdir"
 
 if [ "$groupType" = "primary" ]; then
-   mkdir -m 750 "${SCHOOL_HOME_BASE}/${nameLo}"
-   chgrp $gidNumber "${SCHOOL_HOME_BASE}/${nameLo}"
+   mkdir -m 750 "${CRANIX_HOME_BASE}/${nameLo}"
+   chgrp $gidNumber "${CRANIX_HOME_BASE}/${nameLo}"
    samba-tool ou create OU="${nameLo}"
 fi
 

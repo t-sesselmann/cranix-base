@@ -8,53 +8,53 @@ R=$5
 
 . /etc/sysconfig/schoolserver
 
-role=$( oss_api_text.sh GET users/byUid/$U/role )
+role=$( crx_api_text.sh GET users/byUid/$U/role )
 mkdir -p /var/lib/samba/sysvol/$R/scripts
 setfacl -m g:users:rx /var/lib/samba/sysvol/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/scripts/
-if [ -e /usr/share/oss/templates/login-${role}.bat ]; then
-	cp /usr/share/oss/templates/login-${role}.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
+if [ -e /usr/share/cranix/templates/login-${role}.bat ]; then
+	cp /usr/share/cranix/templates/login-${role}.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
 else
-	cp /usr/share/oss/templates/login-default.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	cp /usr/share/cranix/templates/login-default.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
-if [ -x /usr/share/oss/tools/custom_create_logon_script.sh ]; then
-	/usr/share/oss/tools/custom_create_logon_script.sh ${U} ${I} ${a} ${m} ${R} ${role} 
+if [ -x /usr/share/cranix/tools/custom_create_logon_script.sh ]; then
+	/usr/share/cranix/tools/custom_create_logon_script.sh ${U} ${I} ${a} ${m} ${R} ${role} 
 fi
 
-if [ "${SCHOOL_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/oss/templates/copy_and_run_rem_printers ]; then
-	cat /usr/share/oss/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+if [ "${CRANIX_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/cranix/templates/copy_and_run_rem_printers ]; then
+	cat /usr/share/cranix/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
 if [ "$role" = "students" ]; then
-        if [ "${SCHOOL_MOVE_STUDENTS_PROFILE_TO_HOME}" = "no" ]; then
-                SCHOOL_MOVE_PROFILE_TO_HOME="no"
+        if [ "${CRANIX_MOVE_STUDENTS_PROFILE_TO_HOME}" = "no" ]; then
+                CRANIX_MOVE_PROFILE_TO_HOME="no"
         fi
-        if [ "${SCHOOL_TEACHER_OBSERV_HOME}" = "yes" ]; then
-                SCHOOL_MOVE_PROFILE_TO_HOME="no"
+        if [ "${CRANIX_TEACHER_OBSERV_HOME}" = "yes" ]; then
+                CRANIX_MOVE_PROFILE_TO_HOME="no"
         fi
 fi
-if [ "${SCHOOL_MOVE_PROFILE_TO_HOME}" = "yes" ]; then
-	userHome=$( oss_get_home.sh ${U} )
-	if [ -z "${userHome}" -o ${userHome/${SCHOOL_HOME_BASE}/} = ${userHome} ]; then
+if [ "${CRANIX_MOVE_PROFILE_TO_HOME}" = "yes" ]; then
+	userHome=$( crx_get_home.sh ${U} )
+	if [ -z "${userHome}" -o ${userHome/${CRANIX_HOME_BASE}/} = ${userHome} ]; then
                 echo "ERROR create-logon-script: '$U' has not home directory"
         else
-		cat /usr/share/oss/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+		cat /usr/share/cranix/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 	        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
 	fi
 else 
-	cat /usr/share/oss/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	cat /usr/share/cranix/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
-defaultPrinter=$( oss_api.sh GET devices/byIP/$I/defaultPrinter )
+defaultPrinter=$( crx_api.sh GET devices/byIP/$I/defaultPrinter )
 if [ "$defaultPrinter" ]; then
-        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${SCHOOL_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
-        printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${SCHOOL_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+        printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 fi
-for printer in $( oss_api.sh GET devices/byIP/$I/availablePrinters )
+for printer in $( crx_api.sh GET devices/byIP/$I/availablePrinters )
 do
-        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${SCHOOL_PRINTSERVER}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 done
 
 chown ${U} /var/lib/samba/sysvol/$R/scripts/${U}.bat

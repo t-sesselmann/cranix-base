@@ -3,7 +3,7 @@
 
 usage ()
 {
-	echo 'Usage: /usr/share/oss/tools/oss_del_user_files [OPTION]'
+	echo 'Usage: /usr/share/cranix/tools/crx_del_user_files [OPTION]'
 	echo 'Leiras .....'
 	echo
 	echo 'Options :'
@@ -20,7 +20,7 @@ usage ()
 description ()
 {
 	echo 'NAME:'
-	echo '	oss_del_user_files'
+	echo '	crx_del_user_files'
 	echo 'DESCRIPTION:'
 	echo '	Leiras ...'
 	echo 'PARAMETERS:'
@@ -77,8 +77,8 @@ while [ "$1" != "" ]; do
     shift
 done
 . /etc/sysconfig/schoolserver
-FILE=`/usr/bin/mktemp /tmp/oss_del_user_filesXXX`
-DATUM=`/usr/share/oss/tools/oss_date.sh`
+FILE=`/usr/bin/mktemp /tmp/crx_del_user_filesXXX`
+DATUM=`/usr/share/cranix/tools/crx_date.sh`
 
 if [ -d $HOMEDIR ]
 then
@@ -92,7 +92,7 @@ then
 	# Delete the profiles
 	find $START/profiles  -maxdepth 1 -iname "$USERNAME.??" -exec  rm -rf {} \;
 	# Delete the subdirectories of home
-	for i in $SCHOOL_SEARCH_FOR_DELETE
+	for i in $CRANIX_SEARCH_FOR_DELETE
 	do
 		test -d $START/$i || continue;
 		#Find directories owned by this user

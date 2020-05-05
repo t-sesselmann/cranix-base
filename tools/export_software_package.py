@@ -14,7 +14,7 @@ sid=0
 try:
     sid=int(software)
 except:
-    softwares=json.load(os.popen('oss_api.sh GET softwares/allInstallable'))
+    softwares=json.load(os.popen('crx_api.sh GET softwares/allInstallable'))
     for s in softwares:
         if s['name'] == software:
             sid = int(s['id'])
@@ -22,7 +22,7 @@ if sid == 0:
     print("Can not find software: " + software)
     sys.exit(1)
 
-package=json.load(os.popen('oss_api.sh GET softwares/{}'.format(sid)))
+package=json.load(os.popen('crx_api.sh GET softwares/{}'.format(sid)))
 
 del package['id']
 for v in package['softwareVersions']:

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 . /etc/sysconfig/schoolserver
-REPO_USER=${SCHOOL_REG_CODE:0:9}
-REPO_PASSWORD=${SCHOOL_REG_CODE:10:9}
+REPO_USER=${CRANIX_REG_CODE:0:9}
+REPO_PASSWORD=${CRANIX_REG_CODE:10:9}
 . /etc/os-release
 
 if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
@@ -10,7 +10,7 @@ if [ -z "${REPO_USER}" -o -z "${REPO_PASSWORD}" ]; then
 	exit 1
 fi
 
-VALID=$( curl --insecure -X GET https://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REG_CODE} )
+VALID=$( curl --insecure -X GET https://repo.cephalix.eu/api/customers/regcodes/${CRANIX_REG_CODE} )
 if [ $? -gt 0 ]; then
         echo "Can not register."
         exit 1
@@ -24,11 +24,11 @@ zypper rr ${NAME}-4.0-1
 zypper rr ${NAME}-4.0.1-0
 zypper rr ${NAME}-${VERSION_ID}-0
 #Save the credentials
-echo "[${SCHOOL_UPDATE_URL}/${NAME}/${VERSION_ID}]
+echo "[${CRANIX_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}
 password = ${REPO_PASSWORD}
 
-[${SCHOOL_SALT_PKG_URL}]
+[${CRANIX_SALT_PKG_URL}]
 username = ${REPO_USER}
 password = ${REPO_PASSWORD}
 " > /etc/zypp/credentials.cat
@@ -42,7 +42,7 @@ echo "[salt-packages]
 name=salt-packages
 enabled=1
 autorefresh=1
-baseurl=${SCHOOL_SALT_PKG_URL}
+baseurl=${CRANIX_SALT_PKG_URL}
 path=/
 type=rpm-md
 keeppackages=0
@@ -59,16 +59,16 @@ echo "[${NAME}]
 name=${NAME}
 enabled=1
 autorefresh=1
-baseurl=${SCHOOL_UPDATE_URL}/${NAME}/$VERSION_ID
+baseurl=${CRANIX_UPDATE_URL}/${NAME}/$VERSION_ID
 path=/
 type=rpm-md
 keeppackages=0
-" > /tmp/oss.repo
+" > /tmp/cranix.repo
 
-zypper ar -G /tmp/oss.repo
+zypper ar -G /tmp/cranix.repo
 
 #Add customer specific repositories
-for repo in $( /usr/bin/curl --insecure -X GET http://repo.cephalix.eu/api/customers/regcodes/${SCHOOL_REG_CODE}/repositories )
+for repo in $( /usr/bin/curl --insecure -X GET http://repo.cephalix.eu/api/customers/regcodes/${CRANIX_REG_CODE}/repositories )
 do
 	repoType=$( echo $repo | gawk -F '#' '{ print $1 }' )
 	repoName=$( echo $repo | gawk -F '#' '{ print $2 }' )
@@ -92,6 +92,6 @@ do
 done
 
 zypper --gpg-auto-import-keys ref
-#We need the OSS packages for the salt packages too
-ln -s /etc/zypp/repos.d/OSS.repo  /srv/salt/repos.d/OSS.repo
+#We need the CRANIX packages for the salt packages too
+ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/OSS.repo
 

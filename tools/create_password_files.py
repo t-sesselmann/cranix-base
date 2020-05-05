@@ -42,7 +42,7 @@ with open(user_list) as csvfile:
     csv.register_dialect('oss',dialect)
     reader = csv.DictReader(csvfile,dialect='oss')
     for row in reader:
-        fobj = open("/usr/share/oss/templates/password.html","r")
+        fobj = open("/usr/share/cranix/templates/password.html","r")
         template = fobj.read()
         fobj.close()
         uid=""

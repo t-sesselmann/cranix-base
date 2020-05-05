@@ -10,9 +10,9 @@ import socket
 from configobj import ConfigObj
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.openschoolserver.dao.User.Register.Password']
-domain = os.popen('oss_api_text.sh GET system/configuration/DOMAIN').read()
+domain = os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
 
-devices=json.load(os.popen('/usr/sbin/oss_api.sh GET devices/all'))
+devices=json.load(os.popen('/usr/sbin/crx_api.sh GET devices/all'))
 for device in devices:
   print(device)
   try:
@@ -28,8 +28,8 @@ for device in devices:
 
 print("Recreate the reverse zone")
 
-netmask=int(os.popen('oss_api_text.sh GET system/configuration/NETMASK').read().rstrip())
-network=os.popen('oss_api_text.sh GET system/configuration/NETWORK').read().split('.')
+netmask=int(os.popen('crx_api_text.sh GET system/configuration/NETMASK').read().rstrip())
+network=os.popen('crx_api_text.sh GET system/configuration/NETWORK').read().split('.')
 revdomain=""
 print(netmask)
 if netmask > 23:

@@ -12,7 +12,7 @@ done
 for i in $( lpc status | grep ':$' | sed 's/://' )
 do
 	#Check if this printer is in the DB
-	INDB=$( echo "select name from Printers where name='$i'" | mysql OSS )
+	INDB=$( echo "select name from Printers where name='$i'" | mysql CRANIX )
 	if [ -z "${INDB}" ]; then
 		continue
 	fi
@@ -28,6 +28,6 @@ do
 		sleep 2
 		systemctl restart samba-printserver
 		sleep 1
-		/usr/sbin/cupsaddsmb -v -H ${SCHOOL_PRINTSERVER} -U Administrator%"$ADMINPW" $lower
+		/usr/sbin/cupsaddsmb -v -H ${CRANIX_PRINTSERVER} -U Administrator%"$ADMINPW" $lower
 	fi
 done

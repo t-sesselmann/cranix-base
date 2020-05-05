@@ -4,19 +4,19 @@
 #
 
 if [ ! -e /etc/sysconfig/schoolserver ]; then
-   echo "ERROR This ist not an OSS."
+   echo "ERROR This ist not an CRANIX."
    exit 1
 fi
 
 . /etc/sysconfig/schoolserver
 
-if [ -z "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be defined."
+if [ -z "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be defined."
    exit 2
 fi
 
-if [ ! -d "${SCHOOL_HOME_BASE}" ]; then
-   echo "ERROR SCHOOL_HOME_BASE must be a directory and must exist."
+if [ ! -d "${CRANIX_HOME_BASE}" ]; then
+   echo "ERROR CRANIX_HOME_BASE must be a directory and must exist."
    exit 3
 fi
 
@@ -33,14 +33,14 @@ msquota=0
 
 abort() {
 	TASK="modify_user-$( uuidgen -t )"
-	mkdir -p /var/adm/oss/opentasks/
-	echo "uid: $uid"             >> /var/adm/oss/opentasks/$TASK
-	echo "password: $password"   >> /var/adm/oss/opentasks/$TASK
-	echo "mpassword: $mpassword" >> /var/adm/oss/opentasks/$TASK
-	echo "surname: $surname"     >> /var/adm/oss/opentasks/$TASK
-	echo "givenname: $givenname" >> /var/adm/oss/opentasks/$TASK
-	echo "fsquota: $fsquota"     >> /var/adm/oss/opentasks/$TASK
-        echo "msquota: $msquota"     >> /var/adm/oss/opentasks/$TASK
+	mkdir -p /var/adm/cranix/opentasks/
+	echo "uid: $uid"             >> /var/adm/cranix/opentasks/$TASK
+	echo "password: $password"   >> /var/adm/cranix/opentasks/$TASK
+	echo "mpassword: $mpassword" >> /var/adm/cranix/opentasks/$TASK
+	echo "surname: $surname"     >> /var/adm/cranix/opentasks/$TASK
+	echo "givenname: $givenname" >> /var/adm/cranix/opentasks/$TASK
+	echo "fsquota: $fsquota"     >> /var/adm/cranix/opentasks/$TASK
+        echo "msquota: $msquota"     >> /var/adm/cranix/opentasks/$TASK
 	exit 1
 }
 
@@ -79,10 +79,10 @@ do
 done
 
 #Set fsquota
-/usr/sbin/oss_set_quota.sh $uid $fsquota
+/usr/sbin/crx_set_quota.sh $uid $fsquota
 
 #Set mailsystem quota
-/usr/sbin/oss_set_mquota.pl $uid $msquota
+/usr/sbin/crx_set_mquota.pl $uid $msquota
 
 if [ "$surname" -a "$givenname" ]
 then

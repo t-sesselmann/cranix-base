@@ -6,7 +6,7 @@
 	dns forwarder = 8.8.8.8 #GATEWAY#
 	server role = active directory domain controller
 	idmap_ldb:use rfc2307 = Yes
-	check password script = /usr/share/oss/tools/check_password_complexity.sh
+	check password script = /usr/share/cranix/tools/check_password_complexity.sh
 	winbind enum users = Yes
 	winbind enum groups = Yes
 	wide links = Yes
@@ -26,7 +26,7 @@
 [itool]
 	comment = Imaging Tool
 	path = /srv/itool
-	root preexec = /usr/share/oss/plugins/share_plugin_handler.sh itool open %u %I %a %m
+	root preexec = /usr/share/cranix/plugins/share_plugin_handler.sh itool open %u %I %a %m
 	inherit permissions = Yes
 	valid users = @sysadmins, @workstations, root, Administrator, ossreader
 	force group = sysadmins
@@ -37,8 +37,8 @@
 
 [netlogon]
         comment = Network logon
-        path = /var/lib/samba/sysvol/#SCHOOL_DOMAIN#/scripts
-	root preexec=/usr/share/oss/plugins/share_plugin_handler.sh netlogon open %U %I %a %m #SCHOOL_DOMAIN#
+        path = /var/lib/samba/sysvol/#CRANIX_DOMAIN#/scripts
+	root preexec=/usr/share/cranix/plugins/share_plugin_handler.sh netlogon open %U %I %a %m #CRANIX_DOMAIN#
 	browseable = No
 	writable = No
 #	read only = No
@@ -48,7 +48,7 @@
 [profiles]
         comment = Network profiles
 	path = HOMEBASE/profiles/
-	root preexec=/usr/share/oss/plugins/share_plugin_handler.sh profiles open %U %I %a %m #SCHOOL_DOMAIN#
+	root preexec=/usr/share/cranix/plugins/share_plugin_handler.sh profiles open %U %I %a %m #CRANIX_DOMAIN#
         browseable = No
         read only = No
         force create mode = 0600
@@ -59,8 +59,8 @@
 
 [homes]
         comment = Home Directories
-	root preexec=/usr/share/oss/plugins/share_plugin_handler.sh homes open %U %I %a %m #SCHOOL_DOMAIN#
-	root postexec=/usr/share/oss/plugins/share_plugin_handler.sh homes close %U %I %a %m #SCHOOL_DOMAIN#
+	root preexec=/usr/share/cranix/plugins/share_plugin_handler.sh homes open %U %I %a %m #CRANIX_DOMAIN#
+	root postexec=/usr/share/cranix/plugins/share_plugin_handler.sh homes close %U %I %a %m #CRANIX_DOMAIN#
 	inherit permissions = Yes
 	browseable = No
 	printable = No
@@ -74,8 +74,8 @@
 [groups]
 	comment = Shared directories of groups you are member in.
 	path = HOMEBASE/groups/LINKED/%U
-	root preexec=/usr/share/oss/plugins/share_plugin_handler.sh groups open %U %I %a %m #SCHOOL_DOMAIN#
-	root postexec=/usr/share/oss/plugins/share_plugin_handler.sh groups close %U %I %a %m #SCHOOL_DOMAIN#
+	root preexec=/usr/share/cranix/plugins/share_plugin_handler.sh groups open %U %I %a %m #CRANIX_DOMAIN#
+	root postexec=/usr/share/cranix/plugins/share_plugin_handler.sh groups close %U %I %a %m #CRANIX_DOMAIN#
 	inherit permissions = Yes
 	browseable = Yes
 	guest ok = No

@@ -2,11 +2,11 @@
 
 abort() {
         TASK="delete_device-$( uuidgen -t )"
-        mkdir -p /var/adm/oss/opentasks/
-	echo "reason: $1" >> /var/adm/oss/opentasks/$TASK
-        echo "name: $name" >> /var/adm/oss/opentasks/$TASK
-        echo "id: $id" >> /var/adm/oss/opentasks/$TASK
-        echo "deviceType: $deviceType" >> /var/adm/oss/opentasks/$TASK
+        mkdir -p /var/adm/cranix/opentasks/
+	echo "reason: $1" >> /var/adm/cranix/opentasks/$TASK
+        echo "name: $name" >> /var/adm/cranix/opentasks/$TASK
+        echo "id: $id" >> /var/adm/cranix/opentasks/$TASK
+        echo "deviceType: $deviceType" >> /var/adm/cranix/opentasks/$TASK
         exit 1
 }
 

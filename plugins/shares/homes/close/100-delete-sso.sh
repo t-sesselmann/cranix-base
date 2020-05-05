@@ -6,23 +6,23 @@ m=$4
 R=$5
 
 
-oss_api.sh DELETE devices/loggedInUsers/$I/$U
+crx_api.sh DELETE devices/loggedInUsers/$I/$U
 
 . /etc/sysconfig/schoolserver
 
-role=$( oss_api_text.sh GET users/byUid/$U/role )
+role=$( crx_api_text.sh GET users/byUid/$U/role )
 
 case "${role}" in
         workstations)
         ;;
         students)
-                if [ "${SCHOOL_ALLOW_STUDENTS_MULTIPLE_LOGIN}" = "no" ]; then
-                        DN=$( oss_get_dn.sh ${U} )
+                if [ "${CRANIX_ALLOW_STUDENTS_MULTIPLE_LOGIN}" = "no" ]; then
+                        DN=$( crx_get_dn.sh ${U} )
                 fi
         ;;
         *)
-                if [ "${SCHOOL_ALLOW_MULTIPLE_LOGIN}" = "no" ]; then
-                        DN=$( oss_get_dn.sh ${U} )
+                if [ "${CRANIX_ALLOW_MULTIPLE_LOGIN}" = "no" ]; then
+                        DN=$( crx_get_dn.sh ${U} )
                 fi
 esac
 

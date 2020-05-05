@@ -1,9 +1,9 @@
 #!/bin/bash
-# Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2020 Peter Varkoly <pvarkoly@cephalix.eu> Nürnberg, Germany.  All rights reserved.
 
 . /etc/sysconfig/schoolserver
 what=$1
-conf=$( mktemp /tmp/ossplugin-XXXXXXXXXX )
+conf=$( mktemp /tmp/cranixplugin-XXXXXXXXXX )
 
 cat - > $conf
 
@@ -13,20 +13,20 @@ then
   exit
 fi
 
-if [ "$SCHOOL_DEBUG" = "yes" ]
+if [ "$CRANIX_DEBUG" = "yes" ]
 then
   cp $conf $conf.DEBUG
 fi
 
-if [ -d /usr/share/oss/plugins/$what ]
+if [ -d /usr/share/cranix/plugins/$what ]
 then
- cd /usr/share/oss/plugins/$what
+ cd /usr/share/cranix/plugins/$what
  for i in `find -mindepth 1 -maxdepth 1 | sort`
  do
-   cat $conf | /usr/share/oss/plugins/$what/$i
-   if [ "$SCHOOL_DEBUG" = "yes" ]
+   cat $conf | /usr/share/cranix/plugins/$what/$i
+   if [ "$CRANIX_DEBUG" = "yes" ]
    then
-     echo "cat $conf | /usr/share/oss/plugins/$what/$i" >> $conf.DEBUG
+     echo "cat $conf | /usr/share/cranix/plugins/$what/$i" >> $conf.DEBUG
    fi
  done
 fi 

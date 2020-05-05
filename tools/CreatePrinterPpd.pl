@@ -28,13 +28,13 @@ foreach my $ppd ( @ppds ) {
   }
 
 }
-open OUT, ">/usr/share/oss/templates/drivers.txt";
+open OUT, ">/usr/share/cranix/templates/drivers.txt";
 foreach(sort keys %$drivers ) {
     print OUT $_.'###'.$drivers->{$_}."\n";
 }
 close OUT;
 
-open OUT, ">/usr/share/oss/templates/printers.txt";
+open OUT, ">/usr/share/cranix/templates/printers.txt";
 foreach(sort keys %$printers ) {
     print OUT $_.'###';
     print OUT join("%%",sort(@{$printers->{$_}}))."\n";

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -e /srv/salt/repos.d/OSS.repo ]; then
-	ln -s /etc/zypp/repos.d/OSS.repo  /srv/salt/repos.d/OSS.repo
+if [ ! -e /srv/salt/repos.d/CRANIX.repo ]; then
+	ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/CRANIX.repo
 fi
 

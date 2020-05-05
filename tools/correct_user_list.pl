@@ -145,7 +145,7 @@ my @AKTUID     = ();
 my @lines      = ();
 my $ret        = '';
 
-my $users = `/usr/sbin/oss_api.sh GET users/byRole/$role`;
+my $users = `/usr/sbin/crx_api.sh GET users/byRole/$role`;
 $users = eval { decode_json($users) };
 if ($@)
 {

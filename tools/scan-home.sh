@@ -3,7 +3,7 @@
 
 if [ "$1" = "--help" -o  "$1" = "-h" ]
 then
-        echo 'Usage: /usr/share/oss/tools/scan-home.sh'
+        echo 'Usage: /usr/share/cranix/tools/scan-home.sh'
         echo 'Scan /home for viruses and save the result into /var/log/virus_scan_logs/<Date_Time>'
         echo
         echo 'Options :'

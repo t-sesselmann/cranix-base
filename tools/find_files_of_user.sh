@@ -2,7 +2,7 @@
 # Copyright (c) 2012 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 usage ()
 {
-        echo 'Usage: /usr/share/oss/tools/find_files_of_user.sh [OPTION]'
+        echo 'Usage: /usr/share/cranix/tools/find_files_of_user.sh [OPTION]'
         echo 'Tool to find all files created by the user <uid> in the /home directory.'
         echo '(Creates a report of all files created by the user <uid> in the /home directory.'
         echo "The report will be saved in the homedirectory of [myuid] in the directory SearchUsersFiles."
@@ -40,7 +40,7 @@ while [ "$1" != "" ]; do
                                         usage
                                         exit;
                                 fi
-				report=$( /usr/sbin/oss_get_home.sh $a )
+				report=$( /usr/sbin/crx_get_home.sh $a )
 				;;
         -h | --help )           usage
                                 exit;;
@@ -51,20 +51,20 @@ while [ "$1" != "" ]; do
 done
 
 
-home=$( /usr/sbin/oss_get_home.sh $u )
-date=$( /usr/share/oss/tools/oss_date.sh )
+home=$( /usr/sbin/crx_get_home.sh $u )
+date=$( /usr/share/cranix/tools/crx_date.sh )
 
 
 get_name()
 {
-	GN=$( /usr/sbin/oss_api_text.sh users/byUid/${u}/givenName )
-	SN=$( /usr/sbin/oss_api_text.sh users/byUid/${u}/surName )
+	GN=$( /usr/sbin/crx_api_text.sh users/byUid/${u}/givenName )
+	SN=$( /usr/sbin/crx_api_text.sh users/byUid/${u}/surName )
 	NAME="$GN $SN"
 }
 get_name
 
 if [ -z "$report" ]; then
-        report=$SCHOOL_HOME_BASE/groups/SYSADMINS
+        report=$CRANIX_HOME_BASE/groups/SYSADMINS
 fi
 mkdir -p $report/SearchUsersFiles/
 
@@ -87,20 +87,20 @@ else
 fi
 echo "================================================================="
 echo
-echo "Files of $NAME in $SCHOOL_HOME_BASE/all:"
-find $SCHOOL_HOME_BASE/all      -type f -user $u -exec ls -lh {} \;
+echo "Files of $NAME in $CRANIX_HOME_BASE/all:"
+find $CRANIX_HOME_BASE/all      -type f -user $u -exec ls -lh {} \;
 echo "================================================================="
 echo
-echo "Files of $NAME in $SCHOOL_HOME_BASE/groups:"
-find $SCHOOL_HOME_BASE/groups   -type f -user $u -exec ls -lh {} \;
+echo "Files of $NAME in $CRANIX_HOME_BASE/groups:"
+find $CRANIX_HOME_BASE/groups   -type f -user $u -exec ls -lh {} \;
 echo "================================================================="
 echo
-echo "Files of $NAME in $SCHOOL_HOME_BASE/software:"
-find $SCHOOL_HOME_BASE/software -type f -user $u -exec ls -lh {} \;
+echo "Files of $NAME in $CRANIX_HOME_BASE/software:"
+find $CRANIX_HOME_BASE/software -type f -user $u -exec ls -lh {} \;
 echo "================================================================="
 echo
 echo "Windows Profiles of $NAME in MB:"
-find $SCHOOL_HOME_BASE/profiles/$u.* -maxdepth 1 -type d -exec du -s -BM {} \;
+find $CRANIX_HOME_BASE/profiles/$u.* -maxdepth 1 -type d -exec du -s -BM {} \;
 echo "================================================================="
 echo
 echo "Allocation of $NAME's home directory"

@@ -20,8 +20,8 @@ rsync -aAv old-oss:/etc/cups/ /etc/cups/
 rsync -aAv old-oss:/var/lib/printserver/ /var/lib/printserver/
 rsync -aAv old-oss:/var/lib/squidGuard/ /var/lib/squidGuard/ 
 rsync -aAv old-oss:/etc/squid/ /etc/squid/
-oss_api.sh PUT devices/refreshConfig
-oss_api.sh PUT softwares/saveStates
+crx_api.sh PUT devices/refreshConfig
+crx_api.sh PUT softwares/saveStates
 nohup rsync -aAv old-oss:/srv/itool/ /srv/itool/ &
 nohup rsync -aAv old-oss:/home/ /home/ &
 

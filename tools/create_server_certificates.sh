@@ -4,7 +4,7 @@ gencert() {
     # Try to get a valid hostname...
     CN=$NAME.$DOMAIN
     if [ $NAME = "CA" ]; then
-        CN="OSS_Default_CA";
+        CN="CRANIX_Default_CA";
     fi
     if [ "$SHORT" ]; then
        CN=$NAME
@@ -154,13 +154,13 @@ usage() {
 #Set the defaults
 CLEAN=""
 NAME=
-DOMAIN=$SCHOOL_DOMAIN
-comment="OSS Server Certificate"
-C=$SCHOOL_CCODE
+DOMAIN=$CRANIX_DOMAIN
+comment="CRANIX Server Certificate"
+C=$CRANIX_CCODE
 ST="Bavaria"
 L="Nuremberg"
-U="OSS Server"
-O=$SCHOOL_NAME
+U="CRANIX Server"
+O=$CRANIX_NAME
 SHORT=
 CPATH="/etc/ssl/servercerts"
 

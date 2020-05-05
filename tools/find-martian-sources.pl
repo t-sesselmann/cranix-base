@@ -17,7 +17,7 @@ my $result = GetOptions(\%options,
                 );
 sub usage
 {
-        print   'Usage: /usr/share/oss/tools/find-martian-sources.pl [OPTION]'."\n".
+        print   'Usage: /usr/share/cranix/tools/find-martian-sources.pl [OPTION]'."\n".
                 'This script find the IP and MAC-Adresses of devices which causes martian sources messages'."\n\n".
                 'Options :'."\n".
                 'Mandatory parameters :'."\n".

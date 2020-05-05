@@ -6,4 +6,4 @@ a=$3
 m=$4
 R=$5
 
-oss_api.sh DELETE clonetool/devicesByIP/${I}/cloning
+crx_api.sh DELETE clonetool/devicesByIP/${I}/cloning

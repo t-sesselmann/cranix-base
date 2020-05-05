@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/sbin/oss_api.sh PUT rooms/setScheduledAccess &> /dev/null
+/usr/sbin/crx_api.sh PUT rooms/setScheduledAccess &> /dev/null

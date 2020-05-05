@@ -79,6 +79,6 @@ fw_custom_before_denyall() { # could also be named "after_forwardmasq()"
 
 fw_custom_after_finished() {
     # these are the rules to be loaded after the firewall is fully configured
-    oss_api.sh PUT rooms/setDefaultAccess 
+    crx_api.sh PUT rooms/setDefaultAccess 
     true
 }

@@ -20,7 +20,7 @@ sub write_file($$) {
 }
 
 
-my $classes = `/usr/sbin/oss_api.sh GET groups/byType/class`;
+my $classes = `/usr/sbin/crx_api.sh GET groups/byType/class`;
 $classes = eval { decode_json($classes) };
 
 foreach my $classe (@{$classes}) {
@@ -31,7 +31,7 @@ foreach my $classe (@{$classes}) {
 	my $json = '{"name":"WLAN-'.$name.'","description":"Wlanraum '.$desc.'","hwconfId":"3","roomType":"AdHocAccess","roomControl":"allTeachers","netMask":"26","places":1}';
 	print "$json\n";
 	write_file("/tmp/addRoom",$json);
-	my $result = `/usr/sbin/oss_api_post_file.sh rooms/add /tmp/addRoom`;
+	my $result = `/usr/sbin/crx_api_post_file.sh rooms/add /tmp/addRoom`;
 	$result = eval { decode_json($result) };
         if ($@)
         {
@@ -41,21 +41,21 @@ foreach my $classe (@{$classes}) {
 	$json = '{"name":"WLAN-'.$name.'","description":"Wlanraum '.$desc.'","categoryType":"AdHocAccess","studentsOnly":true,"publicAccess":false}';
 	print "$json\n";
 	write_file("/tmp/addCatetory",$json);
-	$result = `/usr/sbin/oss_api_post_file.sh categories/add /tmp/addCatetory`;
+	$result = `/usr/sbin/crx_api_post_file.sh categories/add /tmp/addCatetory`;
 	$result = eval { decode_json($result) };
         if ($@)
         {
             die( "decode_json failed, invalid json. error:$@\n" );
         }
 	my $categoryId = $result->{'objectId'};
-	$result = `/usr/sbin/oss_api.sh PUT categories/$categoryId/Room/$roomId`;
+	$result = `/usr/sbin/crx_api.sh PUT categories/$categoryId/Room/$roomId`;
 	$result = eval { decode_json($result) };
         if ($@)
         {
             die( "decode_json failed, invalid json. error:$@\n" );
         }
 	print $result->{value}."\n";
-	$result = `/usr/sbin/oss_api.sh PUT categories/$categoryId/Group/$groupId`;
+	$result = `/usr/sbin/crx_api.sh PUT categories/$categoryId/Group/$groupId`;
 	$result = eval { decode_json($result) };
         if ($@)
         {

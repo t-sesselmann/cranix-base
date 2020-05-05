@@ -1,0 +1,302 @@
+#!/bin/bash
+# Copyright (c) 2012 Peter Varkoly Nürnberg, Germany.  All rights reserved.
+# cranix-backup
+# 
+# $Id: cranix-backup,v 1.10 2007/07/18 16:43:22 pv Exp $
+#
+
+LOGFILE=/var/log/cranix-backup.log
+DATE=`date +%Y-%m-%d-%H-%M`
+#TODO Make all variables configurable.
+MYSQLDUMP_OPTIONS="--lock-tables --add-drop-database --add-locks --quote-names --opt --create-options"
+MAILADDR="admin"
+FORCE="no"
+VERBOSE="yes"
+CONFIG=/etc/sysconfig/schoolserver
+RSYNCPARS=" -aA --delete --size-only "
+LIMIT=80
+DAY_OF_WEEK=$( date +%u )
+
+if [ -e /var/adm/cranix/BackupRunning ]
+then
+	BPID=$( cat /var/adm/cranix/BackupRunning )
+	if [ -d /proc/$BPID ]; then
+		echo "An other backup process is running with PID: $BPID"
+		exit 1;
+	fi
+fi
+
+echo $$ > /var/adm/cranix/BackupRunning
+
+function TheEnd(){
+	rm /var/adm/cranix/BackupRunning
+	echo $DATE > /var/adm/backup/LAST_BACKUP
+	if [ "$2" ]; then
+		LOG "$2 $1";
+	fi
+	exit $1
+}
+
+function usage (){
+	echo 
+	echo "Usage: `basename $0` [OPTION] "
+	echo "       -h|--help     : help (this message)"
+	echo "       -f            : force backup (even if it's disabled in config)"
+	echo "       -v            : be verbose"
+	echo 
+	echo "       Use this script to immediately create a backup of your CRANIX."
+	echo "       You can find the configuration in $CONFIG."
+	echo "       Feel free to read the administration handbook for further details."
+	echo
+	TheEnd $1
+}
+
+function check_discspace() {
+	if [ "$CRANIX_BACKUP_WARNING_LIMIT" ]; then
+		LIMIT=$CRANIX_BACKUP_WARNING_LIMIT
+	fi
+
+	USED=`df $1 | tail -n1 | awk '{ print $(NF-1) }' | sed s/%//`
+	if [ $USED -gt $LIMIT ]; then
+	{
+		AVAIL=`df -h $1 | tail -n1 | awk '{ print $(NF-2) }'`
+		echo "WARNING: only $AVAIL space available on $1." | tee -a $LOGFILE
+	} | mail -s "BACKUP WARNING from $0" $MAILADDR
+	fi
+}
+
+function LOG() {
+	LOG_DATE=`date "+%b %d %H:%M:%S"`
+	HOST=`hostname`
+	echo "$LOG_DATE $HOST cranix-backup: $1" >> $LOGFILE
+	if [ "$VERBOSE" = "yes" ]; then
+		echo "$1"
+	fi
+}
+
+while getopts 'fhv --long help --' OPTION ; do
+        case $OPTION in
+		        h|H|help)    usage 0
+                ;;
+				f) FORCE="yes"
+				;;
+				v) VERBOSE="yes"
+				;;
+		esac
+done
+
+shift $(( OPTIND - 1 ))
+
+if [ ! -f $CONFIG ]; then
+	echo -e "\033[0;31;1mThis script is for Open School Server only!\033[\0m"
+	echo -e "\033[0;31;1m*********         exiting         *********\033[\0m"
+	TheEnd 1
+fi
+
+# Read the configuration
+. $CONFIG
+if [ -z "$CRANIX_BACKUP_DAYS" ]; then
+        CRANIX_BACKUP_DAYS="1234567"
+fi
+if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
+	RSYNCPARS=" -a --delete "
+fi
+
+if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_OWNER" = "yes" ]; then
+	RSYNCPARS=" -r --delete "
+fi
+
+if [ "${CRANIX_BACKUP_DAYS/$DAY_OF_WEEK/}" = $CRANIX_BACKUP_DAYS -a "$FORCE" != "yes" ]; then
+        LOG "********** No backup needed today **********"
+        exit 0;
+fi
+
+MAILADDR="admin@$CRANIX_DOMAIN"
+
+if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
+	LOG "********** Starting Backup **********"
+
+    if [ "$CRANIX_BACKUP_START_CMD" ]; then
+	eval $CRANIX_BACKUP_START_CMD
+    fi
+    if [ -e /var/adm/backup/LAST_BACKUP ]; then
+        LAST_BACKUP=`cat /var/adm/backup/LAST_BACKUP`
+    else    
+        LAST_BACKUP=$DATE
+    fi
+	# check needed configs
+	if [ -z $CRANIX_BACKUP_FULL_DIR ]; then
+		VERBOSE="yes"
+		LOG "No CRANIX_BACKUP_FULL_DIR defined - exiting" 
+		TheEnd 1
+	fi
+	check_discspace $CRANIX_BACKUP_FULL_DIR
+	if [ -z $CRANIX_BACKUP_INC_DIR ]; then
+		VERBOSE="yes"
+		LOG "No CRANIX_BACKUP_INC_DIR defined - using $CRANIX_BACKUP_FULL_DIR instead" 
+		CRANIX_BACKUP_INC_DIR=$CRANIX_BACKUP_FULL_DIR
+	else
+		check_discspace $CRANIX_BACKUP_INC_DIR
+	fi
+
+    #create the backup direcktory
+    BACKUP_DIR="$CRANIX_BACKUP_INC_DIR/$LAST_BACKUP"
+    mkdir -p $BACKUP_DIR
+    if [ $? != 0 ]; then
+	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi  
+    touch $CRANIX_BACKUP_FULL_DIR/DO_BACKUP
+    if [ $? != 0 ]; then
+	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi  
+
+    export BACKUP_DIR
+    export CRANIX_BACKUP_FULL_DIR
+    if [ "$CRANIX_BACKUP_CHECK_MOUNT" = "yes" ]; then
+        mount | grep -q "$CRANIX_BACKUP_FULL_DIR" || {
+            LOG "Unable to mount $CRANIX_BACKUP_FULL_DIR" 
+            TheEnd 5
+        }
+        mount | grep -q "$CRANIX_BACKUP_INC_DIR" || {
+            LOG "Unable to mount $CRANIX_BACKUP_INC_DIR" 
+            TheEnd 5
+        }
+    fi
+
+    # copy sysconfig file schoolconf to the base for simple recovery
+    cp /etc/sysconfig/schoolserver $CRANIX_BACKUP_FULL_DIR/
+    if [ $? != 0 ]; then
+	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi  
+
+    # save custom squidGuard database
+    LOG "Syncing custom squidGuard database" 
+    mkdir -p $CRANIX_BACKUP_FULL_DIR/var/lib/squidGuard/db/custom/
+    mkdir -p $BACKUP_DIR/var/lib/squidGuard/db/custom/
+    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/squidGuard/db/custom/ \
+		/var/lib/squidGuard/db/custom/ \
+		$CRANIX_BACKUP_FULL_DIR/var/lib/squidGuard/db/custom/
+    if [ $? != 0 ]; then
+	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi  
+
+    LOG "Syncing samba"
+    if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
+       test -e $CRANIX_BACKUP_FULL_DIR/samba_facls.gz && mv $CRANIX_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
+       getfacl --absolute-names -R /var/lib/samba/ | gzip > $CRANIX_BACKUP_FULL_DIR/samba_facls.gz
+    fi
+    mkdir -p $BACKUP_DIR/var/lib/samba/
+    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
+    if [ $? != 0 ]; then
+        TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi
+
+    # save /etc - must run after samba-backup otherwise secrets.tdb.bak is not saved
+    if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
+	LOG "Saving acls on /etc/"
+	if [ -e $CRANIX_BACKUP_FULL_DIR/etc_facls.gz ]; then
+		mv $CRANIX_BACKUP_FULL_DIR/etc_facls.gz $BACKUP_DIR/etc_facls.gz
+	fi
+	getfacl --skip-base --absolute-names -R /etc/ | gzip > $CRANIX_BACKUP_FULL_DIR/etc_facls.gz
+    fi
+    LOG "Syncing /etc/"
+    mkdir -p $BACKUP_DIR/etc/
+    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/etc/ /etc/ $CRANIX_BACKUP_FULL_DIR/etc/
+    if [ $? != 0 ]; then
+	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+    fi  
+
+    # save /root (needed already for ssh-key files)
+    LOG "Syncing /root/"
+    mkdir -p $BACKUP_DIR/root/
+    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/root/ /root/ $CRANIX_BACKUP_FULL_DIR/root/
+
+    if [ "$CRANIX_BACKUP_HOME" = "yes" ]; then
+        if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
+		LOG "Saving acls on /home/" 
+		if [ -e $CRANIX_BACKUP_FULL_DIR/home_facls.gz ]; then
+		    mv $CRANIX_BACKUP_FULL_DIR/home_facls.gz $BACKUP_DIR/home_facls.gz
+		fi
+		getfacl --skip-base --absolute-names -R /home/ | gzip > $CRANIX_BACKUP_FULL_DIR/home_facls.gz
+	fi
+	LOG "Syncing /home/" 
+	test -e /usr/share/cranix/templates/exclude-from-home-backup || touch /usr/share/cranix/templates/exclude-from-home-backup
+	# If $CRANIX_BACKUP_FULL_DIR equal $CRANIX_BACKUP_INC_DIR we make hartlinks
+	if [ $CRANIX_BACKUP_FULL_DIR = $CRANIX_BACKUP_INC_DIR -a "$CRANIX_BACKUP_WITH_HARDLINK" = "yes" ]; then
+	    if [ -d $CRANIX_BACKUP_FULL_DIR/home/ ]; then
+	    	mv $CRANIX_BACKUP_FULL_DIR/home/ $BACKUP_DIR/home/
+	    else
+	    	mkdir -p $BACKUP_DIR/home/
+	    fi
+	    rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup --link-dest=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/
+	    if [ $? != 0 ]; then
+		TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+	    fi  
+	else
+	    mkdir -p $BACKUP_DIR/home/
+	    rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup -b --backup-dir=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/
+	    if [ $? != 0 ]; then
+		TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+	    fi  
+	fi
+    fi
+
+    if [ "$CRANIX_BACKUP_CTOOL" = "yes" ]; then
+    	LOG "Syncing itool"  
+    	mkdir -p $CRANIX_BACKUP_FULL_DIR/srv/itool
+    	mkdir -p $BACKUP_DIR/srv/itool
+    	rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/srv/itool/ /srv/itool/ $CRANIX_BACKUP_FULL_DIR/srv/itool/
+        if [ $? != 0 ]; then
+            TheEnd 6 "CAN_NOT_MAKE_BACKUP"
+        fi  
+    fi
+    
+    if [ "$CRANIX_BACKUP_DB" = "yes" ]; then
+	LOG "Syncing CRANIX Database"
+        mysqldump $MYSQLDUMP_OPTIONS --all-databases | gzip > $BACKUP_DIR/MYSQL.sql.gz
+	if [ $? != 0 ]; then
+		LOG " CAN_NOT_MAKE_BACKUP"
+	fi  
+    fi
+
+    if [ "$CRANIX_BACKUP_MAIL" = "yes" ]; then
+	LOG "Syncing Mail Data"
+        for i in var/spool/imap/ var/lib/imap/; do
+            mkdir -p $CRANIX_BACKUP_FULL_DIR/$i
+            mkdir -p $BACKUP_DIR/$i
+            rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/$i /$i $CRANIX_BACKUP_FULL_DIR/$i
+	    if [ $? != 0 ]; then
+		LOG " CAN_NOT_MAKE_BACKUP"
+	    fi  
+        done    
+    fi
+
+    # Now we make recovery easy
+    if [ -f /usr/share/cranix/tools/crx_recover.sh ]; then
+      cp -f /usr/share/cranix/tools/crx_recover.sh $CRANIX_BACKUP_FULL_DIR/
+      chmod 750 $CRANIX_BACKUP_FULL_DIR/crx_recover.sh 
+      chown root:root $CRANIX_BACKUP_FULL_DIR/crx_recover.sh
+    fi
+    if [ -f /usr/share/doc/packages/openschool-base/crx_recover.readme ]; then
+      cp -f /usr/share/doc/packages/openschool-base/crx_recover.readme $CRANIX_BACKUP_FULL_DIR/	
+    fi
+
+    # Execute custom scripts
+    if [ "$CRANIX_BACKUP_CUSTOM_SCRIPTS" ]; then
+        for i in $CRANIX_BACKUP_CUSTOM_SCRIPTS
+        do
+                LOG "Starting $i"
+                $i $BACKUP_DIR $CRANIX_BACKUP_FULL_DIR
+        done
+    fi
+
+    # create mark for last backup
+    DATE=`date +%Y-%m-%d-%H-%M`
+    LOG "********** Backup finished **********"
+    echo $DATE > /var/adm/backup/LAST_BACKUP
+    if [ "$CRANIX_BACKUP_STOP_CMD" ]; then
+	eval $CRANIX_BACKUP_STOP_CMD
+    fi
+   
+fi
+TheEnd

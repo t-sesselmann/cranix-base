@@ -4,7 +4,7 @@ ACTION=$1
 
 case $ACTION in
 	update)
-		/usr/sbin/oss_update.sh
+		/usr/sbin/crx_update.sh
 	;;
 	reboot)
 		/usr/bin/systemctl reboot

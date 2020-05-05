@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Copyright (c) 2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
+#
+
+PACKAGES=$@
+
+mkdir -p /run/lock/cranix-api/
+echo "$PACKAGES" > /run/lock/cranix-api/crx_download_packages
+while [ -e /var/run/zypp.pid ]
+do
+  ZPID=( cat /var/run/zypp.pid )
+  if [ -z "$ZPID" -o ! -e /proc/$ZPID ]
+  then
+     rm -f /var/run/zypp.pid
+  else
+     sleep 2
+  fi
+done
+/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/cranix-download-salt-packages.log  2>&1
+rm -f /run/lock/cranix-api/crx_download_packages
+

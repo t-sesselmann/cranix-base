@@ -108,14 +108,14 @@ if ( defined($options{'role'}) )
         $role = $options{'role'};
 }
 # Get the list of the users
-my $users = `/usr/sbin/oss_api.sh GET users/byRole/$role`;
+my $users = `/usr/sbin/crx_api.sh GET users/byRole/$role`;
 $users = eval { decode_json($users) };
 if ($@)
 {
     die( "decode_json failed, invalid json. error:$@\n" );
 }
-my $CHECK_PASSWORD_QUALITY = `/usr/sbin/oss_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
-system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no");
+my $CHECK_PASSWORD_QUALITY = `/usr/sbin/crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY`;
+system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no");
 foreach my $user (@{$users})
 {
    my $i = $user->{'uid'};
@@ -127,4 +127,4 @@ foreach my $user (@{$users})
    print("/usr/bin/samba-tool user setpassword $i --newpassword=$birthday\n");
    system("/usr/bin/samba-tool user setpassword $i --newpassword=$birthday");
 }
-system("/usr/sbin/oss_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");
+system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/$CHECK_PASSWORD_QUALITY");

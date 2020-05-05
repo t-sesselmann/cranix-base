@@ -3,11 +3,11 @@
 
 MINIONS=$1
 
-rm -rf /var/adm/oss/running/
-mkdir -p /var/adm/oss/running/
+rm -rf /var/adm/cranix/running/
+mkdir -p /var/adm/cranix/running/
 IFS=","
 for i in ${MINIONS}
 do
-   touch /var/adm/oss/running/$i
+   touch /var/adm/cranix/running/$i
 done
 

@@ -4,13 +4,13 @@ ROLE=$1
 
 if [ -z "$ROLE" ]; then
 	echo
-	echo "Usage: /usr/share/oss/tools/clean_up_userWorkstations.sh <role>"
+	echo "Usage: /usr/share/cranix/tools/clean_up_userWorkstations.sh <role>"
 	echo
 	exit 1
 fi
-for U in $( /usr/sbin/oss_api.sh GET users/uidsByRole/${ROLE} )
+for U in $( /usr/sbin/crx_api.sh GET users/uidsByRole/${ROLE} )
 do
-        DN=$( /usr/sbin/oss_get_dn.sh ${U} )
+        DN=$( /usr/sbin/crx_get_dn.sh ${U} )
         if [ "${DN}" ]; then
                 tmpldif=$( /usr/bin/mktemp /tmp/CleanUpWSXXXXXXXX )
                 echo "${DN}" > ${tmpldif};

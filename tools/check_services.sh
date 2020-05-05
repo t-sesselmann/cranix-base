@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/sysconfig/schoolserver
 echo -n "["
-for i in ${SCHOOL_MONITOR_SERVICES}
+for i in ${CRANIX_MONITOR_SERVICES}
 do
   if [ "${NEXT}" ]; then
     echo -n ","
