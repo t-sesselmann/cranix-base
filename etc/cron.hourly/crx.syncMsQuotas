@@ -2,12 +2,12 @@
 # Copyright 2018 Peter Varkoly <peter@varkoly.de>
 export PATH="/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin"
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 export HOME="/root"
 (
         echo "select uid from Users" | mysql CRANIX  | /usr/sbin/crx_get_mquotas.pl
 ) | gawk -f /usr/share/cranix/tools/quota.awk > /tmp/mquotalist
-TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+TOKEN=$( grep de.cranix.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.api.auth.localhost=//' )
 curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/mquotalist' 'http://localhost:9080/api/users/syncMsQuotas'
 

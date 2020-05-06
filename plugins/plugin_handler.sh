@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (c) 2020 Peter Varkoly <pvarkoly@cephalix.eu> Nürnberg, Germany.  All rights reserved.
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 what=$1
 conf=$( mktemp /tmp/cranixplugin-XXXXXXXXXX )
 

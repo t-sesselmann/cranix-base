@@ -1,5 +1,5 @@
 #!/bin/bash
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 echo -n "["
 for i in ${CRANIX_MONITOR_SERVICES}
 do

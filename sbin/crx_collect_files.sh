@@ -30,7 +30,7 @@ do
     esac
 done
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 if [ ${CRANIX_DEBUG} = "yes" ];  then
    DATE=$( /usr/share/cranix/tools/crx_date.sh )

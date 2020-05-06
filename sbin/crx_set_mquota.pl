@@ -4,7 +4,7 @@ use strict;
 my $user  = shift;
 my $quota = shift || 0;
 
-my $passwd=`grep de.openschoolserver.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//'`;
+my $passwd=`grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//'`;
 chomp $passwd;
 my $imap = Mail::IMAPClient->new(
   Server   => 'localhost',

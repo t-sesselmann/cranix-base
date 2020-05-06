@@ -4,7 +4,7 @@
 #
 
 # other global variable
-sysconfig="/etc/sysconfig/schoolserver"
+sysconfig="/etc/sysconfig/cranix"
 logdate=`date "+%Y%m%d-%H%M%S"`
 logfile="/var/log/cranix-setup.$logdate.log"
 passwd=""
@@ -138,7 +138,7 @@ function SetupSamba (){
     ########################################################################
     log " - Create dns entries "
     samba-tool dns add localhost $CRANIX_DOMAIN mailserver   A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
-    samba-tool dns add localhost $CRANIX_DOMAIN schoolserver A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
+    samba-tool dns add localhost $CRANIX_DOMAIN cranix A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN proxy        A $CRANIX_PROXY         -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN backup       A $CRANIX_BACKUP_SERVER -U Administrator%"$passwd"
@@ -482,7 +482,7 @@ unset _bred _sgr0
     log "Make mysql secure"
     cd /root
     password=`mktemp XXXXXXXXXX`
-    echo "grant all on CRANIX.* to 'claxss'@'localhost'  identified by '$password'" | mysql
+    echo "grant all on CRANIX.* to 'cranix'@'localhost'  identified by '$password'" | mysql
     mysqladmin -u root password $password
 echo "[client]
 host=localhost
@@ -504,7 +504,7 @@ chmod 600 /root/.my.cnf
 	log "Create Certificates"
 	/usr/share/cranix/tools/create_server_certificates.sh -N CA
 	/usr/share/cranix/tools/create_server_certificates.sh -N admin
-	/usr/share/cranix/tools/create_server_certificates.sh -N schoolserver
+	/usr/share/cranix/tools/create_server_certificates.sh -N cranix
     fi
 
     ########################################################################

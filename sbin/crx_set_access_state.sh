@@ -15,7 +15,7 @@ if [ "$STATE" = "$1" ]; then
         exit;
 fi
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 export NETWORK="$CRANIX_SERVER/$CRANIX_NETMASK";
 

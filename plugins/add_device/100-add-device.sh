@@ -1,5 +1,5 @@
 #!/bin/bash
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 abort() {
         TASK="add_device-$( uuidgen -t )"
@@ -39,7 +39,7 @@ do
   esac
 done
 
-passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//' )
+passwd=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
 
 samba-tool dns add localhost $CRANIX_DOMAIN $name  A $ip   -U register%"$passwd"
 if [ $? != 0 ]; then

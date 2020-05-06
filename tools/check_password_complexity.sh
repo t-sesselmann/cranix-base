@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 read pw2check
 if [[ $pw2check =~ [\&§] ]]; then

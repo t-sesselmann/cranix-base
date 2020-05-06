@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright 2017 Peter Varkoly <peter@varkoly.de>
 export PATH="/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin"
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 EXT3=$( mount | grep "on /home type ext3" )
 if [ "$EXT3" ]; then
@@ -17,6 +17,6 @@ if [ "$EXT3" ]; then
 else
 	xfs_quota -x -c 'report -u -N' /home | grep ${CRANIX_WORKGROUP} | sed "s/${CRANIX_WORKGROUP}.//" | gawk -f /usr/share/cranix/tools/quota.awk > /tmp/quotalist
 fi
-TOKEN=$( grep de.openschoolserver.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.api.auth.localhost=//' )
+TOKEN=$( grep de.cranix.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.api.auth.localhost=//' )
 /usr/bin/curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer '${TOKEN} -d '@/tmp/quotalist' 'http://localhost:9080/api/users/syncFsQuotas'
 

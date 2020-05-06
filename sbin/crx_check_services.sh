@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright Dipl Ing Peter Varkoly <peter@varkoly.de>
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 for i in ${CRANIX_MONITOR_SERVICES}
 do

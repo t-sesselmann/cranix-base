@@ -8,7 +8,7 @@ R=$5
 
 crx_api.sh DELETE devices/loggedInUsers/$I/$U
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 role=$( crx_api_text.sh GET users/byUid/$U/role )
 

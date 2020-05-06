@@ -76,7 +76,7 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 FILE=`/usr/bin/mktemp /tmp/crx_del_user_filesXXX`
 DATUM=`/usr/share/cranix/tools/crx_date.sh`
 

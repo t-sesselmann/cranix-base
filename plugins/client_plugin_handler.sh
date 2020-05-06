@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (c) 2012-2018 Peter Varkoly <peter@varkoly.de> Nurember, Germany.  All rights reserved.
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 what=$1
 client=$2
 

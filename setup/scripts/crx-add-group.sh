@@ -3,7 +3,7 @@
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 name=''
 description=''

@@ -1,7 +1,7 @@
 #!/bin/bash
 group=$1
 CRANIX_HOME_BASE="/home"
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 nameUp=`echo "$group" | tr "[:lower:]" "[:upper:]"`
 

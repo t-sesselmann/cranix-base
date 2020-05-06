@@ -6,7 +6,7 @@ a=$3
 m=$4
 R=$5
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 role=$( crx_api_text.sh GET users/byUid/$U/role )
 mkdir -p /var/lib/samba/sysvol/$R/scripts

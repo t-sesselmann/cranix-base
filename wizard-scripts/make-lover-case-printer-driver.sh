@@ -7,7 +7,7 @@ do
 	read ADMINPW
 done
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 for i in $( lpc status | grep ':$' | sed 's/://' )
 do

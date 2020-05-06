@@ -2,12 +2,12 @@
 #
 # Copyright (c) 2017 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
-if [ ! -e /etc/sysconfig/schoolserver ]; then
+if [ ! -e /etc/sysconfig/cranix ]; then
    echo "ERROR This ist not an CRANIX."
    exit 1
 fi
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 if [ -z "${CRANIX_HOME_BASE}" ]; then
    echo "ERROR CRANIX_HOME_BASE must be defined."

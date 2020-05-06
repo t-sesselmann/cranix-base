@@ -149,7 +149,7 @@ usage() {
  echo 
 }
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 #Set the defaults
 CLEAN=""

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright (c) Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 /bin/chown root /home/*
 

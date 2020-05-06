@@ -34,7 +34,7 @@ then
 	exit
 fi
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 /bin/chown root /home/*
 

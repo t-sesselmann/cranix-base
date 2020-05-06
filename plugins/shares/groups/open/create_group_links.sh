@@ -1,7 +1,7 @@
 #!/bin/bash
 # (c) Péter Varkoly <peter@varkoly.de> - all rights reserved
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 user=$1
 mkdir -m 500 -p $CRANIX_HOME_BASE/groups/LINKED/$user/

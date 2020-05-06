@@ -3,7 +3,7 @@
 # Copyright (c) 2016 Peter Varkoly Nürnberg, Germany.  All rights reserved.
 #
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 surname=''
 givenname=''
@@ -95,7 +95,7 @@ while [ "$1" != "" ]; do
     shift
 done
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 skel="/etc/skel"
 

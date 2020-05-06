@@ -7,7 +7,7 @@
 #
 # syntax: /usr/sbin/crx_get_access_status network direct|proxy|internet|login|printing|portal
 #
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 case "$2" in
    direct)
 	if test "$CRANIX_ISGATE" = "no"; then

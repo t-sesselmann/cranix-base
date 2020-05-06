@@ -20,8 +20,8 @@ install:
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
 	mkdir -p $(DESTDIR)/usr/lib/rpm/gnupg/keys/
-	install -m 644 setup/schoolserver      $(DESTDIR)/$(FILLUPDIR)/sysconfig.schoolserver
-	rm -f setup/schoolserver
+	install -m 644 setup/cranix      $(DESTDIR)/$(FILLUPDIR)/sysconfig.cranix
+	rm -f setup/cranix
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   addons/          $(SHARE)/addons/

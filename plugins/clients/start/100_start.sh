@@ -2,7 +2,7 @@
 # Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 
 MINION=$1
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 CLIENT=${MINION/.$CRANIX_DOMAIN/}
 
 #Set the license grains

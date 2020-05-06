@@ -6,7 +6,7 @@ if [ -z "${client}" ]; then
 	echo ""
 	exit 1
 fi
-. /etc/sysconfig/schoolserver
-passwd=$( grep de.openschoolserver.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.openschoolserver.dao.User.Register.Password=//' )
+. /etc/sysconfig/cranix
+passwd=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
 salt "${client}.${CRANIX_DOMAIN}" system.unjoin_domain domain="${CRANIX_DOMAIN}" username='register' password="${passwd}" restart=True
 

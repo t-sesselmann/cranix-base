@@ -1,5 +1,5 @@
 #!/bin/bash
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 uid=$1
 
 for i in ${CRANIX_HOME_BASE}/profiles/$uid.V*

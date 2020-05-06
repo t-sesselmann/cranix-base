@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 
 samba-tool domain passwordsettings set --complexity=off
 for uid in $( crx_api.sh GET users/uidsByRole/workstations )

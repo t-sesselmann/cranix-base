@@ -13,7 +13,7 @@ IP=$4
 ARCH=$5
 MACH=$6
 REALM=$7
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 for i in /usr/share/cranix/plugins/shares/$SHARE/$TASK/*
 do
    test ! -e $i && continue

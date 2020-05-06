@@ -12,7 +12,7 @@ MYSQLDUMP_OPTIONS="--lock-tables --add-drop-database --add-locks --quote-names -
 MAILADDR="admin"
 FORCE="no"
 VERBOSE="yes"
-CONFIG=/etc/sysconfig/schoolserver
+CONFIG=/etc/sysconfig/cranix
 RSYNCPARS=" -aA --delete --size-only "
 LIMIT=80
 DAY_OF_WEEK=$( date +%u )
@@ -164,7 +164,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
     fi
 
     # copy sysconfig file schoolconf to the base for simple recovery
-    cp /etc/sysconfig/schoolserver $CRANIX_BACKUP_FULL_DIR/
+    cp /etc/sysconfig/cranix $CRANIX_BACKUP_FULL_DIR/
     if [ $? != 0 ]; then
 	TheEnd 6 "CAN_NOT_MAKE_BACKUP"
     fi  

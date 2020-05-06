@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 REPO_USER=${CRANIX_REG_CODE:0:9}
 REPO_PASSWORD=${CRANIX_REG_CODE:10:9}
 . /etc/os-release

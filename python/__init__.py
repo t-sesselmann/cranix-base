@@ -38,7 +38,7 @@ lockfile = '/run/crx_import_user'
 date = time.strftime("%Y-%m-%d.%H-%M-%S")
 # read and set some default values
 config    = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
-passwd    = config['de.openschoolserver.dao.User.Register.Password']
+passwd    = config['de.cranix.dao.User.Register.Password']
 domain    = os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
 home_base = os.popen('crx_api_text.sh GET system/configuration/HOME_BASE').read()
 check_pw  = os.popen('crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY').read().lower() == 'yes'
@@ -127,8 +127,8 @@ def read_csv():
             close_on_error('CVS file is not UTF-8')
         csvfile.seek(0)
         #Create an array of dicts from it
-        csv.register_dialect('oss',dialect)
-        reader = csv.DictReader(csvfile,dialect='oss')
+        csv.register_dialect('cranix',dialect)
+        reader = csv.DictReader(csvfile,dialect='cranix')
         if init_debug:
             print(reader.fieldnames)
         for row in reader:

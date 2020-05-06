@@ -23,7 +23,7 @@ then
         exit
 fi
 
-. /etc/sysconfig/schoolserver
+. /etc/sysconfig/cranix
 while [ "$1" != "" ]; do
     case $1 in
         --uid=* )
