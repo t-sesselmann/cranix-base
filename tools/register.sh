@@ -93,5 +93,5 @@ done
 
 zypper --gpg-auto-import-keys ref
 #We need the CRANIX packages for the salt packages too
-ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/OSS.repo
+ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/CRANIX.repo
 

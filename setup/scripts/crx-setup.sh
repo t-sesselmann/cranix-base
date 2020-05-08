@@ -330,19 +330,19 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base roles"
-    /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$CRANIX_DOMAIN"      --gid-number=$sysadmins_gn
+    /usr/share/cranix/setup/scripts/crx-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$CRANIX_DOMAIN"      --gid-number=$sysadmins_gn
     samba-tool ou create OU=sysadmins
-    /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$CRANIX_DOMAIN"   --gid-number=$workstations_gn
+    /usr/share/cranix/setup/scripts/crx-add-group.sh --name="WORKSTATIONS"   --description="Workstations"   --type="primary" --mail="workstations@$CRANIX_DOMAIN"   --gid-number=$workstations_gn
     samba-tool ou create OU=workstations
-    /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$CRANIX_DOMAIN" --gid-number=$administration_ng
+    /usr/share/cranix/setup/scripts/crx-add-group.sh --name="ADMINISTRATION" --description="Administration" --type="primary" --mail="administration@$CRANIX_DOMAIN" --gid-number=$administration_ng
     samba-tool ou create OU=administration
-    /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$CRANIX_DOMAIN"      --gid-number=$templates_gn
+    /usr/share/cranix/setup/scripts/crx-add-group.sh --name="TEMPLATES"      --description="Templates"      --type="primary" --mail="templates@$CRANIX_DOMAIN"      --gid-number=$templates_gn
     samba-tool ou create OU=templates
     samba-tool ou create OU=guests
     if [ $CRANIX_TYPE != "business" ]; then
-        /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$CRANIX_DOMAIN"   --gid-number=$students_gn
+        /usr/share/cranix/setup/scripts/crx-add-group.sh --name="STUDENTS"       --description="Students"       --type="primary" --mail="students@$CRANIX_DOMAIN"   --gid-number=$students_gn
         samba-tool ou create OU=students
-        /usr/share/cranix/setup/scripts/cranix-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$CRANIX_DOMAIN"   --gid-number=$teachers_gn
+        /usr/share/cranix/setup/scripts/crx-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$CRANIX_DOMAIN"   --gid-number=$teachers_gn
         samba-tool ou create OU=teachers
     fi
     samba-tool group addmembers "Sysadmins" register
@@ -358,16 +358,16 @@ function SetupInitialAccounts (){
 
     ########################################################################
     #log " - Create admin user"
-    #/usr/share/cranix/setup/scripts/cranix-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
+    #/usr/share/cranix/setup/scripts/crx-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
     #samba-tool group addmembers "Domain Admins" admin
 
     ########################################################################
     log " - Create base template users"
-    /usr/share/cranix/setup/scripts/cranix-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=4000011
+    /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tadministration" --givenname="Default profile" --surname="for administration" --role="templates" --password="$passwd" --groups="" --uid-number=4000011
     if [ $CRANIX_TYPE != "business" ]; then
-        /usr/share/cranix/setup/scripts/cranix-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=4000012
-        /usr/share/cranix/setup/scripts/cranix-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
-        /usr/share/cranix/setup/scripts/cranix-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
+        /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tstudents"       --givenname="Default profile" --surname="for students"       --role="templates" --password="$passwd" --groups="" --uid-number=4000012
+        /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
+        /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
     fi
 
     samba-tool domain passwordsettings set --complexity=on
@@ -463,18 +463,18 @@ unset _bred _sgr0
 	sed -i "s/#CRANIX_NETWORK#/${CRANIX_NETWORK}/g"		$i
 	sed -i "s/#CRANIX_NETMASK#/${CRANIX_NETMASK}/g"		$i
     done
-    mysql < /opt/cranix-java/data/cranix-objects.sql
+    mysql < /opt/cranix-java/data/crx-objects.sql
     case $CRANIX_TYPE in
         cephalix)
-            mysql CRANIX < /opt/cranix-java/data/cephalix-objects.sql
-            mysql CRANIX < /opt/cranix-java/data/school-INSERT.sql
-            mysql CRANIX < /opt/cranix-java/data/cephalix-INSERT.sql
+            mysql CRX < /opt/cranix-java/data/cephalix-objects.sql
+            mysql CRX < /opt/cranix-java/data/school-INSERT.sql
+            mysql CRX < /opt/cranix-java/data/cephalix-INSERT.sql
 	;;
         business)
-            mysql CRANIX < /opt/cranix-java/data/business-INSERT.sql
+            mysql CRX < /opt/cranix-java/data/business-INSERT.sql
 	;;
 	*)
-            mysql CRANIX < /opt/cranix-java/data/school-INSERT.sql
+            mysql CRX < /opt/cranix-java/data/school-INSERT.sql
     esac
 
 
@@ -482,7 +482,7 @@ unset _bred _sgr0
     log "Make mysql secure"
     cd /root
     password=`mktemp XXXXXXXXXX`
-    echo "grant all on CRANIX.* to 'cranix'@'localhost'  identified by '$password'" | mysql
+    echo "grant all on CRX.* to 'cranix'@'localhost'  identified by '$password'" | mysql
     mysqladmin -u root password $password
 echo "[client]
 host=localhost
