@@ -274,7 +274,7 @@ foreach my $act_line (@lines)
     #{
     #  $USER{'mailenabled'} = $mailenabled;
     #}
-    if( $mustchange )
+    if( $mustChange )
     {
       $USER{'mustChange'} = 'true';
     }

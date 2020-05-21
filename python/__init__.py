@@ -47,7 +47,7 @@ for role in os.popen('crx_api_text.sh GET groups/text/byType/primary').readlines
   roles.append(role.strip())
 
 def init(args):
-    global output, input_file, role, password, identifier, full, test, debug, mustchange
+    global output, input_file, role, password, identifier, full, test, debug, mustChange
     global resetPassword, allClasses, cleanClassDirs, appendBirthdayToPassword
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
@@ -75,7 +75,7 @@ def init(args):
     full       = args.full
     test       = args.test
     debug      = args.debug
-    mustchange = args.mustchange
+    mustChange = args.mustChange
     resetPassword   = args.resetPassword
     allClasses      = args.allClasses
     cleanClassDirs = args.cleanClassDirs
@@ -239,7 +239,7 @@ def add_class(name):
 def add_user(user,ident):
     global new_user_count
     global import_list
-    if mustchange:
+    if mustChange:
         user['mustChange'] = True
     if password != "":
         user['password'] = password

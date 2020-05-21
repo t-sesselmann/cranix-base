@@ -28,7 +28,7 @@ parser.add_argument("--test", dest="test", default=False, action="store_true",
                     help="If this parameter is true no changes will be done. The scipt only reports what would happends.")
 parser.add_argument("--debug", dest="debug", default=False, action="store_true",
                     help="Run in debug mode.")
-parser.add_argument("--mustchange", dest="mustchange", default=False, action="store_true",
+parser.add_argument("--mustChange", dest="mustChange", default=False, action="store_true",
                     help="If set, the new users must change its password by the first login.")
 parser.add_argument("--resetPassword", dest="resetPassword", default=False, action="store_true",
                     help="If this option is true the password of old user will be reseted too.")
@@ -73,7 +73,7 @@ for ident in cranix.import_list:
                     password = password + old_user['birthDay']
                 old_user['password'] = password
                 cranix.import_list[ident]['password'] = password
-                old_user['mustChange'] =  args.mustchange
+                old_user['mustChange'] =  args.mustChange
             cranix.modify_user(old_user,ident)
     else:
         cranix.log_debug("New user",new_user)
