@@ -329,7 +329,7 @@ CRANIX_STUDENTS_MAY_UPLOAD="no"
 ## Default:     https://support.cephalix.de/support
 # The support URL of the CEPHALIX or OTRS system the ticket will be sent to via REST-API.
 # If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
-CRANIX_SUPPORT_MAIL_URL="https://repo.cephalix.eu/api/tickets/add"
+CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
 
 ## Type:	string
 ## Default:     support@cephalix.eu
