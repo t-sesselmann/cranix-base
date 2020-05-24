@@ -19,10 +19,10 @@ if [ "${VALID}" = "0" ]; then
         echo "Regcode is not valid."
         exit 2
 fi
-zypper rr ${NAME}-4.0-0
-zypper rr ${NAME}-4.0-1
-zypper rr ${NAME}-4.0.1-0
-zypper rr ${NAME}-${VERSION_ID}-0
+zypper rr OSS-4.0-0 &> /dev/null
+zypper rr OSS-4.0-1 &> /dev/null
+zypper rr OSS-4.0.1-0 &> /dev/null
+zypper rr ${NAME}-${VERSION_ID}-0 &> /dev/null
 #Save the credentials
 echo "[${CRANIX_UPDATE_URL}/${NAME}/${VERSION_ID}]
 username = ${REPO_USER}
@@ -93,5 +93,7 @@ done
 
 zypper --gpg-auto-import-keys ref
 #We need the CRANIX packages for the salt packages too
-ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/CRANIX.repo
+if [ ! -e /srv/salt/repos.d/CRANIX.repo ]; then
+	ln -s /etc/zypp/repos.d/CRANIX.repo  /srv/salt/repos.d/CRANIX.repo
+fi
 
