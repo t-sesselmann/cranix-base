@@ -1,25 +1,19 @@
 #!/bin/bash
 
-. /etc/sysconfig/schoolserver
-rpm -e --nodeps ntp
+. /etc/sysconfig/cranix
 zypper -n install chrony
 
 echo "# CRANIX CHRONY CONF
 pool 0.pool.ntp.org
 ntpsigndsocket  /var/lib/samba/ntp_signd/
-allow           ${SCHOOL_NETWORK}/${SCHOOL_NETMASK}
-bindcmdaddress  ${SCHOOL_SERVER}
+allow           ${CRANIX_NETWORK}/${CRANIX_NETMASK}
+bindcmdaddress  ${CRANIX_SERVER}
 " > /etc/chrony.d/cranix.conf
 
-if [ -d /usr/share/oss/templates/ ]; then
-	echo "base:
-  '*':
-    - ntp_conf" > /usr/share/oss/templates/top.sls
-else
-	echo "base:
+
+echo "base:
   '*':
     - ntp_conf" > /usr/share/cranix/templates/top.sls
-fi
 echo "ntp_conf:
   ntp.managed:
     - servers:

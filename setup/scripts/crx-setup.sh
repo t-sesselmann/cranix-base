@@ -564,9 +564,14 @@ chmod 600 /root/.my.cnf
     gsettings set org.gnome.desktop.background show-desktop-icons true
 
     ########################################################################
-    log "Enable icons for gnome 3.0"
+    log "Enable user and group quota"
     sed -i 's#/home  xfs   defaults#/home  xfs   usrquota,grpquota#' /etc/fstab
     mount -o remount,usrquota,grpquota /home
+
+    ########################################################################
+    log "Timeserver setup"
+    /usr/share/cranix/setup/scripts/setup-chrony.sh
+
     log "End PostSetup"
 
 }
