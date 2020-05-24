@@ -19,8 +19,8 @@ install:
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
-	mkdir -p $(DESTDIR)/var/adm/cranix/
 	mkdir -p $(DESTDIR)/usr/lib/rpm/gnupg/keys/
+	mkdir -p $(DESTDIR)/var/adm/cranix/running
 	install -m 644 setup/cranix      $(DESTDIR)/$(FILLUPDIR)/sysconfig.cranix
 	rm -f setup/cranix
 	install -m 755 sbin/*       $(DESTDIR)/usr/sbin/
