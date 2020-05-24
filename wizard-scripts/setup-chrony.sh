@@ -4,8 +4,6 @@
 rpm -e --nodeps ntp
 zypper -n install chrony
 
-sed -i 's/^pool/#pool/' /etc/chrony.conf
-
 echo "# CRANIX CHRONY CONF
 pool 0.pool.ntp.org
 ntpsigndsocket  /var/lib/samba/ntp_signd/
