@@ -127,6 +127,7 @@ function SetupSamba (){
     ########################################################################
     log " - Tell nsswitch to use winbind."
     cp /usr/share/cranix/setup/templates/nsswitch.conf /etc/nsswitch.conf
+    cp /usr/share/cranix/setup/templates/top.sls /usr/share/cranix/templates/top.sls
 
     ########################################################################
     log " - Create linked groups directory "
@@ -512,8 +513,8 @@ chmod 600 /root/.my.cnf
     sed -i 's/^APACHE_MODULES=.*/APACHE_MODULES="actions alias auth_basic authn_file authz_host authz_groupfile authz_core authz_user autoindex cgi dir env expires include log_config mime negotiation setenvif ssl socache_shmcb userdir reqtimeout php5 rewrite authn_core proxy proxy_http proxy_connect headers"/' /etc/sysconfig/apache2
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
-    sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/crx_include.conf.ini   > /etc/apache2/vhosts.d/crx_include.conf
-    mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,oss,cranix-ssl}
+    sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/cranix_include.conf.ini   > /etc/apache2/vhosts.d/cranix_include.conf
+    mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,cranix,cranix-ssl}
     if [ $CRANIX_ISGATE = "yes" ]; then
        sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
        sed -Ei 's/\s+Listen 443/                Listen 443\n                    Listen 444/' /etc/apache2/listen.conf
