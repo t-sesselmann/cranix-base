@@ -128,7 +128,6 @@ function SetupSamba (){
     ########################################################################
     log " - Tell nsswitch to use winbind."
     cp /usr/share/cranix/setup/templates/nsswitch.conf /etc/nsswitch.conf
-    cp /usr/share/cranix/setup/templates/top.sls /usr/share/cranix/templates/top.sls
 
     ########################################################################
     log " - Create linked groups directory "

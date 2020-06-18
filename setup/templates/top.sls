@@ -1,3 +1,0 @@
-base:
-  '*':
-    - ntp_conf
