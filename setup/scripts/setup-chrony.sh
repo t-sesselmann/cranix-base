@@ -24,5 +24,5 @@ systemctl restart chronyd
 systemctl enable chronyd
 sleep 10
 systemctl restart samba
-oss_api.sh PUT softwares/saveState
+crx_api.sh PUT softwares/saveState
 

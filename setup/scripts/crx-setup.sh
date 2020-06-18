@@ -58,9 +58,10 @@ function log() {
 function InitGlobalVariable (){
 
     ########################################################################
-    log "Setup ntp"
-    systemctl start chronyd
-    systemctl enable chronyd
+    # Avoid running migration scripts:
+    mkdir -p /var/adm/cranix/
+    touch /var/adm/cranix/migrated-to-cranix
+
     log "Start InitGlobalVariable"
 
     ########################################################################
@@ -572,7 +573,6 @@ chmod 600 /root/.my.cnf
     ########################################################################
     log "Timeserver setup"
     /usr/share/cranix/setup/scripts/setup-chrony.sh
-
     log "End PostSetup"
 
 }
