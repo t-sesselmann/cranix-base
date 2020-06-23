@@ -377,25 +377,25 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - Create base directory rights"
     case $CRANIX_TYPE in
-   cephalix)
-      chgrp        $sysadmins_gn           $CRANIX_HOME_BASE/software
+      cephalix)
+        chgrp        $sysadmins_gn           $CRANIX_HOME_BASE/software
 	;;
-	business)
-      chgrp        $sysadmins_gn           $CRANIX_HOME_BASE/software
+      business)
+        chgrp        $sysadmins_gn           $CRANIX_HOME_BASE/software
 	;;
-	primary)
-      chgrp        $teachers_gn           $CRANIX_HOME_BASE/software
-      setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
+      primary)
+        chgrp        $teachers_gn           $CRANIX_HOME_BASE/software
+        setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
 	;;
-	*)
-	    setfacl -m m::rwx                   $CRANIX_HOME_BASE/all
-	    setfacl -m g:$teachers_gn:rwx       $CRANIX_HOME_BASE/all
-	    setfacl -m g:$students_gn:rwx       $CRANIX_HOME_BASE/all
-	    setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/all
+      *)
+	setfacl -m m::rwx                   $CRANIX_HOME_BASE/all
+	setfacl -m g:$teachers_gn:rwx       $CRANIX_HOME_BASE/all
+	setfacl -m g:$students_gn:rwx       $CRANIX_HOME_BASE/all
+	setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/all
 
-	    chgrp        $teachers_gn           $CRANIX_HOME_BASE/software
-	    setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
-	    setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/software
+	chgrp        $teachers_gn           $CRANIX_HOME_BASE/software
+	setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
+	setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/software
     esac
 
     ########################################################################
