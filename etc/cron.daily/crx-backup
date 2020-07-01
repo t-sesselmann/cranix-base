@@ -186,7 +186,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
        getfacl --absolute-names -R /var/lib/samba/ | gzip > $CRANIX_BACKUP_FULL_DIR/samba_facls.gz
     fi
     mkdir -p $BACKUP_DIR/var/lib/samba/
-    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
+    rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ $? != 0 ]; then
         TheEnd 6 "CAN_NOT_MAKE_BACKUP"
     fi
