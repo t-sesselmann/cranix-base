@@ -5,6 +5,9 @@ sed -i 's/solver.dupAllowVendorChange*$/solver.dupAllowVendorChange = true/' /et
 mv /etc/zypp/repos.d/OSS.repo /etc/zypp/repos.d/CRANIX.repo
 sed -i s/OSS/CRANIX/ /etc/zypp/repos.d/CRANIX.repo
 sed -i s/4.1/4.2/ /etc/zypp/repos.d/CRANIX.repo
+sed s/SCHOOL_/CRANIX_/ /etc/sysconfig/schoolserver > /etc/sysconfig/cranix
+mkdir -p /usr/share/cranix/templates/
+rsync -aAv /usr/share/oss/templates/ /usr/share/cranix/templates/
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
