@@ -8,6 +8,9 @@ sed -i s/4.1/4.2/ /etc/zypp/repos.d/CRANIX.repo
 sed s/SCHOOL_/CRANIX_/ /etc/sysconfig/schoolserver > /etc/sysconfig/cranix
 mkdir -p /usr/share/cranix/templates/
 rsync -aAv /usr/share/oss/templates/ /usr/share/cranix/templates/
+sed -i s#oss/plugins#cranix/plugins# /etc/samba/smb.conf
+sed -i s#oss/tools#cranix/tools# /etc/samba/smb.conf
+sed -i s/oss_api.sh/crx_api.sh/ /etc/sysconfig/scripts/SuSEfirewall2-custom
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
