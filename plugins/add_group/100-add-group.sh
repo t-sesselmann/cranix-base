@@ -54,7 +54,7 @@ do
     description)
       description="${c}"
     ;;
-    groupType)
+    grouptype)
       groupType="${c}"
     ;;
     mail)

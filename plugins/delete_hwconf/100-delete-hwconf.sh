@@ -25,7 +25,7 @@ do
     id)
       id="${c}"
     ;;
-    deviceType)
+    devicetype)
       deviceType="${c}"
     ;;
   esac
