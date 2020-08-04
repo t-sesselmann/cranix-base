@@ -13,6 +13,6 @@ TEMPLATEDIR=$( /usr/sbin/crx_get_home.sh $template )
 
 if [ -d "$HOMEDIR" -a -d "$TEMPLATEDIR" ]; then
    rsync -a --exclude-from=/usr/share/cranix/templates/exclude-from-sync-home ${TEMPLATEDIR}/ ${HOMEDIR}/
-   uidNumber=$( /usr/sbin/crx_get_uidNumber $uid )
+   uidNumber=$( /usr/sbin/crx_get_uidNumber.sh $uid )
    chown -R $uidNumber ${HOMEDIR}/
 fi
