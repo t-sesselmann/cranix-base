@@ -155,8 +155,11 @@ def read_csv():
                 if not identifier in user:
                     close_on_error("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
+            if 'groups' in user:
+                user['groups'] = user['groups'].upper()
             if not 'classes' in user:
                 user['classes'] = ''
+            user['classes'] = user['classes'].upper()
             user_id = user_id.replace(' ','_')
             import_list[user_id] = user
     if(debug):
