@@ -118,8 +118,8 @@ function SetupSamba (){
 
     ########################################################################
     log " - Start samba service"
-    systemctl enable samba.service
-    systemctl restart samba.service
+    systemctl enable samba-ad-dc.service
+    systemctl restart samba-ad-dc.service
 
     ########################################################################
     log " - Setup samba private krbconf to kerberos conf"
@@ -236,7 +236,7 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s/#IPADDR#/$CRANIX_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
 
-    systemctl restart samba
+    systemctl restart samba-ad-dc
     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
 
     ########################################################################

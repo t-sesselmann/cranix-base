@@ -104,6 +104,7 @@
                 </module>
                 <module>
                     <label>Welcome</label>
+                    <enabled config:type="boolean">false</enabled>
                     <name>firstboot_welcome</name>
                 </module>
                 <module>
@@ -205,7 +206,7 @@
                 </module>
                 <module>
                     <label>Finish Setup</label>
-                    <name>inst_congratulate</name>
+                    <name>firstboot_finish</name>
                 </module>
             </modules>
         </workflow>
