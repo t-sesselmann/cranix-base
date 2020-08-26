@@ -145,10 +145,6 @@ if [ $CRANIX_SORT_HOMES = "yes" ]; then
         ln -s $unixhome ${CRANIX_HOME_BASE}/${CRANIX_WORKGROUP}/$uid
 fi
 
-
-#Samba has to recognize the ne user
-sleep 3
-
 #add user to groups
 samba-tool group addmembers "$role" "$uid"
 
