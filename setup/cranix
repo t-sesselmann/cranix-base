@@ -397,3 +397,8 @@ CRANIX_SESSION_TIMEOUT="90"
 # Remove all network printers from the users profile by the login process
 CRANIX_CLEAN_UP_PRINTERS="yes"
 
+## Type:        yesno
+## Default:     yes
+# If this variable is yes the admin website allows the browser to use the saved passwords.
+CRANIX_ALLOW_SAVED_PASSWORD="no"
+

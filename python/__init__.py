@@ -51,10 +51,14 @@ def init(args):
     global resetPassword, allClasses, cleanClassDirs, appendBirthdayToPassword
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
+
     fsQuota        = int(os.popen('crx_api_text.sh GET system/configuration/FILE_QUOTA').read())
     fsTeacherQuota = int(os.popen('crx_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
     msQuota        = int(os.popen('crx_api_text.sh GET system/configuration/MAIL_QUOTA').read())
     msTeacherQuota = int(os.popen('crx_api_text.sh GET system/configuration/MAIL_TEACHER_QUOTA').read())
+    #Check if import is running
+    if os.path.isfile(lockfile):
+        close_on_error("Import is already running")
     os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     import_dir = home_base + "/groups/SYSADMINS/userimports/" + date
     os.system('mkdir -pm 770 ' + import_dir + '/tmp' )
@@ -188,6 +192,7 @@ def close_on_error(msg):
         os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     os.remove(lockfile)
     output.write(print_error(msg))
+    output.write(print_msg("Import finished","ERROR"))
     output.close()
     sys.exit(1)
 
