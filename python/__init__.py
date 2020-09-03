@@ -28,6 +28,7 @@ init_debug = False
 # Define some global variables
 required_classes = []
 existing_classes = []
+protected_users  = []
 all_groups       = []
 all_users   = {}
 import_list = {}
@@ -39,6 +40,7 @@ date = time.strftime("%Y-%m-%d.%H-%M-%S")
 # read and set some default values
 config    = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd    = config['de.cranix.dao.User.Register.Password']
+protected_users = config['de.cranix.dao.User.protected'].split(",")
 domain    = os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
 home_base = os.popen('crx_api_text.sh GET system/configuration/HOME_BASE').read()
 check_pw  = os.popen('crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY').read().lower() == 'yes'
@@ -305,6 +307,14 @@ def modify_user(user,ident):
         log_error(result['value'])
 
 def move_user(uid,old_classes,new_classes):
+    if not cleanClassDirs:
+        cmd = '/usr/share/cranix/tools/move_user_class_files.sh {0} "{1}" "{2}"'.format(uid,old_classes[0],new_classes[0])
+        if debug:
+            print(cmd)
+        result = os.popen(cmd).read()
+        if debug:
+            print(result)
+
     for g in old_classes:
        if g == '' or g.isspace():
             continue

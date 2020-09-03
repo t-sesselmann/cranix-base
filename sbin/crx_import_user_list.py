@@ -81,8 +81,7 @@ for ident in cranix.import_list:
         if not args.test:
              cranix.add_user(new_user,ident)
     #trate classes
-    for cl in new_user['classes'].split():
-        cl = cl.upper()
+    for cl in new_classes:
         if cl == '' or cl.isspace():
             continue
         cranix.log_debug("  Class:",cl)
@@ -109,7 +108,7 @@ if not args.test and args.cleanClassDirs:
 
 if args.full and args.role == 'students':
     for ident in cranix.all_users:
-        if not ident in cranix.import_list:
+        if not ident in cranix.import_list and not cranix.all_users[ident]['uid'] in cranix.protected_users:
             cranix.log_msg(ident,"User will be deleted")
             if not args.test:
                 cranix.delete_user(cranix.all_users[ident]['uid'])
