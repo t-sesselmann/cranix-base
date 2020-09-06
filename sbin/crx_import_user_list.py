@@ -67,6 +67,8 @@ for ident in cranix.import_list:
         if not args.test:
             if args.resetPassword:
                 password = args.password
+                if 'password' in cranix.import_list[ident]:
+                    password = cranix.import_list[ident]['password']
                 if password == "":
                     password = cranix.create_secure_pw(8)
                 if args.appendBirthdayToPassword:
