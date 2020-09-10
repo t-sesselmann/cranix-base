@@ -400,5 +400,22 @@ CRANIX_CLEAN_UP_PRINTERS="yes"
 ## Type:        yesno
 ## Default:     yes
 # If this variable is yes the admin website allows the browser to use the saved passwords.
-CRANIX_ALLOW_SAVED_PASSWORD="no"
+CRANIX_ALLOW_SAVE_PASSWORD="no"
+
+## Type:        yesno
+## Default:     yes
+# If this variable is yes adhoc rooms will be created for all classes.
+# This happens when creating a new class or by importing the stundents.
+# Existing adhoc rooms will be cleaned an filled by the exiting devices
+CRANIX_MAINTAIN_ADHOC_ROOM_FOR_CLASSES="yes"
+
+## Type:                integer
+## Default:             "1"
+# How much devices may a user register in a class adhoc room
+CRANIX_CLASS_ADHOC_DEVICE_PRO_USER="2"
+
+## Type:                integer
+## Default:             "32"
+# Row much devices can be registered in a class adhoc room
+CRANIX_CLASS_ADHOC_DEVICE_COUNT="64"
 
