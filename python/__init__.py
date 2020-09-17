@@ -95,12 +95,12 @@ def init(args):
 def read_classes():
     global existing_classes
     for group in os.popen('/usr/sbin/crx_api_text.sh GET groups/text/byType/class').readlines():
-        existing_classes.append(group.strip())
+        existing_classes.append(group.strip().upper())
 
 def read_groups():
     global existing_groups
     for group in os.popen('/usr/sbin/crx_api_text.sh GET groups/text/byType/workgroups').readlines():
-        all_groups.append(group.strip())
+        all_groups.append(group.strip().upper())
 
 def read_users():
     global all_users
@@ -221,6 +221,7 @@ def add_group(name):
         print(add_group)
         print(result)
     if result['code'] == 'OK':
+        all_groups.append(name.upper())
         return True
     else:
         log_error(result['value'])
@@ -257,6 +258,9 @@ def add_user(user,ident):
         user['password'] = password
     if appendBirthdayToPassword:
         user['password'] = password + user['birthDay']
+    # The group attribute must not be part of the user json
+    if 'group' in user:
+        user.pop('group')
     #if 'class' in user:
     #    user['classes'] = user['class']
     #    del user['class']

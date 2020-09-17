@@ -95,7 +95,21 @@ for ident in cranix.import_list:
                 cranix.add_class(cl)
     if not args.test:
         cranix.move_user(new_user['uid'],old_classes,new_classes)
-    #TODO trate groups
+    #trate groups
+    if 'group' in cranix.import_list[ident]:
+        for gr in cranix.import_list[ident]['group'].split():
+            if gr.upper() not in cranix.all_groups:
+                 cranix.log_msg(gr,"New group")
+                 if not args.test:
+                     cranix.add_group(gr)
+            cranix.log_msg(gr,"Add user to group")
+            if not args.test:
+                cmd = '/usr/sbin/oss_api_text.sh PUT users/text/{0}/groups/{1}'.format(new_user['uid'],gr)
+                if args.debug:
+                   print(cmd)
+                result = os.popen(cmd).read()
+                if args.debug:
+                   print(result)
 
 # Now we write the user list
 if args.debug:
