@@ -34,13 +34,13 @@ while [ "$1" != "" ]; do
                                         exit;
                                 fi;;
         --myuid=* )
-                                a=$(echo $1 | sed -e 's/--myuid=//g');
+                                myuid=$(echo $1 | sed -e 's/--myuid=//g');
                                 if [ "$a" = '' ]
                                 then
                                         usage
                                         exit;
                                 fi
-				report=$( /usr/sbin/crx_get_home.sh $a )
+				report=$( /usr/sbin/crx_get_home.sh $myuid )
 				;;
         -h | --help )           usage
                                 exit;;
@@ -114,3 +114,6 @@ echo "3. The content $NAME's subdirectories in KB. Sorted by size:"
 find $home -mindepth 1 -maxdepth 1 -type d -exec du -s {} \; | sort -nr
 ) > $report/SearchUsersFiles/$u-$date.txt
 
+if [ "$myuid" ]; then
+	chown -R $myuid:users $report/SearchUsersFiles/
+fi
