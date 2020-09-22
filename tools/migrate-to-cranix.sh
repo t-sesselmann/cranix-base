@@ -4,8 +4,10 @@ sed -i s#OSS/4.1#CRANIX/4.3# /etc/zypp/credentials.cat
 sed -i 's/solver.dupAllowVendorChange*$/solver.dupAllowVendorChange = true/' /etc/zypp/zypp.conf
 mv /etc/zypp/repos.d/OSS.repo /etc/zypp/repos.d/CRANIX.repo
 sed -i s/OSS/CRANIX/ /etc/zypp/repos.d/CRANIX.repo
-sed -i s/4.1/4.2/ /etc/zypp/repos.d/CRANIX.repo
+sed -i s/4.1/4.3/ /etc/zypp/repos.d/CRANIX.repo
 sed s/SCHOOL_/CRANIX_/ /etc/sysconfig/schoolserver > /etc/sysconfig/cranix
+sed -i "s/oss_/crx_/g" /etc/sysconfig/cranix
+sed -i "s/samba /samba-ad /" /etc/sysconfig/cranix
 mkdir -p /usr/share/cranix/templates/
 rsync -aAv /usr/share/oss/templates/ /usr/share/cranix/templates/
 sed -i s#oss/plugins#cranix/plugins# /etc/samba/smb.conf
@@ -26,5 +28,5 @@ if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
 /var/adm/oss/migrate-db-to-cranix.sh
-" |  at "now + 20 minutes"
+" |  at "now + 5 minutes"
 
