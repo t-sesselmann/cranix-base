@@ -89,7 +89,7 @@ gdir="${SCHOOL_HOME_BASE}/groups/${name}"
 
 mkdir -p -m 0770 "$gdir"
 chgrp $gidNumber "$gdir"
-setfacl -d -m g::rwx "$gdir"
+setfacl -d -m g:$gidNumber:rwx "$gdir"
 
 if [ "$groupType" = "primary" ]; then
    mkdir -m 750 "${SCHOOL_HOME_BASE}/${nameLo}"
