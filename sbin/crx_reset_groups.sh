@@ -54,7 +54,7 @@ do
         chgrp -R $gid  "$i"
         /usr/bin/setfacl -P -R -b "$i"
         find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
-        find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
+        find "$i" -type d -exec /usr/bin/setfacl -d -m g:$gid:rwx {} \;
         echo "Repairing $i"
     else
    	   echo "Class $cn do not exists. Can not repair $i"
@@ -72,7 +72,7 @@ do
         chgrp -R $gid  "$i"
         /usr/bin/setfacl -P -R -b "$i"
         find "$i" -type d -exec /bin/chmod o-t,g+rwx {}  \;
-        find "$i" -type d -exec /usr/bin/setfacl -d -m g::rwx {} \;
+        find "$i" -type d -exec /usr/bin/setfacl -d -m g:$gid:rwx {} \;
         echo "Repairing $i"
     else
    	   echo "Class $cn do not exists. Can not repair $i"
