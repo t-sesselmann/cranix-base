@@ -28,5 +28,6 @@ if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
 /var/adm/oss/migrate-db-to-cranix.sh
+/usr/lib/systemd-presets-branding/branding-preset-states save
 " |  at "now + 5 minutes"
 
