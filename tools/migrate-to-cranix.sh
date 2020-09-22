@@ -14,6 +14,8 @@ sed -i s/oss_api.sh/crx_api.sh/ /etc/sysconfig/scripts/SuSEfirewall2-custom
 if [ -e /etc/chrony.d/oss.conf ]; then
 	mv /etc/chrony.d/oss.conf /etc/chrony.d/cranix.conf
 fi
+cp /usr/share/oss/tools/migrate-db-to-cranix.sh /var/adm/oss/migrate-db-to-cranix.sh
+chmod 755 /var/adm/oss/migrate-db-to-cranix.sh
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
@@ -23,5 +25,6 @@ echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
 if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
+/var/adm/oss/migrate-db-to-cranix.sh
 " |  at "now + 20 minutes"
 
