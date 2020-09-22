@@ -547,13 +547,11 @@ chmod 600 /root/.my.cnf
     tar xf /usr/share/cranix/setup/templates/needed-files-for-root.tar -C /root/
 
     ########################################################################
-    log "Enable some importent services"
-    for i in $( cat /usr/share/cranix/setup/services-to-enable )
-    do
-        systemctl enable $i
-    done
+    log "Enable some important services"
+    /usr/lib/systemd-presets-branding/branding-preset-states save
     if [ "$CRANIX_TYPE" = "cephalix"  ]; then
-        systemctl enable cephalix-api
+        systemctl enable  cephalix-api
+        systemctl disable cranix-api
     fi
 
     ########################################################################

@@ -12,6 +12,7 @@ PACKAGE         = cranix-base
 
 install:
 	mkdir -p $(SHARE)/{setup,templates,tools,plugins,profiles,updates}
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system-preset
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/$(FILLUPDIR)
 	mkdir -p $(DESTDIR)/$(PYTHONSITEARCH)
@@ -29,6 +30,7 @@ install:
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   profiles/        $(SHARE)/profiles/
 	rsync -a   setup/           $(SHARE)/setup/
+	mv $(SHARE)/setup/80-default-CRANIX.preset $(DESTDIR)/usr/lib/systemd/system-preset/
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   tools/           $(SHARE)/tools/
 	if [ -e updates ]; then rsync -a   updates/         $(SHARE)/updates/; fi
