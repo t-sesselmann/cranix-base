@@ -112,3 +112,15 @@ def executeCommands():
         print(os.path.join(r,entry))
   return True
 
+def disableUpdates():
+  if __grains__['os_family'] == 'Windows':
+    os.system("sc config wuauserv start= disabled")
+    os.system("net stop wuauserv")
+  return True
+
+def enableUpdates():
+  if __grains__['os_family'] == 'Windows':
+    os.system("sc config wuauserv start= enabled")
+    os.system("net start wuauserv")
+  return True
+

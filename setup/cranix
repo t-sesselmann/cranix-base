@@ -268,7 +268,7 @@ CRANIX_RESET_REGISTER_PASSWORD="no"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-CRANIX_MONITOR_SERVICES="amavis apache2 cups dhcpd ntpd cranix-api crx_get_screenshots crx_salt_event_watcher postfix salt-master samba squid"
+CRANIX_MONITOR_SERVICES="amavis apache2 cups mysql dhcpd ntpd cranix-api crx_get_screenshots crx_salt_event_watcher postfix salt-master samba-ad squid"
 
 ## Type:	yesno
 ## Default:	no
@@ -418,4 +418,9 @@ CRANIX_CLASS_ADHOC_DEVICE_PRO_USER="2"
 ## Default:             "32"
 # Row much devices can be registered in a class adhoc room
 CRANIX_CLASS_ADHOC_DEVICE_COUNT="64"
+
+## Type:        yesno
+## Default:     yes
+# This variable allows or disables windows clients to download updates.
+CRANIX_ALLOW_WINDOWS_UPDATES="no"
 
