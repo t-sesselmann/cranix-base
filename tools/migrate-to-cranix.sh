@@ -28,5 +28,9 @@ if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
 /var/adm/oss/migrate-db-to-cranix.sh
+for i in \$( cat /usr/share/cranix/setup/services-to-enable )
+do
+	systemctl enable \$i
+done
 " |  at "now + 5 minutes"
 
