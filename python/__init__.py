@@ -38,7 +38,7 @@ lockfile = '/run/crx_import_user'
 
 date = time.strftime("%Y-%m-%d.%H-%M-%S")
 # read and set some default values
-config    = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
+config    = ConfigObj("/opt/cranix-java/conf/cranix-api.properties",list_values=False)
 passwd    = config['de.cranix.dao.User.Register.Password']
 protected_users = config['de.cranix.dao.User.protected'].split(",")
 domain    = os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
@@ -50,7 +50,7 @@ for role in os.popen('crx_api_text.sh GET groups/text/byType/primary').readlines
 
 def init(args):
     global output, input_file, role, password, identifier, full, test, debug, mustChange
-    global resetPassword, allClasses, cleanClassDirs, appendBirthdayToPassword
+    global resetPassword, allClasses, cleanClassDirs, appendBirthdayToPassword, appendClassToPassword
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
 
@@ -74,18 +74,19 @@ def init(args):
     args_dict["startTime"] = date
     with open(import_dir +'/parameters.json','w') as f:
         json.dump(args_dict,f,ensure_ascii=False)
-    input_file = args.input
-    role       = args.role
-    password   = args.password
-    identifier = args.identifier
-    full       = args.full
-    test       = args.test
-    debug      = args.debug
-    mustChange = args.mustChange
-    resetPassword   = args.resetPassword
-    allClasses      = args.allClasses
-    cleanClassDirs = args.cleanClassDirs
+    input_file               = args.input
+    role                     = args.role
+    password                 = args.password
+    identifier               = args.identifier
+    full                     = args.full
+    test                     = args.test
+    debug                    = args.debug
+    mustChange               = args.mustChange
+    resetPassword            = args.resetPassword
+    allClasses               = args.allClasses
+    cleanClassDirs           = args.cleanClassDirs
     appendBirthdayToPassword = args.appendBirthdayToPassword
+    appendClassToPassword    = args.appendClassToPassword
 
     read_classes()
     read_groups()
@@ -123,7 +124,7 @@ def read_csv():
     global import_list
     #Copy the import file into the import directory
     if input_file != import_dir + '/userlist.txt':
-        os.system('cp ' + input_file + ' ' + import_dir + '/userlist.txt')
+        os.system('cp {0} {1}/userlist.txt'.format(input_file,import_dir))
     # fix some dos stuff
     os.system("/usr/bin/dos2unix " + input_file)
     with open(input_file) as csvfile:
@@ -139,7 +140,9 @@ def read_csv():
         reader = csv.DictReader(csvfile,dialect='cranix')
         if init_debug:
             print(reader.fieldnames)
+        line_count = 0
         for row in reader:
+            line_count = line_count +1
             user = {}
             user_id = ''
             for key in row:
@@ -152,14 +155,16 @@ def read_csv():
                 user['birthDay'] = read_birthday(user['birthDay'])
             except SyntaxError:
                 user['birthDay'] = ''
+            if not check_attributes(user,line_count):
+                if debug:
+                    print(row)
+                continue
             #uid must be in lower case
             if 'uid' in user:
                 user['uid'] = user['uid'].lower()
             if identifier == "sn-gn-bd":
                 user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
             else:
-                if not identifier in user:
-                    close_on_error("Import file does not contains the identifier:" + identifier)
                 user_id = user[identifier]
             if 'groups' in user:
                 user['groups'] = user['groups'].upper()
@@ -168,15 +173,39 @@ def read_csv():
             user['classes'] = user['classes'].upper()
             user_id = user_id.replace(' ','_')
             import_list[user_id] = user
-    if(debug):
+    if debug:
         print("All user in the list:")
         print(import_list)
+
+def check_attributes(user,line_count):
+    #check if all required attributes are there. If not ignore the line
+    if 'surName' not in user or 'givenName' not in user:
+        log_error('Missing required attributes in line {0}.'.format(line_count))
+        if debug:
+            print('Missing required attributes in line {0}.'.format(line_count))
+        return False
+    if user['surName'] == "" or user['givenName'] == "":
+        log_error('Required attributes are empty in line {0}.'.format(line_count))
+        if debug:
+            print('Required attributes are empty in line {0}.'.format(line_count))
+        return False
+    if not identifier in user:
+        log_error('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
+        if debug:
+            print('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
+        return False
+    if identifier == "sn-gn-bd":
+        if 'birthDay' not in user or user['birthDay'] == '':
+            log_error('Missing birthday in line {0}.'.format(line_count))
+            if debug:
+                print('Missing birthday in line {0}.'.format(line_count))
+            return False
+    return True
 
 def log_debug(text,obj):
     if debug:
         print(text)
         print(obj)
-
 
 def close():
     if check_pw:
@@ -258,6 +287,10 @@ def add_user(user,ident):
         user['password'] = password
     if appendBirthdayToPassword:
         user['password'] = password + user['birthDay']
+    if appendClassToPassword:
+        classes = user['classes'].split()
+        if len(classes) > 0:
+            user['password'] = password + classes[0]
     # The group attribute must not be part of the user json
     if 'group' in user:
         user.pop('group')
@@ -304,15 +337,15 @@ def modify_user(user,ident):
     file_name = '{0}/tmp/user_modify.{1}'.format(import_dir,user['uid'])
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
-    result = json.load(os.popen('crx_api_post_file.sh users/{0} {1} '.format(user['id'],file_name)))
+    result = json.load(os.popen('crx_api_post_file.sh users/{0} "{1}" '.format(user['id'],file_name)))
     if debug:
         print(result)
     if result['code'] == 'ERROR':
         log_error(result['value'])
 
 def move_user(uid,old_classes,new_classes):
-    if not cleanClassDirs:
-        cmd = '/usr/share/cranix/tools/move_user_class_files.sh {0} "{1}" "{2}"'.format(uid,old_classes[0],new_classes[0])
+    if not cleanClassDirs and role == 'students':
+        cmd = '/usr/share/cranix/tools/move_user_class_files.sh "{0}" "{1}" "{2}"'.format(uid,old_classes[0],new_classes[0])
         if debug:
             print(cmd)
         result = os.popen(cmd).read()
@@ -323,7 +356,7 @@ def move_user(uid,old_classes,new_classes):
        if g == '' or g.isspace():
             continue
        if not g in new_classes:
-           cmd = '/usr/sbin/crx_api_text.sh DELETE users/text/{0}/groups/{1}'.format(uid,g)
+           cmd = '/usr/sbin/crx_api_text.sh DELETE "users/text/{0}/groups/{1}"'.format(uid,g)
            if debug:
                print(cmd)
            result = os.popen(cmd).read()
@@ -333,7 +366,7 @@ def move_user(uid,old_classes,new_classes):
        if g == '' or g.isspace():
             continue
        if not g in old_classes:
-           cmd = '/usr/sbin/crx_api_text.sh PUT users/text/{0}/groups/{1}'.format(uid,g)
+           cmd = '/usr/sbin/crx_api_text.sh PUT "users/text/{0}/groups/{1}"'.format(uid,g)
            if debug:
                print(cmd)
            result = os.popen(cmd).read()
@@ -341,7 +374,7 @@ def move_user(uid,old_classes,new_classes):
                print(result)
 
 def delete_user(uid):
-    cmd = '/usr/sbin/crx_api_text.sh DELETE users/text/{0}'.format(uid)
+    cmd = '/usr/sbin/crx_api_text.sh DELETE "users/text/{0}"'.format(uid)
     if debug:
         print(cmd)
     result = os.popen(cmd).read()
@@ -349,7 +382,7 @@ def delete_user(uid):
         print(result)
 
 def delete_class(group):
-    cmd = '/usr/sbin/crx_api_text.sh DELETE groups/text/{0}'.format(group)
+    cmd = '/usr/sbin/crx_api_text.sh DELETE "groups/text/{0}"'.format(group)
     if debug:
         print(cmd)
     result = os.popen(cmd).read()
