@@ -345,12 +345,13 @@ def modify_user(user,ident):
 
 def move_user(uid,old_classes,new_classes):
     if not cleanClassDirs and role == 'students':
-        cmd = '/usr/share/cranix/tools/move_user_class_files.sh "{0}" "{1}" "{2}"'.format(uid,old_classes[0],new_classes[0])
-        if debug:
-            print(cmd)
-        result = os.popen(cmd).read()
-        if debug:
-            print(result)
+        if len(old_classes) > 0 and len(new_classes) > 0 and old_classes[0] != new_classes[0]:
+            cmd = '/usr/share/cranix/tools/move_user_class_files.sh "{0}" "{1}" "{2}"'.format(uid,old_classes[0],new_classes[0])
+            if debug:
+                print(cmd)
+            result = os.popen(cmd).read()
+            if debug:
+                print(result)
 
     for g in old_classes:
        if g == '' or g.isspace():

@@ -18,7 +18,7 @@ if [ $? != 0 ]; then
         echo "User does not exist"
         exit 2
 fi
-role=$( oss_api_text.sh GET users/byUid/${user}/role )
+role=$( crx_api_text.sh GET users/byUid/${user}/role )
 if [ "$role" != "students" ]; then
         echo "This command can be only used for students"
         exit 3
