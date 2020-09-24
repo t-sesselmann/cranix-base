@@ -40,10 +40,9 @@ fi
 
 /bin/mkdir -p  /home/groups
 /bin/chmod 755 /home/groups
+/usr/bin/setfacl -b /home/groups
 /bin/mkdir -p  /home/profiles
-/usr/bin/setfacl -b     /home/profiles
-/bin/chmod 1770 /home/profiles
-/bin/chgrp 100  /home/profiles
+/usr/bin/setfacl --restore=/usr/share/canix/setup/profiles-acls
 /bin/mkdir -p  /home/templates
 /bin/chmod 750 /home/templates
 /bin/mkdir -p  /home/all

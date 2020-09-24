@@ -1,0 +1,22 @@
+# file: /home/profiles/
+# owner: root
+# group: users
+user::rwx
+user:root:rwx
+user:NT\040AUTHORITY\\system:rwx
+user:NT\040AUTHORITY\\authenticated\040users:rwx
+group::---
+group:users:---
+group:NT\040AUTHORITY\\system:rwx
+group:NT\040AUTHORITY\\authenticated\040users:rwx
+mask::rwx
+other::---
+default:user::rwx
+default:user:root:rwx
+default:user:NT\040AUTHORITY\\system:rwx
+default:group::---
+default:group:users:---
+default:group:NT\040AUTHORITY\\system:rwx
+default:mask::rwx
+default:other::---
+

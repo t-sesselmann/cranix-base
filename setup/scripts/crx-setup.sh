@@ -499,6 +499,7 @@ chmod 600 /root/.my.cnf
     mkdir -p  "$CRANIX_HOME_BASE/profiles"
     chgrp 100 "$CRANIX_HOME_BASE/profiles/"
     chmod 1770 "$CRANIX_HOME_BASE/profiles"
+    /usr/bin/setfacl --restore=/usr/share/canix/setup/profiles-acls
 
     ########################################################################
     if [ ! -e /etc/ssl/servercerts/cacert.pem ]; then

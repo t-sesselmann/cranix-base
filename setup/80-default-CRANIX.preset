@@ -9,6 +9,7 @@ enable crx_salt_event_wat.servicecher
 enable SuSEfirewall2.service
 enable salt-master.service
 enable samba-ad.service
+enable samba-printserver.service
 enable squid.service
 enable sshd.service
 enable vsftpd.service
