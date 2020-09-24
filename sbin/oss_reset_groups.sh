@@ -7,6 +7,7 @@
 
 /bin/mkdir -p  /home/groups
 /bin/chmod 755 /home/groups
+/usr/bin/setfacl -b  /home/groups
 /bin/mkdir -p  /home/profiles
 setfacl -b     /home/profiles
 /bin/chmod 1770 /home/profiles

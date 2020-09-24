@@ -8,6 +8,8 @@ sed -i s/4.1/4.3/ /etc/zypp/repos.d/CRANIX.repo
 sed s/SCHOOL_/CRANIX_/ /etc/sysconfig/schoolserver > /etc/sysconfig/cranix
 sed -i "s/oss_/crx_/g" /etc/sysconfig/cranix
 sed -i "s/samba /samba-ad /" /etc/sysconfig/cranix
+sed -i s/ntpd/chronyd/ /etc/sysconfig/cranix
+sed -i s/oss-api/cranix-api/ /etc/sysconfig/cranix
 mkdir -p /usr/share/cranix/templates/
 rsync -aAv /usr/share/oss/templates/ /usr/share/cranix/templates/
 sed -i s#oss/plugins#cranix/plugins# /etc/samba/smb.conf
@@ -21,7 +23,7 @@ chmod 755 /var/adm/oss/migrate-db-to-cranix.sh
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
-/usr/bin/zypper -n up &>  /var/log/MIGRATE-TO-CRANIX-2.log
+/usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log
 /bin/rpm -e --nodeps OSS-release OSS-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-3.log
 /usr/bin/zypper -n install CRANIX-release CRANIX-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-4.log
 if [ ! -e /etc/chrony.d/cranix.conf ]; then
