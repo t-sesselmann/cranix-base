@@ -37,6 +37,7 @@ sed -i 's/=claxss/=cranix/' /opt/cranix-java/conf/cranix-api.properties
 echo "grant all on CRX.* to 'cranix'@'localhost'  identified by '$password'" | mysql
 mkdir -p /var/adm/cranix/
 echo "insert Acls values(NULL,NULL,1,'system.support','Y',1);" | mysql CRX
+echo "insert into Enumerates VALUES(NULL,'apiAcl','system.support',6);" | mysql CRX
 
 if [ -e /usr/share/cephalix/templates ]; then
 	/bin/bash /opt/cranix-java/data/adapt-cephalix-to-cranix.sh
