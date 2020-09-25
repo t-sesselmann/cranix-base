@@ -197,9 +197,8 @@ profilePath: \\\\admin\\profiles\\administrator
     cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
-    chgrp -R BUILTIN\\administrators /var/lib/printserver/drivers/*
-    chmod -R 775 /var/lib/printserver/drivers/*
-    setfacl -Rdm g::rwx /var/lib/printserver/drivers/*
+    chmod -R 775 /var/lib/printserver/drivers/
+    chgrp -R ntadmin /var/lib/printserver/drivers/
     mkdir -p /var/log/samba/printserver/
     sed    "s/#REALM#/$CRANIX_DOMAIN/g"          /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
