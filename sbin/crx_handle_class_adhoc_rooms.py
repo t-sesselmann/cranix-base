@@ -11,7 +11,6 @@ print(dev_pro_user,dev_count)
 def collect_datas():
     #Collect all classess
     for c in json.load(os.popen('/usr/sbin/crx_api.sh GET groups/byType/class')):
-        print(c)
         all_classes[c['id']] = c['name']
     #Collect all adhoc rooms for classess
     for a in json.load(os.popen('/usr/sbin/crx_api.sh GET adhocrooms/all')):
@@ -22,7 +21,7 @@ def collect_datas():
     #Collect the devices
     for a in adhoc_rooms:
         for dev in json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/devices'.format(adhoc_rooms[a]))):
-            all_devices.add(dev)
+            all_devices.append(dev)
 
 def create_adhocroom(c_id):
     name  = all_classes[c_id]
