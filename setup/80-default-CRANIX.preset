@@ -1,12 +1,10 @@
 enable apache2.service
 enable atd.service
 enable clamd.service
-enable dhcpd.service
 enable freshclam.service
 enable chronyd.service
 enable cranix-api.service
 enable crx_salt_event_wat.servicecher
-enable SuSEfirewall2.service
 enable salt-master.service
 enable samba-ad.service
 enable samba-printserver.service

@@ -529,6 +529,9 @@ chmod 600 /root/.my.cnf
     if [ $CRANIX_ISGATE = "yes" ]; then
         sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
         sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
+	echo "## Enable forwarding."                  >  /etc/sysctl.d/cranix.conf
+	echo "net.ipv4.ip_forward = 1 "              >>  /etc/sysctl.d/cranix.conf
+	echo "net.ipv6.conf.all.forwarding = 1 "     >>  /etc/sysctl.d/cranix.conf
         systemctl enable SuSEfirewall2
     else
         systemctl disable SuSEfirewall2
