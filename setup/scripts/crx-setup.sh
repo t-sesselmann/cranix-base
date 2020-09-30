@@ -276,6 +276,11 @@ function SetupMail (){
 
 function SetupProxy (){
     log "Start SetupProxy"
+    sed "s/#DOMAIN#/${CRANIX_DOMAIN}/g" /srv/www/admin/proxy.pac.in > /srv/www/admin/proxy.pac
+    ln  /srv/www/admin/proxy.pac /srv/www/admin/wpad.dat
+    cp /etc/squid/squid.conf.in      /etc/squid/squid.conf
+    sed -i s/LimitNOFILE=.*/LimitNOFILE=16384/ /usr/lib/systemd/system/squid.service
+    grep -q www.google.de /etc/hosts || echo "216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en" >> /etc/hosts
     log "End SetupProxy"
 }
 
