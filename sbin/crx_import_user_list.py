@@ -36,7 +36,7 @@ parser.add_argument("--allClasses", dest="allClasses", default=False, action="st
                     help="The import list contains all classes. Classes which are not in the list will be deleted. This parameter has only affect when role=students.")
 parser.add_argument("--appendBirthdayToPassword", dest="appendBirthdayToPassword", default=False, action="store_true",
                     help="Append the birthday of a user to the password.")
-arser.add_argument("--appendClassToPassword", dest="appendClassToPassword", default=False, action="store_true",
+parser.add_argument("--appendClassToPassword", dest="appendClassToPassword", default=False, action="store_true",
                     help="Append the upper case name of the first class of a user to the password.")
 parser.add_argument("--cleanClassDirs", dest="cleanClassDirs", default=False, action="store_true",
                     help="Remove the content of the directories of the classes. This parameter has only affect when role=students.")

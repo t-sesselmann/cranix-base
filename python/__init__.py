@@ -54,6 +54,7 @@ def init(args):
     global import_dir, required_classes, existing_classes, all_users, import_list
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
 
+    password       = ""
     fsQuota        = int(os.popen('crx_api_text.sh GET system/configuration/FILE_QUOTA').read())
     fsTeacherQuota = int(os.popen('crx_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
     msQuota        = int(os.popen('crx_api_text.sh GET system/configuration/MAIL_QUOTA').read())
@@ -189,17 +190,17 @@ def check_attributes(user,line_count):
         if debug:
             print('Required attributes are empty in line {0}.'.format(line_count))
         return False
-    if not identifier in user:
-        log_error('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
-        if debug:
-            print('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
-        return False
     if identifier == "sn-gn-bd":
         if 'birthDay' not in user or user['birthDay'] == '':
             log_error('Missing birthday in line {0}.'.format(line_count))
             if debug:
                 print('Missing birthday in line {0}.'.format(line_count))
             return False
+    elif not identifier in user:
+        log_error('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
+        if debug:
+            print('The line {0} does not contains the identifier {1}'.format(line_count,identifier))
+        return False
     return True
 
 def log_debug(text,obj):
@@ -279,18 +280,22 @@ def add_class(name):
         return False
 
 def add_user(user,ident):
+    global password
     global new_user_count
     global import_list
+    local_password = ""
     if mustChange:
         user['mustChange'] = True
     if password != "":
-        user['password'] = password
+        local_password = password
     if appendBirthdayToPassword:
-        user['password'] = password + user['birthDay']
+        local_password = local_password + user['birthDay']
     if appendClassToPassword:
         classes = user['classes'].split()
         if len(classes) > 0:
-            user['password'] = password + classes[0]
+            local_password = local_password + classes[0]
+    if local_password != "":
+        user['password'] = local_password
     # The group attribute must not be part of the user json
     if 'group' in user:
         user.pop('group')
