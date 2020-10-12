@@ -10,7 +10,18 @@ def read_birthday(bd):
     i_bd = bd.replace('.','-')
     l_bd = i_bd.replace(':','-').split('-')
     if( len(l_bd) != 3 ):
-        raise SyntaxError("Bad birthday format:" + bd)
+        lbd=len(bd)
+        y=""
+        m=""
+        d=""
+        if lbd < 9 and lbd > 6:
+            y=bd[lbd-4:lbd]
+            m=bd[lbd-6:lbd-4]
+            d=bd[:lbd-6]
+            #TODO Test y m and d
+            return "{:4s}-{:0>2s}-{:0>2s}".format(y,m,d)
+        else:
+            raise SyntaxError("Bad birthday format:" + bd)
     if(len(l_bd[0]) == 4 ):
         return "{:4s}-{:0>2s}-{:0>2s}".format(l_bd[0],l_bd[1],l_bd[2])
     if(len(l_bd[2]) == 4 ):
