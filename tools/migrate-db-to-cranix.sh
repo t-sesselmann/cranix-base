@@ -36,7 +36,15 @@ sed -i s/javax.persistence.jdbc.password=.*$/javax.persistence.jdbc.password=${p
 sed -i 's/=claxss/=cranix/' /opt/cranix-java/conf/cranix-api.properties
 echo "grant all on CRX.* to 'cranix'@'localhost'  identified by '$password'" | mysql
 mkdir -p /var/adm/cranix/
-echo "insert Acls values(NULL,NULL,1,'system.support','Y',1);" | mysql CRX
+#Add new acls:
+ACLSUPPORT=$( echo "SELECT * FROM Acls where acl='system.support'" | mysql CRX )
+ACLHWCONF=$( echo "SELECT * FROM Acls where acl='hwconf.modify'" | mysql CRX )
+if [ -z "$ACLSUPPORT" ]; then
+	echo "insert into Acls values(NULL,NULL,1,'system.support','Y',1);" | mysql CRX
+fi
+if [ -z "$ACLHWCONF" ]; then
+	echo "insert into Acls Values(NULL,NULL,1,'hwconf.modify','Y',6);"  | mysql CRX
+fi
 
 if [ -e /usr/share/cephalix/templates ]; then
 	/bin/bash /opt/cranix-java/data/adapt-cephalix-to-cranix.sh
