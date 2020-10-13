@@ -45,6 +45,14 @@ fi
 if [ -z "$ACLHWCONF" ]; then
 	echo "insert into Acls Values(NULL,NULL,1,'hwconf.modify','Y',6);"  | mysql CRX
 fi
+ACLSUPPORT=$( echo "SELECT * FROM Enumerates where value='system.support'" | mysql CRX )
+ACLHWCONF=$( echo "SELECT * FROM Enumerates where value='hwconf.modify'" | mysql CRX )
+if [ -z "$ACLSUPPORT" ]; then
+	echo "insert into Enumerates VALUES(NULL,'apiAcl','system.support',6);" | mysql CRX
+fi
+if [ -z "$ACLHWCONF" ]; then
+	echo "insert into Enumerates VALUES(NULL,'apiAcl','hwconf.modify',6);" | mysql CRX
+fi
 
 if [ -e /usr/share/cephalix/templates ]; then
 	/bin/bash /opt/cranix-java/data/adapt-cephalix-to-cranix.sh

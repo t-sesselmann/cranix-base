@@ -24,11 +24,15 @@ systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
 /usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log
-/bin/rpm -e --nodeps OSS-release OSS-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-3.log
-/usr/bin/zypper -n install CRANIX-release CRANIX-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-4.log
+/bin/rpm -e --nodeps OSS-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-3.log
+cd /etc/products.d
+rm baseproduct
+ln -s CRANIX.prod baseproduct
+cd
 if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
+restart samba-ad
 /var/adm/oss/migrate-db-to-cranix.sh
 /usr/lib/systemd-presets-branding/branding-preset-states save
 " |  at "now + 5 minutes"
