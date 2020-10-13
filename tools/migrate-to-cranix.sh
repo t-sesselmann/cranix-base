@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sed -i s#OSS/4.1#CRANIX/4.3# /etc/zypp/credentials.cat
-sed -i 's/solver.dupAllowVendorChange*$/solver.dupAllowVendorChange = true/' /etc/zypp/zypp.conf
+sed -i 's/solver.dupAllowVendorChange.*$/solver.dupAllowVendorChange = true/' /etc/zypp/zypp.conf
 mv /etc/zypp/repos.d/OSS.repo /etc/zypp/repos.d/CRANIX.repo
 sed -i s/OSS/CRANIX/ /etc/zypp/repos.d/CRANIX.repo
 sed -i s/4.1/4.3/ /etc/zypp/repos.d/CRANIX.repo
