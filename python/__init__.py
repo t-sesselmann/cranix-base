@@ -149,9 +149,13 @@ def read_csv():
             for key in row:
                 if key == '':
                     continue
-                if init_debug:
-                    print(attr_ext_name[key.upper()] + " " + row[key])
-                user[attr_ext_name[key.upper()]] = row[key]
+                try:
+                    if init_debug:
+                        print(attr_ext_name[key.upper()] + " " + row[key])
+                    user[attr_ext_name[key.upper()]] = row[key]
+                except KeyError:
+                    log_error('Unknown field "{0}".'.format(key))
+                    continue
             try:
                 user['birthDay'] = read_birthday(user['birthDay'])
             except SyntaxError:
