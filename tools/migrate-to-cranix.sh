@@ -32,7 +32,7 @@ cd
 if [ ! -e /etc/chrony.d/cranix.conf ]; then
 	/usr/share/cranix/setup/scripts/setup-chrony.sh
 fi
-restart samba-ad
+/usr/bin/systemctl restart samba-ad
 /var/adm/oss/migrate-db-to-cranix.sh
 /usr/lib/systemd-presets-branding/branding-preset-states save
 " |  at "now + 5 minutes"
