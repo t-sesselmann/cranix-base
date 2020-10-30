@@ -15,6 +15,8 @@ rsync -aAv /usr/share/oss/templates/ /usr/share/cranix/templates/
 sed -i s#oss/plugins#cranix/plugins# /etc/samba/smb.conf
 sed -i s#oss/tools#cranix/tools# /etc/samba/smb.conf
 sed -i s/oss_api.sh/crx_api.sh/ /etc/sysconfig/scripts/SuSEfirewall2-custom
+sed -i 's#/usr/share/.*squid_sso.py#/usr/share/cranix/tools/squid_sso.py#'  /etc/squid/squid.conf
+
 if [ -e /etc/chrony.d/oss.conf ]; then
 	mv /etc/chrony.d/oss.conf /etc/chrony.d/cranix.conf
 fi
