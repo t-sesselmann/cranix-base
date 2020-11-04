@@ -29,10 +29,11 @@ chmod 755 /var/adm/oss/migrate-db-to-cranix.sh
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
-/usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log || {
+if ! /usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log
+then
 	echo "Migration TO CRANIX Failed" > /var/log/MIGRATE-TO-CRANIX-FAILED
 	exit 1
-}
+fi
 /bin/rpm -e --nodeps OSS-release-dvd &>  /var/log/MIGRATE-TO-CRANIX-3.log
 cd /etc/products.d
 rm baseproduct
