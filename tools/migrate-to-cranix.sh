@@ -30,7 +30,8 @@ chmod 755 /var/adm/oss/migrate-db-to-cranix.sh
 systemctl restart atd
 
 echo "/usr/bin/zypper ref &>  /var/log/MIGRATE-TO-CRANIX-1.log
-if ! /usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log
+/usr/bin/zypper -n dup &>  /var/log/MIGRATE-TO-CRANIX-2.log
+if [ ! -e /etc/products.d/CRANIX.prod ]
 then
 	echo "Migration TO CRANIX Failed" > /var/log/MIGRATE-TO-CRANIX-FAILED
 	exit 1
