@@ -17,6 +17,6 @@ do
      sleep 2
   fi
 done
-/usr/bin/zypper -nD /srv/salt/repos.d/ install -r salt-packages $PACKAGES  >> /var/log/cranix-download-salt-packages.log  2>&1
+/usr/bin/zypper -nD /srv/salt/repos.d/ install $PACKAGES  >> /var/log/cranix-download-salt-packages.log  2>&1
 rm -f /run/lock/cranix-api/crx_download_packages
 
