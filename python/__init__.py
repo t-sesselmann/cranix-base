@@ -108,7 +108,6 @@ def read_users():
     global all_users
     for user in json.load(os.popen('/usr/sbin/crx_api.sh GET users/byRole/' + role )):
         user_id = ""
-        user['birthDay'] = time.strftime("%Y-%m-%d",time.localtime(user['birthDay']/1000))
         if identifier == "sn-gn-bd":
             user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
         else:
