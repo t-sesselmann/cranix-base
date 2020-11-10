@@ -4,6 +4,8 @@ if [ ! -e /etc/products.d/CRANIX.prod ]; then
         exit 0
 fi
 CALLER=$( cat /proc/$PPID/comm )
+systemctl restart mysql
+sleep 1
 export HOME="/root"
 CRANIX=$( echo "show tables" | mysql CRX | grep CrxNextID )
 if [ "${CRANIX}" ];  then
