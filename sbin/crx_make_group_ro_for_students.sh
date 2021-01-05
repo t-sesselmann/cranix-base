@@ -1,0 +1,27 @@
+#!/bin/bash
+# Copyright (c) 2020 Peter Varkoly <pvarkoly@cephalix.eu> Nürnberg, Germany.  All rights reserved.
+
+if [ -z "$1" ]; then
+        echo "You have to provide a group name"
+        exit 1
+fi
+
+gidTeachers=$( /usr/sbin/crx_get_gidNumber.sh teachers )
+cn=$1
+g=$( echo $cn|tr '[:lower:]' '[:upper:]' )
+i="/home/groups/$g"
+/bin/mkdir -p  "$i"
+gid=`/usr/sbin/crx_get_gidNumber.sh "$cn"`
+if [ "$gid" ]
+then
+    chgrp -R $gidTeachers  "$i"
+    /usr/bin/setfacl -P -R -b "$i"
+    find "$i" -type d -exec /usr/bin/chmod o-t,g+rwx {} \;
+    find "$i" -type d -exec /usr/bin/setfacl -m g:$gidTeachers:rwx {} \;
+    find "$i" -type d -exec /usr/bin/setfacl -d -m g:$gidTeachers:rwx {} \;
+    find "$i" -type d -exec /usr/bin/setfacl -m g:$gid:rx {} \;
+    find "$i" -type d -exec /usr/bin/setfacl -d -m g:$gid:rx {} \;
+    echo "Repairing $i"
+else
+   echo "Class $cn do not exists. Can not repair $i"
+fi
