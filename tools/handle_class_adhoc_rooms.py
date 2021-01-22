@@ -5,8 +5,8 @@ import os
 all_classes = {}
 adhoc_rooms = {}
 all_devices = []
-dev_pro_user = os.popen('crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_PRO_USER').read()
-dev_count = os.popen('crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_COUNT').read()
+dev_pro_user = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_PRO_USER').read()
+dev_count = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_COUNT').read()
 print(dev_pro_user,dev_count)
 def collect_datas():
     #Collect all classess

@@ -41,11 +41,13 @@ date = time.strftime("%Y-%m-%d.%H-%M-%S")
 config    = ConfigObj("/opt/cranix-java/conf/cranix-api.properties",list_values=False)
 passwd    = config['de.cranix.dao.User.Register.Password']
 protected_users = config['de.cranix.dao.User.protected'].split(",")
-domain    = os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
-home_base = os.popen('crx_api_text.sh GET system/configuration/HOME_BASE').read()
-check_pw  = os.popen('crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY').read().lower() == 'yes'
+domain    = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DOMAIN').read()
+home_base = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/HOME_BASE').read()
+check_pw  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY').read().lower() == 'yes'
+class_adhoc = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAINTAIN_ADHOC_ROOM_FOR_CLASSES').read().lower() == 'yes'
 roles  = []
-for role in os.popen('crx_api_text.sh GET groups/text/byType/primary').readlines():
+devices_move = []
+for role in os.popen('/usr/sbin/crx_api_text.sh GET groups/text/byType/primary').readlines():
   roles.append(role.strip())
 
 def init(args):
@@ -55,14 +57,14 @@ def init(args):
     global fsQuota, fsTeacherQuota, msQuota, msTeacherQuota
 
     password       = ""
-    fsQuota        = int(os.popen('crx_api_text.sh GET system/configuration/FILE_QUOTA').read())
-    fsTeacherQuota = int(os.popen('crx_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
-    msQuota        = int(os.popen('crx_api_text.sh GET system/configuration/MAIL_QUOTA').read())
-    msTeacherQuota = int(os.popen('crx_api_text.sh GET system/configuration/MAIL_TEACHER_QUOTA').read())
+    fsQuota        = int(os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/FILE_QUOTA').read())
+    fsTeacherQuota = int(os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/FILE_TEACHER_QUOTA').read())
+    msQuota        = int(os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAIL_QUOTA').read())
+    msTeacherQuota = int(os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAIL_TEACHER_QUOTA').read())
     #Check if import is running
     if os.path.isfile(lockfile):
         close_on_error("Import is already running")
-    os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
+    os.system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     import_dir = home_base + "/groups/SYSADMINS/userimports/" + date
     os.system('mkdir -pm 770 ' + import_dir + '/tmp' )
     #open the output file
@@ -213,18 +215,18 @@ def log_debug(text,obj):
 
 def close():
     if check_pw:
-        os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
+        os.system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
     else:
-        os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
+        os.system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     os.remove(lockfile)
     output.write(print_msg("Import finished","OK"))
     output.close()
 
 def close_on_error(msg):
     if check_pw:
-        os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
+        os.system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/yes")
     else:
-        os.system("crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
+        os.system("/usr/sbin/crx_api.sh PUT system/configuration/CHECK_PASSWORD_QUALITY/no")
     os.remove(lockfile)
     output.write(print_error(msg))
     output.write(print_msg("Import finished","ERROR"))
@@ -248,7 +250,7 @@ def add_group(name):
     file_name = '{0}/tmp/group_add.{1}'.format(import_dir,new_group_count)
     with open(file_name, 'w') as fp:
         json.dump(group, fp, ensure_ascii=False)
-    result = json.load(os.popen('crx_api_post_file.sh groups/add ' + file_name))
+    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh groups/add ' + file_name))
     new_group_count = new_group_count + 1
     if debug:
         print(add_group)
@@ -271,7 +273,7 @@ def add_class(name):
     file_name = '{0}/tmp/group_add.{1}'.format(import_dir,new_group_count)
     with open(file_name, 'w') as fp:
         json.dump(group, fp, ensure_ascii=False)
-    result = json.load(os.popen('crx_api_post_file.sh groups/add ' + file_name))
+    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh groups/add ' + file_name))
     existing_classes.append(name)
     new_group_count = new_group_count + 1
     if debug:
@@ -324,7 +326,7 @@ def add_user(user,ident):
     file_name = '{0}/tmp/user_add.{1}'.format(import_dir,new_user_count)
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
-    result = json.load(os.popen('crx_api_post_file.sh users/insert ' + file_name))
+    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh users/insert ' + file_name))
     if debug:
         print(result)
     if result['code'] == 'OK':
@@ -345,7 +347,7 @@ def modify_user(user,ident):
     file_name = '{0}/tmp/user_modify.{1}'.format(import_dir,user['uid'])
     with open(file_name, 'w') as fp:
         json.dump(user, fp, ensure_ascii=False)
-    result = json.load(os.popen('crx_api_post_file.sh users/{0} "{1}" '.format(user['id'],file_name)))
+    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh users/{0} "{1}" '.format(user['id'],file_name)))
     if debug:
         print(result)
     if result['code'] == 'ERROR':
@@ -381,6 +383,13 @@ def move_user(uid,old_classes,new_classes):
            result = os.popen(cmd).read()
            if debug:
                print(result)
+
+    if class_adhoc and old_classes[0] != new_classes[0]:
+        movement['uid'] = uid
+        movement['old'] = old_classes[0]
+        movement['new'] = new_classes[0]
+        devices_move.append(movement)
+
 
 def delete_user(uid):
     cmd = '/usr/sbin/crx_api_text.sh DELETE "users/text/{0}"'.format(uid)
@@ -426,7 +435,13 @@ def write_user_list():
                     class_files[user_class].write(';'.join(map(str,line))+"\n")
         for cl in class_files:
             class_files[cl].close()
+
     #Now we start to write the password files
     os.system('/usr/share/cranix/tools/create_password_files.py {0} {1}'.format(import_dir,role))
 
+    #Now we handle AdHocRooms:
+    if class_adhoc:
+        with open(import_dir +'/devices_move.json','w') as f:
+            json.dump(devices_move,f,ensure_ascii=False)
+        os.system('/usr/share/cranix/tools/move_devices.py {0}/{1}'.format(import_dir,devices_move.json))
 
