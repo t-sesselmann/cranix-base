@@ -2,8 +2,9 @@
 #
 # Copyright (C) 2021 Peter Varkoly <pvarkoly@cephalix.eu> Nuremberg, Germany.  All rights reserved.
 #
-import os
 import json
+import os
+import sys
 
 input_file   = sys.argv[1]
 devices_move = []
