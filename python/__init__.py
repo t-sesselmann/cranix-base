@@ -166,7 +166,7 @@ def read_csv():
                     print(row)
                 continue
             #uid must be in lower case
-            if 'uid' in user:
+            if 'uid' in user and user['uid']:
                 user['uid'] = user['uid'].lower()
             if identifier == "sn-gn-bd":
                 user_id = user['surName'].upper() + '-' + user['givenName'].upper() + '-' + user['birthDay']
