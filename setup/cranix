@@ -403,11 +403,11 @@ CRANIX_CLEAN_UP_PRINTERS="yes"
 CRANIX_ALLOW_SAVE_PASSWORD="no"
 
 ## Type:        yesno
-## Default:     yes
+## Default:     no
 # If this variable is yes adhoc rooms will be created for all classes.
 # This happens when creating a new class or by importing the stundents.
 # Existing adhoc rooms will be cleaned an filled by the exiting devices
-CRANIX_MAINTAIN_ADHOC_ROOM_FOR_CLASSES="yes"
+CRANIX_MAINTAIN_ADHOC_ROOM_FOR_CLASSES="no"
 
 ## Type:                integer
 ## Default:             "1"
