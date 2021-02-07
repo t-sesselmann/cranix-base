@@ -385,6 +385,7 @@ def move_user(uid,old_classes,new_classes):
                print(result)
 
     if class_adhoc and old_classes[0] != new_classes[0]:
+        movement = {}
         movement['uid'] = uid
         movement['old'] = old_classes[0]
         movement['new'] = new_classes[0]
