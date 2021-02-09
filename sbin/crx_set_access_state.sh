@@ -49,7 +49,7 @@ LOCAL=`/sbin/ip addr | grep "$DEST/"`
 
 case "$3" in
    direct)
-	DEV=$( ip route show | gawk '{ if( $1 == "default" ) { print $5 } }' )
+	DEV=$( ip route show | gawk '{ if( $1 == "default" ) { print $5; exit; } }' )
 	if test "$1" = "1"; then
 		IFS=$'\n'; i=0; e=0; n=0;
 		for l in $( /usr/sbin/iptables -t filter -S forward_int ); do n=$((n+1)); echo $l | grep -q 'j ACCEPT' && i=$n; done;
