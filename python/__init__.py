@@ -384,13 +384,12 @@ def move_user(uid,old_classes,new_classes):
            if debug:
                print(result)
 
-    if class_adhoc and old_classes[0] != new_classes[0]:
+    if class_adhoc and 0 in old_classes and 0 in new_classes and old_classes[0] != new_classes[0]:
         movement = {}
         movement['uid'] = uid
         movement['old'] = old_classes[0]
         movement['new'] = new_classes[0]
         devices_move.append(movement)
-
 
 def delete_user(uid):
     cmd = '/usr/sbin/crx_api_text.sh DELETE "users/text/{0}"'.format(uid)
