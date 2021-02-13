@@ -443,5 +443,5 @@ def write_user_list():
     if class_adhoc:
         with open(import_dir +'/devices_move.json','w') as f:
             json.dump(devices_move,f,ensure_ascii=False)
-        os.system('/usr/share/cranix/tools/move_devices.py {0}/{1}'.format(import_dir,devices_move.json))
+        os.system('/usr/share/cranix/tools/move_devices.py {0}/devices_move.json'.format(import_dir))
 
