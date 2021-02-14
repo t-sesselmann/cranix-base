@@ -2,6 +2,7 @@
 Description=CRANIX SALT Event Watcher
 Wants=basic.target
 After=basic.target network.target syslog.target salt-master.service
+PartOf=salt-master.service
 
 [Service]
 Restart=on-failure
