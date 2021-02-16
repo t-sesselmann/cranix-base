@@ -416,8 +416,13 @@ CRANIX_CLASS_ADHOC_DEVICE_PRO_USER="2"
 
 ## Type:                integer
 ## Default:             "32"
-# Row much devices can be registered in a class adhoc room
+# How much devices can be registered in a class adhoc room
 CRANIX_CLASS_ADHOC_DEVICE_COUNT="64"
+
+## Type:               string
+## Default:             ""
+# The netwrork in which the AdHoc rooms will be created.
+CRANIX_CLASS_ADHOC_NETWORK=""
 
 ## Type:        yesno
 ## Default:     yes

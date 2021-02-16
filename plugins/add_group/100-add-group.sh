@@ -97,3 +97,8 @@ if [ "$groupType" = "primary" ]; then
    samba-tool ou create OU="${nameLo}"
 fi
 
+
+#Take care about Class AdHocRooms
+if [ "${CRANIX_MAINTAIN_ADHOC_ROOM_FOR_CLASSES}" = "yes" ]; then
+	/usr/share/cranix/tools/handle_class_adhoc_rooms.py
+fi
