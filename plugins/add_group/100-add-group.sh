@@ -47,7 +47,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     name)
       name="${c}"
     ;;
@@ -63,7 +63,8 @@ do
   esac
 done
 
-name=`echo "$name" | tr "[:lower:]" "[:upper:]"`
+nameLo="${name,,}"
+name="${name^^}"
 
 echo "name:        $name"
 echo "description: $description"
@@ -84,7 +85,6 @@ if [ $? != 0 ]; then
 fi
 
 #create diredtory and set permission
-nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
 gdir="${CRANIX_HOME_BASE}/groups/${name}"
 
 mkdir -p -m 0770 "$gdir"

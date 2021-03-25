@@ -38,7 +38,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     name)
       name="${c}"
     ;;
@@ -57,8 +57,8 @@ if [ $? != 0 ]; then
    abort
 fi
 
-nameUp=`echo "$name" | tr "[:lower:]" "[:upper:]"`
-nameLo=`echo "$name" | tr "[:upper:]" "[:lower:]"`
+nameUp="${name^^}"
+nameLo="${name,,}"
 gdir=${CRANIX_HOME_BASE}/groups/${nameUp}
 
 if [ -d "$gdir" ]; then
@@ -66,5 +66,5 @@ if [ -d "$gdir" ]; then
 fi
 
 if [ -d "${CRANIX_HOME_BASE}/${nameLo}"   ]; then
-    rm -r "${CRANIX_HOME_BASE}/${nameLo}" 
+    rm -r "${CRANIX_HOME_BASE}/${nameLo}"
 fi

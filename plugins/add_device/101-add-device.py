@@ -9,18 +9,19 @@ from configobj import ConfigObj
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
 name=""
-ip=""
+ip=[]
 wlanip=[]
 
 for line in sys.stdin:
-  kv = line.rstrip().split(": ",1)
-  if kv[0] == "ip":
+  kv  = line.rstrip().split(": ",1)
+  key = kv[0].lower()
+  if key == "ip":
     ip=kv[1].split('.')
-  elif kv[0] == "name":
+  elif key == "name":
     name=kv[1]
-  elif kv[0] == "wlanip":
+  elif key == "wlanip":
     wlanip=kv[1].split('.')
-  
+
 domain=os.popen('crx_api_text.sh GET system/configuration/DOMAIN').read()
 netmask=int(os.popen('crx_api_text.sh GET system/configuration/NETMASK').read().rstrip())
 network=os.popen('crx_api_text.sh GET system/configuration/NETWORK').read().split('.')
@@ -35,14 +36,14 @@ if netmask > 23:
     revwlan=wlanip[3]
 elif netmask > 15:
   if ip[0] != network[0] or ip[1] != network[1]:
-    os.exit(0)  
+    os.exit(0)
   revdomain = network[1]+'.'+network[0]+'.IN-ADDR.ARPA'
-  rdomain = ip[3]+'.'+ip[2]
+  rdomain   = ip[3]+'.'+ip[2]
   if wlanip != []:
     revwlan=wlanip[3]+'.'+wlanip[2]
 elif netmask > 7:
   if ip[0] != network[0]:
-    os.exit(0)  
+    os.exit(0)
   revdomain = network[0]+'.IN-ADDR.ARPA'
   rdomain = ip[3]+'.'+ip[2]+'.'+ip[1]
   if wlanip != []:
@@ -53,7 +54,7 @@ if os.system("samba-tool dns add localhost " + revdomain + " " + rdomain + " PTR
   with open(TASK, "w") as f:
     f.write("ip: "+'.'.join(ip) +"\n")
     f.write("name: "+name +"\n")
-    f.write("wlanip: "+wlanip)
+    f.write("wlanip: "+ '.'.join(wlanip))
 
 if wlanip != []:
   if os.system("samba-tool dns add localhost " + revdomain + " " + revwlan + " PTR " + name + "-wlan." + domain + "  -U register%" + passwd ) != 0:
@@ -61,4 +62,4 @@ if wlanip != []:
     with open(TASK, "w") as f:
       f.write("ip: "+'.'.join(ip) +"\n")
       f.write("name: "+name +"\n")
-      f.write("wlanip: "+wlanip)
+      f.write("wlanip: " + '.'.join(wlanip))

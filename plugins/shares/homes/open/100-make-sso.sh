@@ -23,7 +23,7 @@ case "${role}" in
 	*)
 		if [ "${CRANIX_ALLOW_MULTIPLE_LOGIN}" = "no" ]; then
 			DN=$( crx_get_dn.sh ${U} )
-		fi 
+		fi
 esac
 
 if [ "${DN}" ]; then

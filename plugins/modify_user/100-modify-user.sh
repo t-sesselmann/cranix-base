@@ -52,7 +52,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     surname)
       surname="${c}"
     ;;

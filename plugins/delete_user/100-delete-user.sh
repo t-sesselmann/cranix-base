@@ -17,7 +17,7 @@ fi
 if [ ! -d "${CRANIX_HOME_BASE}" ]; then
    echo "ERROR CRANIX_HOME_BASE must be a directory and must exist."
    exit 3
-fi 
+fi
 
 surname=''
 givenname=''
@@ -47,7 +47,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     surname)
       surname="${c}"
     ;;
@@ -75,7 +75,7 @@ HOMEDIR=$( /usr/sbin/crx_get_home.sh $uid )
 UIDNUMBER=$(  /usr/sbin/crx_get_uidNumber.sh $uid )
 # delete logon script
 if [ -e /var/lib/samba/netlogon/$uid.bat ]; then
-   rm  /var/lib/samba/netlogon/$uid.bat 
+   rm  /var/lib/samba/netlogon/$uid.bat
 fi
 
 nice -19 /usr/share/cranix/tools/del_user_files --uid=$uid --uidnumber=$UIDNUMBER --startpath=${CRANIX_HOME_BASE} --homedir=${HOMEDIR} &

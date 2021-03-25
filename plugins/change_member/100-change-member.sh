@@ -41,7 +41,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     changeType)
       changeType="${c}"
     ;;

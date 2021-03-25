@@ -29,6 +29,6 @@ then
      echo "cat $conf | /usr/share/cranix/plugins/$what/$i" >> $conf.DEBUG
    fi
  done
-fi 
+fi
 
 rm $conf &> /dev/null

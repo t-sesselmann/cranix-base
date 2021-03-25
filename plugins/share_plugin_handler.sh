@@ -2,8 +2,8 @@
 # Copyright (c) 2012-2017 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # Handler to execute scripts bey making or closing connection to a share.
 # To activate the handler you have to insert following line into the share definition
-# root preexec  = /usr/share/cranix/plugins/share_plugin_handler.sh open  %S %u %I %a %m 
-# root postexec = /usr/share/cranix/plugins/share_plugin_handler.sh close %S %u %I %a %m 
+# root preexec  = /usr/share/cranix/plugins/share_plugin_handler.sh open  %S %u %I %a %m
+# root postexec = /usr/share/cranix/plugins/share_plugin_handler.sh close %S %u %I %a %m
 # The handler will execute all scripts in the directory
 # /usr/share/cranix/plugins/shares/%S/[open|close]/ whith the parameter %u %I %a %m
 SHARE=$1

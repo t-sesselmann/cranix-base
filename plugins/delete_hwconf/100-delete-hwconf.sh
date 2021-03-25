@@ -18,7 +18,7 @@ do
   else
      c=""
   fi
-  case $b in
+  case "${b,,}" in
     name)
       name="${c}"
     ;;

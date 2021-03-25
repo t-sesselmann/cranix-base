@@ -20,7 +20,7 @@ else
 fi
 
 if [ -x /usr/share/cranix/tools/custom_create_logon_script.sh ]; then
-	/usr/share/cranix/tools/custom_create_logon_script.sh ${U} ${I} ${a} ${m} ${R} ${role} 
+	/usr/share/cranix/tools/custom_create_logon_script.sh ${U} ${I} ${a} ${m} ${R} ${role}
 fi
 
 if [ "${CRANIX_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/cranix/templates/copy_and_run_rem_printers ]; then
@@ -43,7 +43,7 @@ if [ "${CRANIX_MOVE_PROFILE_TO_HOME}" = "yes" ]; then
 		cat /usr/share/cranix/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 	        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
 	fi
-else 
+else
 	cat /usr/share/cranix/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
