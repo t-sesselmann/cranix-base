@@ -195,11 +195,6 @@ CRANIX_USE_DHCP="yes"
 # The windows netbios name of the CRANIX.
 CRANIX_NETBIOSNAME="admin"
 
-## Type:        string(primary)
-## Default:     gymnasium
-# The type of the school.
-CRANIX_TYPE="real"
-
 ## Type:	string readonly
 ## Default:	CRANIX
 # The windows domain name of the school.
@@ -230,10 +225,20 @@ CRANIX_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 # Url to the updates
 CRANIX_UPDATE_URL="http://repo.cephalix.eu"
 
+## Type:        string(dns,proxy)
+## Default:     dns
+# The type of the internet filter.
+CRANIX_INTERNET_FILTER="dns"
+
 ########################################################################
 ## Path:        Network/Server/Settings
 ## Description: Configuration of the CRANIX: Settings
 ########################################################################
+
+## Type:        string(primary)
+## Default:     gymnasium
+# The type of the institute using the CRANIX server.
+CRANIX_TYPE="real"
 
 ## Type:        string
 ## Default:     CRANIX
