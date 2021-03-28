@@ -74,9 +74,9 @@ function InitGlobalVariable (){
     log " - Set windomain variable"
     windomain=`echo "$CRANIX_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
     log "   windomain = $windomain"
-    CRANIX_DOMAIN=$( echo "$CRANIX_DOMAIN" | tr "[:upper:]" "[:lower:]" )
+    CRANIX_DOMAIN=${CRANIX_DOMAIN,,}
     sed -i s/^CRANIX_DOMAIN=.*/CRANIX_DOMAIN=\"$CRANIX_DOMAIN\"/ $sysconfig
-    REALM=$( echo "$CRANIX_DOMAIN" | tr "[:lower:]" "[:upper:]" )
+    REALM=${CRANIX_DOMAIN^^}
 
     log "End InitGlobalVariable"
 }
@@ -139,9 +139,8 @@ function SetupSamba (){
     ########################################################################
     log " - Create dns entries "
     samba-tool dns add localhost $CRANIX_DOMAIN mailserver   A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
-    samba-tool dns add localhost $CRANIX_DOMAIN cranix A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
+    samba-tool dns add localhost $CRANIX_DOMAIN cranix       A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN proxy        A $CRANIX_PROXY         -U Administrator%"$passwd"
-    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN backup       A $CRANIX_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN install      A $CRANIX_SERVER        -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN timeserver   A $CRANIX_SERVER        -U Administrator%"$passwd"
@@ -150,7 +149,7 @@ function SetupSamba (){
        samba-tool dns add localhost $CRANIX_DOMAIN admin   A $CRANIX_SERVER        -U Administrator%"$passwd"
     fi
     /usr/share/cranix/setup/scripts/create-revers-domain.py "$passwd" $CRANIX_DOMAIN $CRANIX_NETWORK $CRANIX_NETMASK \
-	   "mailserver:$CRANIX_MAILSERVER,proxy:$CRANIX_PROXY,printserver:$CRANIX_PRINTSERVER,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY" 
+	   "mailserver:$CRANIX_MAILSERVER,proxy:$CRANIX_PROXY,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY"
 
     #Add rfc2307 attributes to Administartor
     DN=$( /usr/sbin/crx_get_dn.sh Administrator )
@@ -192,24 +191,6 @@ profilePath: \\\\admin\\profiles\\administrator
      ldbmodify  -H /var/lib/samba/private/sam.ldb  /tmp/rfc2307-Administartor
      #rm /tmp/rfc2307-Administartor
 
-    ########################################################################
-    log " - Setup printserver "
-    cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
-    mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
-    mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
-    chmod -R 775 /var/lib/printserver/drivers/
-    chgrp -R ntadmin /var/lib/printserver/drivers/
-    mkdir -p /var/log/samba/printserver/
-    sed    "s/#REALM#/$CRANIX_DOMAIN/g"          /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
-    sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
-    sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
-    systemctl enable samba-printserver
-    systemctl start  samba-printserver
-    chmod -R 775 /var/lib/printserver/drivers
-    chgrp -R $sysadmins_gn /var/lib/printserver/drivers
-    setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
-
     #########################################################################
     log " - Some additional samba settings -"
     samba-tool domain passwordsettings set --max-pwd-age=365
@@ -236,7 +217,6 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
 
     systemctl restart samba-ad
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
 
     ########################################################################
     log " - Setup ntp signd directory rights."
@@ -252,7 +232,6 @@ profilePath: \\\\admin\\profiles\\administrator
 function SetupDHCP (){
     log "Start SetupDHCP"
     sed    "s/#CRANIX_SERVER#/${CRANIX_SERVER}/g"                   /usr/share/cranix/setup/templates/dhcpd.conf.ini > /usr/share/cranix/templates/dhcpd.conf
-    sed -i "s/#CRANIX_PRINTSERVER#/${CRANIX_PRINTSERVER}/g"         /usr/share/cranix/templates/dhcpd.conf
     sed -i "s/#CRANIX_DOMAIN#/${CRANIX_DOMAIN}/g"                   /usr/share/cranix/templates/dhcpd.conf
     sed -i "s/#CRANIX_ANON_DHCP_RANGE#/${CRANIX_ANON_DHCP_RANGE}/g" /usr/share/cranix/templates/dhcpd.conf
     sed -i "s/#CRANIX_NETWORK#/${CRANIX_NETWORK}/g"                 /usr/share/cranix/templates/dhcpd.conf
@@ -275,13 +254,15 @@ function SetupMail (){
 }
 
 function SetupProxy (){
-    log "Start SetupProxy"
-    sed "s/#DOMAIN#/${CRANIX_DOMAIN}/g" /srv/www/admin/proxy.pac.in > /srv/www/admin/proxy.pac
-    ln  /srv/www/admin/proxy.pac /srv/www/admin/wpad.dat
-    cp /etc/squid/squid.conf.in      /etc/squid/squid.conf
-    sed -i s/LimitNOFILE=.*/LimitNOFILE=16384/ /usr/lib/systemd/system/squid.service
-    grep -q www.google.de /etc/hosts || echo "216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en" >> /etc/hosts
-    log "End SetupProxy"
+    if [ -e /etc/squid/squid.conf ]; then
+        log "Start SetupProxy"
+        sed "s/#DOMAIN#/${CRANIX_DOMAIN}/g" /srv/www/admin/proxy.pac.in > /srv/www/admin/proxy.pac
+        ln  /srv/www/admin/proxy.pac /srv/www/admin/wpad.dat
+        cp /etc/squid/squid.conf.in      /etc/squid/squid.conf
+        sed -i s/LimitNOFILE=.*/LimitNOFILE=16384/ /usr/lib/systemd/system/squid.service
+        grep -q www.google.de /etc/hosts || echo "216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en" >> /etc/hosts
+        log "End SetupProxy"
+    fi
 }
 
 
@@ -351,20 +332,18 @@ function SetupInitialAccounts (){
         samba-tool ou create OU=teachers
     fi
     samba-tool group addmembers "Sysadmins" register
-
     ########################################################################
     #log " - Create primary group type and add base role to primary group"
     #samba-tool group add "primary" --description="Primary group for role"
     #samba-tool group addmembers "primary" "sysadmins,students,teachers,workstations,administration,templates"
 
     ########################################################################
-    log " - sysadmin primary group add to Domain Admins group"
+    log " - sysadmins primary group add to Domain Admins group"
     samba-tool group addmembers "Domain Admins" "SYSADMINS"
+    log " - add to Domain Admins group SePrintOperatorPrivilege"
+    net rpc rights grant "$windomain\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
+    #net rpc rights grant "$windomain\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
-    ########################################################################
-    #log " - Create admin user"
-    #/usr/share/cranix/setup/scripts/crx-add-user.sh --uid="admin" --givenname="Main" --surname="Sysadmin" --role="sysadmins" --password="$passwd" --groups=""
-    #samba-tool group addmembers "Domain Admins" admin
 
     ########################################################################
     log " - Create base template users"
@@ -463,7 +442,6 @@ unset _bred _sgr0
 	sed -i "s/#CRANIX_SERVER#/${CRANIX_SERVER}/g"		$i
 	sed -i "s/#CRANIX_MAILSERVER#/${CRANIX_MAILSERVER}/g"	$i
 	sed -i "s/#CRANIX_PROXY#/${CRANIX_PROXY}/g"		$i
-	sed -i "s/#CRANIX_PRINTSERVER#/${CRANIX_PRINTSERVER}/g"	$i
 	sed -i "s/#CRANIX_BACKUP_SERVER#/${CRANIX_BACKUP_SERVER}/g" $i
 	sed -i "s/#CRANIX_NETWORK#/${CRANIX_NETWORK}/g"		$i
 	sed -i "s/#CRANIX_NETMASK#/${CRANIX_NETMASK}/g"		$i

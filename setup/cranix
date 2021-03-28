@@ -92,7 +92,7 @@ CRANIX_BACKUP_WITH_HARDLINK="no"
 
 ########################################################################
 ## Path:        Network/Server/Basic
-## Description: Configuration of the CRANIX: Settings
+## Description: Configuration of the CRANIX: Basic
 ########################################################################
 
 ## Type:        yesno readonly
@@ -125,20 +125,10 @@ CRANIX_HOME_BASE="/home"
 # This varibale shows if the CRANIX was configured as a gateway.
 CRANIX_ISGATE="yes"
 
-## Type:	yesno readonly
-## Default:	no
-# Is this a demo version.
-CRANIX_IS_DEMO="no"
-
 ## Type:	string readonly
 ## Default:	"172.16.0.3"
 # IP-address of the mail server and groupware of the CRANIX.
 CRANIX_MAILSERVER="172.28.0.3"
-
-## Type:        string readonly
-## Default:     CRANIX
-# The name of the school.
-CRANIX_NAME="CRANIX"
 
 ## Type:	string readonly
 ## Default:	"16"
@@ -162,13 +152,8 @@ CRANIX_NET_GATEWAY="172.28.0.2"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.4"
-# IP-address of the print server of the CRANIX.
-CRANIX_PRINTSERVER="172.28.0.4"
-
-## Type:	string readonly
-## Default:	"172.16.0.5"
 # IP-address of the proxy server of the CRANIX.
-CRANIX_PROXY="172.28.0.5"
+CRANIX_PROXY="172.28.0.4"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.6"
@@ -249,6 +234,11 @@ CRANIX_UPDATE_URL="http://repo.cephalix.eu"
 ## Path:        Network/Server/Settings
 ## Description: Configuration of the CRANIX: Settings
 ########################################################################
+
+## Type:        string
+## Default:     CRANIX
+# The name of the school.
+CRANIX_NAME="CRANIX"
 
 ## Type:	yesno
 ## Default:	no
