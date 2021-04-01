@@ -64,4 +64,5 @@ with open(user_list) as csvfile:
 if role == 'students':
   for group in all_classes:
     os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/" + group + "-*.pdf " + import_dir + "/PASSWORDS-" + group + ".pdf")
-os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/*.pdf " + import_dir + "/PASSWORDS-ALL-USER.pdf")
+else:
+  os.system("/usr/bin/pdfunite " + import_dir + "passwordfiles/*.pdf " + import_dir + "/PASSWORDS-ALL-USER.pdf")
