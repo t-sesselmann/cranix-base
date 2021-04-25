@@ -16,7 +16,8 @@ all="no"
 samba="no"
 dhcp="no"
 #mail="no"
-proxy="no"
+filter="no"
+api="no"
 postsetup="no"
 accounts="no"
 verbose="yes"
@@ -37,7 +38,8 @@ function usage (){
 	echo "                --samba             Setup the AD-DC samba server."
 	echo "                --dhcp              Setup the DHCP server"
 	echo "                --mail              Setup the mail server"
-	echo "                --proxy             Setup the proxy server"
+	echo "                --filter            Setup the internet filter"
+	echo "                --api               Setup the API components"
 	echo "                --accounts          Create the initial groups and user accounts"
 	echo "                --postsetup         Make additional setups."
 	echo "                --cephalixpwf       Path to the file containing the password for the CEPHALIX user."
@@ -253,7 +255,7 @@ function SetupMail (){
     log "End SetupMail"
 }
 
-function SetupProxy (){
+function SetupInternetFilter (){
     if [ ${CRANIX_INTERNET_FILTER} = "proxy" ]; then
         log "Start SetupProxy"
         sed "s/#DOMAIN#/${CRANIX_DOMAIN}/g" /srv/www/admin/proxy.pac.in > /srv/www/admin/proxy.pac
@@ -263,10 +265,11 @@ function SetupProxy (){
         grep -q www.google.de /etc/hosts || echo "216.239.32.20  www.google.de www.google.com www.google.fr www.google.it www.google.hu www.google.en" >> /etc/hosts
         log "End SetupProxy"
     else
-	log "Setup Unbound"
+	log "Start SetupUnbound"
+	/usr/share/cranix/tools/unbound/setup.sh
+	log "End SetupUnbound"
     fi
 }
-
 
 function SetupInitialAccounts (){
     log "Start SetupInitialAccounts"
@@ -402,7 +405,7 @@ function SetupInitialAccounts (){
     log "End SetupInitialAccounts"
 }
 
-function PostSetup (){
+function ApiSetup (){
     log "Start PostSetup"
 
     ########################################################################
@@ -477,7 +480,9 @@ chmod 600 /root/.my.cnf
 
     sed -i s/MYSQLPWD/$password/ /opt/cranix-java/conf/cranix-api.properties
     sed -i s/CRANIX_NETBIOSNAME/${CRANIX_NETBIOSNAME}/ /opt/cranix-java/conf/cranix-api.properties
+}
 
+function PostSetup (){
     ########################################################################
     log "Create profile directory"
     mkdir -p  "$CRANIX_HOME_BASE/profiles"
@@ -608,8 +613,11 @@ while [ "$1" != "" ]; do
 	--mail )
                                 mail="yes"
         ;;
-	--proxy )
-                                proxy="yes"
+	--filter )
+				filter="yes"
+        ;;
+	--api )
+				api="yes"
         ;;
 	--accounts )
                                 accounts="yes"
@@ -646,11 +654,14 @@ fi
 if [ "$all" = "yes" ] || [ "$mail" = "yes" ]; then
     SetupMail
 fi
-if [ "$all" = "yes" ] || [ "$proxy" = "yes" ]; then
-    SetupProxy
+if [ "$all" = "yes" ] || [ "$filter" = "yes" ]; then
+    SetupInternetFilter
 fi
 if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
     SetupInitialAccounts
+fi
+if [ "$all" = "yes" ] || [ "$api" = "yes" ]; then
+    ApiSetup
 fi
 if [ "$all" = "yes" ] || [ "$postsetup" = "yes" ]; then
     PostSetup
