@@ -654,14 +654,14 @@ fi
 if [ "$all" = "yes" ] || [ "$mail" = "yes" ]; then
     SetupMail
 fi
-if [ "$all" = "yes" ] || [ "$filter" = "yes" ]; then
-    SetupInternetFilter
-fi
 if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
     SetupInitialAccounts
 fi
 if [ "$all" = "yes" ] || [ "$api" = "yes" ]; then
     ApiSetup
+fi
+if [ "$all" = "yes" ] || [ "$filter" = "yes" ]; then
+    SetupInternetFilter
 fi
 if [ "$all" = "yes" ] || [ "$postsetup" = "yes" ]; then
     PostSetup
