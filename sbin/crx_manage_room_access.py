@@ -7,11 +7,61 @@ import re
 import sys
 from argparse import ArgumentParser
 
-#Define globale variable
+def set_state():
+    if args.allow_printing and network in printing_denied_rooms:
+        printing_denied_rooms.remove(network)
+    else:
+        if network not in printing_denied_rooms:
+            printing_denied_rooms.append(network)
 
+    if args.allow_login and network in login_denied_rooms:
+        login_denied_rooms.remove(network)
+    else:
+        if network not in login_denied_rooms:
+            login_denied_rooms.append(network)
+
+    if len(printing_denied_rooms) == 0:
+        config.remove_option('printers','hosts deny')
+    else:
+        config.set('printers','hosts deny'," ".join(printing_denied_rooms))
+
+    if len(login_denied_rooms) == 0:
+        config.remove_option('global','hosts deny')
+    else:
+        config.set('global','hosts deny'," ".join(login_denied_rooms))
+
+    with open('/etc/samba/smb.conf','wt') as f:
+        config.write(f)
+
+    if args.allow_portal and portal in zones[name]['rule']:
+        os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
+    if args.deny_portal and portal not in zones[name]['rule']:
+        os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
+
+    if args.allow_proxy and proxy in zones[name]['rule']:
+        os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
+    if args.deny_proxy and proxy not in zones[name]['rule']:
+        os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
+
+    if args.allow_direct and zones[name]['masquerade'] == 'no':
+        os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade'.format(name))
+    if args.deny_direct and  zones[name]['masquerade'] == 'yes':
+        os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade'.format(name))
+
+def get_status():
+    return {
+        'login':     network not in login_denied_rooms,
+        'printing':  ( network not in printing_denied_rooms ) and ( network not in login_denied_rooms ),
+        'proxy':     proxy  not in zones[name]['rule'],
+        'portal':    portal not in zones[name]['rule'],
+        'direct':    zones[name]['masquerade'] == 'yes'
+   }
+
+#Parse arguments
 parser = ArgumentParser()
-parser.add_argument("--id",      dest="id",      default="", help="The room id.")
-parser.add_argument("--name",    dest="name",    default="", help="The name of the room.")
+parser.add_argument("--id",   dest="id",   default="", help="The room id.")
+parser.add_argument("--all",  dest="all",  default=False, action="store_true", help="Get or set the values of all rooms.")
+#parser.add_argument("--name",    dest="name",    default="", help="The name of the room.")
 parser.add_argument("--get", dest="get", default=False, action="store_true",
                     help="Gets the actuall access in a room.")
 parser.add_argument("--allow_printing",  dest="allow_printing",   default=False, action="store_true",
@@ -37,21 +87,23 @@ parser.add_argument("--deny_proxy", dest="allow_proxy",  default=False, action="
 parser.set_defaults(allow=True)
 args = parser.parse_args()
 
+#Start collecting datas
 config = configparser.ConfigParser()
 config.read('/etc/samba/smb.conf')
 
-login_denied_rooms=[]
+login_denied_rooms   =[]
 printing_denied_rooms=[]
-proxy  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
-portal = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
+proxy   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
+portal  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
 network = ""
 name    = ""
+rooms   = []
+zones   = {}
+
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
-    #print(login_denied_rooms)
 if 'hosts deny' in config['printers']:
     printing_denied_rooms = config.get('printers','hosts deny').split()
-    #print(printing_denied_rooms)
 
 if args.id != "":
     room = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}'.format(args.id)))
@@ -61,14 +113,13 @@ if args.id != "":
     else:
         print("Can not find the room with id {0}".format(args.id))
         sys.exit(-1)
-elif args.name !=  "":
-    network = args.network
+elif args.all:
+    rooms = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/all'))
 else:
     print("You have to define a room")
     sys.exit(-1)
 
 rule = False
-zones = {}
 for line in os.popen('/usr/bin/firewall-cmd --list-all-zones').readlines():
     match1 = re.search("^(\S+)",line)
     match2 = re.search("\s+rich rules:",line)
@@ -88,55 +139,16 @@ for line in os.popen('/usr/bin/firewall-cmd --list-all-zones').readlines():
             zones[key]['rule'].append(match4.group(1))
 # Now we can send the state if this was the question
 if args.get:
-    actual_access = {
-            'login':     network not in login_denied_rooms,
-            'printing':  ( network not in printing_denied_rooms ) and ( network not in login_denied_rooms ),
-            'proxy':     proxy  not in zones[name]['rule'],
-            'portal':    portal not in zones[name]['rule'],
-            'direct':    zones[name]['masquerade'] == 'yes'
-    }
-    print(actual_access)
-    sys.exit(0)
+    if args.all:
+        status = []
+        for room in rooms:
+            name = room['name']
+            network='{0}/{1}'.format(room['startIP'],room['netMask'])
+            status.append(get_status())
+        print(json.dumps(status))
+        sys.exit(0)
+    else:
+        print(json.dumps(get_status()))
+        sys.exit(0)
 
 # Now we set the state
-print(args.allow_printing)
-print(network in printing_denied_rooms)
-if args.allow_printing and network in printing_denied_rooms:
-    printing_denied_rooms.remove(network)
-else:
-    if network not in printing_denied_rooms:
-        printing_denied_rooms.append(network)
-
-if args.allow_login and network in login_denied_rooms:
-    login_denied_rooms.remove(network)
-else:
-    if network not in login_denied_rooms:
-        login_denied_rooms.append(network)
-
-if len(printing_denied_rooms) == 0:
-    config.remove_option('printers','hosts deny')
-else:
-    config.set('printers','hosts deny'," ".join(printing_denied_rooms))
-
-if len(login_denied_rooms) == 0:
-    config.remove_option('global','hosts deny')
-else:
-    config.set('global','hosts deny'," ".join(login_denied_rooms))
-
-with open('/etc/samba/smb.conf','wt') as f:
-    config.write(f)
-
-if args.allow_portal and portal in zones[name]['rule']:
-    os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
-if args.deny_portal and portal not in zones[name]['rule']:
-    os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
-
-if args.allow_proxy and proxy in zones[name]['rule']:
-    os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
-if args.deny_proxy and proxy not in zones[name]['rule']:
-    os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
-
-if args.allow_direct and zones[name]['masquerade'] == 'no':
-    os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade'.format(name))
-if args.deny_direct and  zones[name]['masquerade'] == 'yes':
-    os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade'.format(name))
