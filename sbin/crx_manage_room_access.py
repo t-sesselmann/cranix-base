@@ -3,6 +3,7 @@
 import configparser
 import json
 import os
+import re
 import sys
 from argparse import ArgumentParser
 
@@ -10,7 +11,7 @@ from argparse import ArgumentParser
 
 parser = ArgumentParser()
 parser.add_argument("--id",      dest="id",      default="", help="The room id.")
-parser.add_argument("--network", dest="network", default="", help="The network of the room.")
+parser.add_argument("--name",    dest="name",    default="", help="The name of the room.")
 parser.add_argument("--get", dest="get", default=False, action="store_true",
                     help="Gets the actuall access in a room.")
 parser.add_argument("--allow_printing",  dest="allow_printing",   default=False, action="store_true",
@@ -41,7 +42,10 @@ config.read('/etc/samba/smb.conf')
 
 login_denied_rooms=[]
 printing_denied_rooms=[]
+proxy  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
+portal = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
 network = ""
+name    = ""
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
     #print(login_denied_rooms)
@@ -51,29 +55,45 @@ if 'hosts deny' in config['printers']:
 
 if args.id != "":
     room = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}'.format(args.id)))
+    name = room['name']
     if 'startIP' in room:
         network='{0}/{1}'.format(room['startIP'],room['netMask'])
     else:
         print("Can not find the room with id {0}".format(args.id))
         sys.exit(-1)
-elif args.network !=  "":
+elif args.name !=  "":
     network = args.network
 else:
     print("You have to define a room")
     sys.exit(-1)
 
-print(network)
+rule = False
+zones = {}
+for line in os.popen('/usr/bin/firewall-cmd --list-all-zones').readlines():
+    match1 = re.search("^(\S+)",line)
+    match2 = re.search("\s+rich rules:",line)
+    match3 = re.search("\s+(\S+): (\S+)",line)
+    if match1:
+        key = match1.group(1)
+        zones[key] = {}
+        rule = False
+    elif match2:
+        rule = True
+        zones[key]['rule'] = []
+    elif match3:
+        zones[key][match3.group(1)] = match3.group(2)
+    elif rule:
+        match4 = re.search('address="([0-9\.]+)"',line)
+        if match4:
+            zones[key]['rule'].append(match4.group(1))
 # Now we can send the state if this was the question
 if args.get:
-    proxy  = os.popen('/usr/sbin/iptables -L -n -v | grep {0}-{1}'.format('proxy',  network)).read()
-    portal = os.popen('/usr/sbin/iptables -L -n -v | grep {0}-{1}'.format('portal', network)).read()
-    direct = os.popen('/usr/sbin/iptables -L -t nat -n -v | grep "MASQUERADE.*{0}"'.format(network)).read()
     actual_access = {
             'login':     network not in login_denied_rooms,
             'printing':  ( network not in printing_denied_rooms ) and ( network not in login_denied_rooms ),
-            'proxy':     proxy  == "",
-            'portal':    portal == "",
-            'direct':    direct != ""
+            'proxy':     proxy  not in zones[name]['rule'],
+            'portal':    portal not in zones[name]['rule'],
+            'direct':    zones[name]['masquerade'] == 'yes'
     }
     print(actual_access)
     sys.exit(0)
@@ -105,3 +125,18 @@ else:
 
 with open('/etc/samba/smb.conf','wt') as f:
     config.write(f)
+
+if args.allow_portal and portal in zones[name]['rule']:
+    os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
+if args.deny_portal and portal not in zones[name]['rule']:
+    os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
+
+if args.allow_proxy and proxy in zones[name]['rule']:
+    os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
+if args.deny_proxy and proxy not in zones[name]['rule']:
+    os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
+
+if args.allow_direct and zones[name]['masquerade'] == 'no':
+    os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade'.format(name))
+if args.deny_direct and  zones[name]['masquerade'] == 'yes':
+    os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade'.format(name))

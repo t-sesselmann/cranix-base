@@ -516,19 +516,27 @@ function PostSetup (){
     systemctl start  apache2
 
     ########################################################################
-    log "Setup SuSEFirewall2"
+    log "Setup firewalld"
     if [ $CRANIX_ISGATE = "yes" ]; then
-        sed -i 's/^FW_ROUTE=.*/FW_ROUTE="yes"/'          /etc/sysconfig/SuSEfirewall2
-        sed -i 's/^FW_MASQUERADE=.*/FW_MASQUERADE="no"/' /etc/sysconfig/SuSEfirewall2
 	echo "## Enable forwarding."                  >  /etc/sysctl.d/cranix.conf
 	echo "net.ipv4.ip_forward = 1 "              >>  /etc/sysctl.d/cranix.conf
 	echo "net.ipv6.conf.all.forwarding = 1 "     >>  /etc/sysctl.d/cranix.conf
-        systemctl enable SuSEfirewall2
-    else
-        systemctl disable SuSEfirewall2
     fi
-    sed -i 's#^FW_CUSTOMRULES=.*#FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"#' /etc/sysconfig/SuSEfirewall2
-    cp /usr/share/cranix/setup/templates/SuSEfirewall2-custom /etc/sysconfig/scripts/SuSEfirewall2-custom
+    systemctl enable firewalld
+    systemctl start  firewalld
+    /usr/bin/firewall-cmd --permanent --new-zone=ANON_DHCP
+    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-description="Zone for ANON_DHCP"
+    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --add-source="$CRANIX_ANON_DHCP_NET"
+    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
+    /usr/bin/firewall-cmd --permanent --new-zone=SERVER_NET
+    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-description="Zone for SERVER_NET"
+    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$CRANIX_SERVER_NET"
+    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-target=ACCEPT
+    /usr/bin/firewall-cmd --permanent --new-zone=CRANIX_NET
+    /usr/bin/firewall-cmd --permanent --zone=CRANIX_NET --set-description="Zone for CRANIX_NET"
+    /usr/bin/firewall-cmd --permanent --zone=CRANIX_NET --add-source="${CRANIX_NETWORK}/${CRANIX_NETMASK}"
+    /usr/bin/firewall-cmd --permanent --zone=CRANIX_NET --set-target=ACCEPT
+
 
     ########################################################################
     log "Setup Cups"
