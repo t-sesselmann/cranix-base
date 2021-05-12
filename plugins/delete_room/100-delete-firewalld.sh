@@ -2,11 +2,11 @@
 
 abort() {
         TASK="add_room-$( uuidgen -t )"
-        mkdir -p /var/adm/oss/opentasks/
-        echo "name: $name" >> /var/adm/oss/opentasks/$TASK
-        echo "start: $start" >> /var/adm/oss/opentasks/$TASK
-        echo "netmask: $netmask" >> /var/adm/oss/opentasks/$TASK
-        echo "hwconf: $hwconf" >> /var/adm/oss/opentasks/$TASK
+        mkdir -p /var/adm/cranix/opentasks/
+        echo "name: $name" >> /var/adm/cranix/opentasks/$TASK
+        echo "start: $start" >> /var/adm/cranix/opentasks/$TASK
+        echo "netmask: $netmask" >> /var/adm/cranix/opentasks/$TASK
+        echo "hwconf: $hwconf" >> /var/adm/cranix/opentasks/$TASK
         exit 1
 }
 
