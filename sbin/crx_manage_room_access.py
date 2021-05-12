@@ -8,13 +8,21 @@ import sys
 from argparse import ArgumentParser
 
 def set_state():
-    if args.allow_printing and network in printing_denied_rooms:
+    if args.set_default:
+        access = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/defaultAccess'.format(args.id)))
+        if 'printing' in access:
+            allow_printing = access['printing']
+            allow_login    = access['login']
+            allow_portal   = access['portal']
+            allow_proxy    = access['proxy']
+            allow_direct   = access['direct']
+    if allow_printing and network in printing_denied_rooms:
         printing_denied_rooms.remove(network)
     else:
         if network not in printing_denied_rooms:
             printing_denied_rooms.append(network)
 
-    if args.allow_login and network in login_denied_rooms:
+    if allow_login and network in login_denied_rooms:
         login_denied_rooms.remove(network)
     else:
         if network not in login_denied_rooms:
@@ -33,29 +41,29 @@ def set_state():
     with open('/etc/samba/smb.conf','wt') as f:
         config.write(f)
 
-    if args.allow_portal and portal in zones[name]['rule']:
+    if allow_portal and portal in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
-    if args.deny_portal and portal not in zones[name]['rule']:
+    if !allow_portal and portal not in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,portal))
 
-    if args.allow_proxy and proxy in zones[name]['rule']:
+    if allow_proxy and proxy in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
-    if args.deny_proxy and proxy not in zones[name]['rule']:
+    if !allow_proxy and proxy not in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop"'.format(name,proxy))
 
-    if args.allow_direct and zones[name]['masquerade'] == 'no':
+    if allow_direct and zones[name]['masquerade'] == 'no':
         os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade'.format(name))
-    if args.deny_direct and  zones[name]['masquerade'] == 'yes':
+    if !allow_direct and  zones[name]['masquerade'] == 'yes':
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade'.format(name))
 
-def get_status():
+def get_state():
     return {
         'login':     network not in login_denied_rooms,
         'printing':  ( network not in printing_denied_rooms ) and ( network not in login_denied_rooms ),
         'proxy':     proxy  not in zones[name]['rule'],
         'portal':    portal not in zones[name]['rule'],
         'direct':    zones[name]['masquerade'] == 'yes'
-   }
+    }
 
 #Parse arguments
 parser = ArgumentParser()
@@ -66,26 +74,24 @@ parser.add_argument("--get", dest="get", default=False, action="store_true",
                     help="Gets the actuall access in a room.")
 parser.add_argument("--allow_printing",  dest="allow_printing",   default=False, action="store_true",
                     help="Allow the printing access in a room.")
-parser.add_argument("--deny_printing", dest="allow_printing",  default=False, action="store_false",
-                    help="Deny the printing access in a room.")
 parser.add_argument("--allow_login",  dest="allow_login",   default=False, action="store_true",
                     help="Allow the login access in a room.")
-parser.add_argument("--deny_login", dest="allow_login",  default=False, action="store_false",
-                    help="Deny the login access in a room.")
 parser.add_argument("--allow_portal",  dest="allow_portal",   default=False, action="store_true",
                     help="Allow the portal access in a room.")
-parser.add_argument("--deny_portal", dest="allow_portal",  default=False, action="store_false",
-                    help="Deny the portal access in a room.")
 parser.add_argument("--allow_direct",  dest="allow_direct",   default=False, action="store_true",
                     help="Allow the direct internet access in a room.")
-parser.add_argument("--deny_direct", dest="allow_direct",  default=False, action="store_false",
-                    help="Deny the direct internet access in a room.")
 parser.add_argument("--allow_proxy",  dest="allow_proxy",   default=False, action="store_true",
                     help="Allow the proxy access in a room.")
-parser.add_argument("--deny_proxy", dest="allow_proxy",  default=False, action="store_false",
-                    help="Deny the proxy access in a room.")
+parser.add_argument("--set_defaults",  dest="set_defaults",   default=False, action="store_true",
+                    help="Set the default access state in the room(s).")
 parser.set_defaults(allow=True)
 args = parser.parse_args()
+
+allow_printing = args.allow_printing
+allow_login    = args.allow_login
+allow_portal   = args.allow_portal
+allow_direct   = args.allow_direct
+allow_proxy    = args.allow_proxy
 
 #Start collecting datas
 config = configparser.ConfigParser()
@@ -99,6 +105,7 @@ network = ""
 name    = ""
 rooms   = []
 zones   = {}
+room_id = 0
 
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
@@ -108,6 +115,7 @@ if 'hosts deny' in config['printers']:
 if args.id != "":
     room = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}'.format(args.id)))
     name = room['name']
+    room_id = args.id
     if 'startIP' in room:
         network='{0}/{1}'.format(room['startIP'],room['netMask'])
     else:
@@ -142,13 +150,21 @@ if args.get:
     if args.all:
         status = []
         for room in rooms:
+            room_id = room['id']
+            name    = room['name']
+            network ='{0}/{1}'.format(room['startIP'],room['netMask'])
+            status.append(get_state())
+        print(json.dumps(status))
+    else:
+        print(json.dumps(get_state()))
+else:
+    if args.all:
+        status = []
+        for room in rooms:
             name = room['name']
             network='{0}/{1}'.format(room['startIP'],room['netMask'])
-            status.append(get_status())
-        print(json.dumps(status))
-        sys.exit(0)
+            set_state()
     else:
-        print(json.dumps(get_status()))
-        sys.exit(0)
+        set_state()
 
 # Now we set the state
