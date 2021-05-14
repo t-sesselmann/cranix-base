@@ -13,15 +13,17 @@ parser.add_argument("--id",   dest="id",   default="", help="The room id.")
 parser.add_argument("--all",  dest="all",  default=False, action="store_true", help="Get or set the values of all rooms.")
 parser.add_argument("--get", dest="get", default=False, action="store_true",
                     help="Gets the actuall access in a room.")
-parser.add_argument("--allow_printing",  dest="allow_printing",   default=False, action="store_true",
+parser.add_argument("--deny_printing",  dest="deny_printing",   default=False, action="store_true",
                     help="Allow the printing access in a room.")
-parser.add_argument("--allow_login",  dest="allow_login",   default=False, action="store_true",
+parser.add_argument("--deny_login",  dest="deny_login",   default=False, action="store_true",
                     help="Allow the login access in a room.")
-parser.add_argument("--allow_portal",  dest="allow_portal",   default=False, action="store_true",
+parser.add_argument("--deny_portal",  dest="deny_portal",   default=False, action="store_true",
                     help="Allow the portal access in a room.")
-parser.add_argument("--allow_direct",  dest="allow_direct",   default=False, action="store_true",
+parser.add_argument("--deny_direct",  dest="deny_direct",   default=False, action="store_true",
                     help="Allow the direct internet access in a room.")
-parser.add_argument("--allow_proxy",  dest="allow_proxy",   default=False, action="store_true",
+parser.add_argument("--let_direct",  dest="let_direct",   default=False, action="store_true",
+                    help="Do not change the direct internet setting.")
+parser.add_argument("--deny_proxy",  dest="deny_proxy",   default=False, action="store_true",
                     help="Allow the proxy access in a room.")
 parser.add_argument("--set_defaults",  dest="set_defaults",   default=False, action="store_true",
                     help="Set the default access state in the room(s).")
@@ -30,20 +32,26 @@ args = parser.parse_args()
 
 #Global variables
 args
-allow_printing = args.allow_printing
-allow_login    = args.allow_login
-allow_portal   = args.allow_portal
-allow_direct   = args.allow_direct
-allow_proxy    = args.allow_proxy
+allow_printing = not args.deny_printing
+allow_login    = not args.deny_login
+allow_portal   = not args.deny_portal
+allow_direct   = not args.deny_direct
+allow_proxy    = not args.deny_proxy
 login_denied_rooms   =[]
 printing_denied_rooms=[]
 rooms   = []
 zones   = {}
 proxy   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
 portal  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
+debug   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DEBUG').read() == "yes"
 network = ""
 name    = ""
 room_id = 0
+
+def log_debug(msg):
+    global debug
+    if debug:
+        print(msg)
 
 def set_state():
     global allow_printing, allow_login, allow_portal, allow_direct, allow_proxy
@@ -73,23 +81,31 @@ def set_state():
 
     if allow_portal and portal in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+        log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
     if not allow_portal and portal not in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+        log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
 
     if allow_proxy and proxy in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+        log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
     if not allow_proxy and proxy not in zones[name]['rule']:
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+        log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
 
-    if allow_direct and zones[name]['masquerade'] == 'no':
-        os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade &>/dev/null'.format(name))
-    if not allow_direct and  zones[name]['masquerade'] == 'yes':
-        os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade &>/dev/null'.format(name))
+    if not args.let_direct:
+        if allow_direct and zones[name]['masquerade'] == 'no':
+            os.system('/usr/bin/firewall-cmd --zone={0} --add-masquerade &>/dev/null'.format(name))
+            log_debug('/usr/bin/firewall-cmd --zone={0} --add-masquerade &>/dev/null'.format(name))
+        if not allow_direct and  zones[name]['masquerade'] == 'yes':
+            os.system('/usr/bin/firewall-cmd --zone={0} --remove-masquerade &>/dev/null'.format(name))
+            log_debug('/usr/bin/firewall-cmd --zone={0} --remove-masquerade &>/dev/null'.format(name))
 
 def get_state():
     global network, proxy, portal, name, room_id
     global login_denied_rooms, printing_denied_rooms, zones
     return {
+        'accessType': 'FW',
         'roomId':    room_id,
         'roomName':  name,
         'login':     network not in login_denied_rooms,
@@ -101,7 +117,7 @@ def get_state():
 
 
 #Start collecting datas
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(delimiters=('='))
 config.read('/etc/samba/smb.conf')
 
 if 'hosts deny' in config['global']:
@@ -119,7 +135,7 @@ if args.id != "":
         print("Can not find the room with id {0}".format(args.id))
         sys.exit(-1)
 elif args.all:
-    rooms = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/all'))
+    rooms = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/allWithControl'))
 else:
     print("You have to define a room")
     sys.exit(-1)
