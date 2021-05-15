@@ -39,6 +39,7 @@ allow_direct   = not args.deny_direct
 allow_proxy    = not args.deny_proxy
 login_denied_rooms   =[]
 printing_denied_rooms=[]
+room    = {}
 rooms   = []
 zones   = {}
 proxy   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
@@ -131,9 +132,12 @@ if args.id != "":
     room_id = args.id
     if 'startIP' in room:
         network='{0}/{1}'.format(room['startIP'],room['netMask'])
+    elif room['roomControl'] == 'no':
+        print("This room '{0}' can not be dynamical controlled".format(room['name']))
+        sys.exit(-1)
     else:
         print("Can not find the room with id {0}".format(args.id))
-        sys.exit(-1)
+        sys.exit(-2)
 elif args.all:
     rooms = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/allWithControl'))
 else:
@@ -175,9 +179,10 @@ else:
     if args.all:
         status = []
         for room in rooms:
-            name = room['name']
-            network='{0}/{1}'.format(room['startIP'],room['netMask'])
-            set_state()
+            if room['roomControl'] != 'no':
+                name = room['name']
+                network='{0}/{1}'.format(room['startIP'],room['netMask'])
+                set_state()
     else:
         set_state()
 
