@@ -532,6 +532,9 @@ function PostSetup (){
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-description="Zone for SERVER_NET"
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$CRANIX_SERVER_NET"
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-target=ACCEPT
+    if [ ${CRANIX_INTERNET_FILTER} = "dns" ]; then
+        /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-masquerade
+    fi
     /usr/bin/firewall-cmd --permanent --new-zone=CRANIX_NET
     /usr/bin/firewall-cmd --permanent --zone=CRANIX_NET --set-description="Zone for CRANIX_NET"
     /usr/bin/firewall-cmd --permanent --zone=CRANIX_NET --add-source="${CRANIX_NETWORK}/${CRANIX_NETMASK}"
