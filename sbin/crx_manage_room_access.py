@@ -160,7 +160,7 @@ for line in os.popen('/usr/bin/firewall-cmd --list-all-zones').readlines():
     elif match3:
         zones[key][match3.group(1)] = match3.group(2)
     elif rule:
-        match4 = re.search('address="([0-9\.]+)"',line)
+        match4 = re.search('address="([0-9\./]+)"',line)
         if match4:
             zones[key]['rule'].append(match4.group(1))
 

@@ -533,7 +533,7 @@ function PostSetup (){
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$CRANIX_SERVER_NET"
     /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-target=ACCEPT
     if [ ${CRANIX_INTERNET_FILTER} = "dns" ]; then
-        /usr/bin/firewall-cmd --permanent --zone=public --add-rich-rule="rule family=ipv4 source address=$CRANIX_SERVER_NET masquerade"
+        /usr/bin/firewall-cmd --permanent --zone=external --add-rich-rule="rule family=ipv4 source address=$CRANIX_SERVER_NET masquerade"
     fi
 
     ########################################################################
