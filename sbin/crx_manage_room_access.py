@@ -48,6 +48,8 @@ debug   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DEBUG').r
 network = ""
 name    = ""
 room_id = 0
+fw_changed = False
+smb_changed = False
 
 def log_debug(msg):
     global debug
@@ -77,29 +79,37 @@ def set_state():
 
     if allow_login:
         if network in login_denied_rooms:
+            smb_changed = True
             login_denied_rooms.remove(network)
     elif network not in login_denied_rooms:
+            smb_changed = True
             login_denied_rooms.append(network)
 
     if allow_portal and portal in zones[name]['rule']:
+        fw_changed = True
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
         log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
     if not allow_portal and portal not in zones[name]['rule']:
+        fw_changed = True
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
         log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
 
     if allow_proxy and proxy in zones[name]['rule']:
+        fw_changed = True
         os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
         log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
     if not allow_proxy and proxy not in zones[name]['rule']:
+        fw_changed = True
         os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
         log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
 
     if not args.let_direct:
         if allow_direct and network not in zones['external']['rule']:
+            fw_changed = True
             os.system('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
             log_debug('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
         if not allow_direct and  network in zones['external']['rule']:
+            fw_changed = True
             os.system('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
             log_debug('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
 
@@ -188,17 +198,21 @@ else:
     else:
         set_state()
 
-    if len(printing_denied_rooms) == 0:
-        config.remove_option('printers','hosts deny')
-    else:
-        config.set('printers','hosts deny'," ".join(printing_denied_rooms))
+    if smb_changed:
+        if len(printing_denied_rooms) == 0:
+            config.remove_option('printers','hosts deny')
+        else:
+            config.set('printers','hosts deny'," ".join(printing_denied_rooms))
 
-    if len(login_denied_rooms) == 0:
-        config.remove_option('global','hosts deny')
-    else:
-        config.set('global','hosts deny'," ".join(login_denied_rooms))
+        if len(login_denied_rooms) == 0:
+            config.remove_option('global','hosts deny')
+        else:
+            config.set('global','hosts deny'," ".join(login_denied_rooms))
 
-    with open('/etc/samba/smb.conf','wt') as f:
-        config.write(f)
+        with open('/etc/samba/smb.conf','wt') as f:
+            config.write(f)
+        os.system("/usr/bin/systemctl reload samba-ad.service")
 
+    if fw_changed:
+        os.system("/usr/bin/systemctl reload firewalld.service")
 
