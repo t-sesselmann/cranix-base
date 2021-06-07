@@ -52,7 +52,7 @@ if [ "$wlanip" -a "$wlanmac" ]; then
 	   abort 2
 	fi
 fi
-samba-tool user delete "${name}$"
+samba-tool user delete "$name"
 if [ $? != 0 ]; then
    abort 3
 fi
