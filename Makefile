@@ -5,13 +5,13 @@ DESTDIR         = /
 SHARE           = $(DESTDIR)/usr/share/cranix/
 FILLUPDIR       = /usr/share/fillup-templates/
 PYTHONSITEARCH  = /usr/lib/python3.6/site-packages/
-TOPACKAGE       = Makefile addons cups etc plugins python profiles sbin setup salt tools templates updates README.md
+TOPACKAGE       = Makefile addons cups etc plugins python software sbin setup salt tools templates updates README.md
 HERE            = $(shell pwd)
 REPO            = /data1/OSC/home:pvarkoly:CRANIX
 PACKAGE         = cranix-base
 
 install:
-	mkdir -p $(SHARE)/{setup,templates,tools,plugins,profiles,updates}
+	mkdir -p $(SHARE)/{setup,templates,tools,plugins,software,updates}
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system-preset
 	mkdir -p $(DESTDIR)/usr/sbin/ 
 	mkdir -p $(DESTDIR)/$(FILLUPDIR)
@@ -28,7 +28,7 @@ install:
 	rsync -a   etc/             $(DESTDIR)/etc/
 	rsync -a   addons/          $(SHARE)/addons/
 	rsync -a   plugins/         $(SHARE)/plugins/
-	rsync -a   profiles/        $(SHARE)/profiles/
+	rsync -a   software/        $(SHARE)/software/
 	rsync -a   setup/           $(SHARE)/setup/
 	mv $(SHARE)/setup/80-default-CRANIX.preset $(DESTDIR)/usr/lib/systemd/system-preset/
 	rsync -a   templates/       $(SHARE)/templates/
