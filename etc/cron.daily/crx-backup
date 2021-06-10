@@ -121,7 +121,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
     fi
     if [ -e /var/adm/backup/LAST_BACKUP ]; then
         LAST_BACKUP=`cat /var/adm/backup/LAST_BACKUP`
-    else  
+    else
         LAST_BACKUP=$DATE
     fi
     # check needed configs
@@ -250,7 +250,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
             TheEnd 6 "CAN_NOT_MAKE_BACKUP"
         fi
     fi
-  
+
     if [ "$CRANIX_BACKUP_DB" = "yes" ]; then
         LOG "Syncing CRANIX Database"
         mysqldump $MYSQLDUMP_OPTIONS --all-databases | gzip > $BACKUP_DIR/MYSQL.sql.gz
@@ -268,7 +268,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
             if [ $? != 0 ]; then
                 LOG " CAN_NOT_MAKE_BACKUP"
             fi
-        done  
+        done
     fi
 
     # Now we make recovery easy
@@ -278,7 +278,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ] ; then
       chown root:root $CRANIX_BACKUP_FULL_DIR/crx_recover.sh
     fi
     if [ -f /usr/share/doc/packages/openschool-base/crx_recover.readme ]; then
-      cp -f /usr/share/doc/packages/openschool-base/crx_recover.readme $CRANIX_BACKUP_FULL_DIR/    
+      cp -f /usr/share/doc/packages/openschool-base/crx_recover.readme $CRANIX_BACKUP_FULL_DIR/
     fi
 
     # Execute custom scripts
