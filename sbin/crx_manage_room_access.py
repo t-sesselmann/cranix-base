@@ -141,11 +141,11 @@ if args.id != "":
     room = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}'.format(args.id)))
     name = room['name']
     room_id = args.id
-    if 'startIP' in room:
-        network='{0}/{1}'.format(room['startIP'],room['netMask'])
-    elif room['roomControl'] == 'no':
+    if room['roomControl'] == 'no':
         print("This room '{0}' can not be dynamical controlled".format(room['name']))
         sys.exit(-1)
+    if 'startIP' in room:
+        network='{0}/{1}'.format(room['startIP'],room['netMask'])
     else:
         print("Can not find the room with id {0}".format(args.id))
         sys.exit(-2)
