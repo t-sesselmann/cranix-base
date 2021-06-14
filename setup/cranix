@@ -112,12 +112,12 @@ CRANIX_ANON_DHCP_RANGE="172.28.1.0 172.28.1.31"
 
 ## Type:	string readonly
 ## Default:	172.16.2.0
-# The network address of the first school room.
+# The network address of the first institute room.
 CRANIX_FIRST_ROOM_NET="172.28.2.0"
 
 ## Type:	string readonly
 ## Default:	"/home"
-# Base of the school home directory.
+# Base of the institute home directory.
 CRANIX_HOME_BASE="/home"
 
 ## Type:	yesno readonly
@@ -197,7 +197,7 @@ CRANIX_NETBIOSNAME="admin"
 
 ## Type:	string readonly
 ## Default:	CRANIX
-# The windows domain name of the school.
+# The windows domain name of the institute.
 CRANIX_WORKGROUP="CRANIX"
 
 ## Type:	string readonly
@@ -212,7 +212,7 @@ CRANIX_CCODE="DE"
 
 ## Type:        string readonly
 ## Default:
-# DNS Domain of the school.
+# DNS Domain of the institute.
 CRANIX_DOMAIN="cranix.eu"
 
 ## Type:        string readonly
@@ -242,7 +242,7 @@ CRANIX_TYPE="real"
 
 ## Type:        string
 ## Default:     CRANIX
-# The name of the school.
+# The name of the institute.
 CRANIX_NAME="CRANIX"
 
 ## Type:	yesno
@@ -424,3 +424,8 @@ CRANIX_CLASS_ADHOC_NETWORK=""
 # This variable allows or disables windows clients to download updates.
 CRANIX_ALLOW_WINDOWS_UPDATES="no"
 
+## Type:        string
+## Default:
+# DNS Domain of the institute for wich official certificate was created.
+# This can be empty if this is the normal DNS domain
+CRANIX_CERT_DOMAIN=""
