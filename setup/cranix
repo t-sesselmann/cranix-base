@@ -429,3 +429,8 @@ CRANIX_CLASS_ADHOC_NETWORK=""
 # This variable allows or disables windows clients to download updates.
 CRANIX_ALLOW_WINDOWS_UPDATES="no"
 
+## Type:        string
+## Default:
+# DNS Domain of the institute for wich official certificate was created.
+# This can be empty if this is the normal DNS domain
+CRANIX_CERT_DOMAIN=""
