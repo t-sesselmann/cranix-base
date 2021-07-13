@@ -491,6 +491,13 @@ function PostSetup (){
     /usr/bin/setfacl --restore=/usr/share/cranix/setup/profiles-acls
 
     ########################################################################
+    log "Setup sssd configuration"
+    LDAPBASE=$( crx_get_dn.sh ossreader | sed 's/dn: CN=ossreader,CN=Users,//' )
+    sed "s/###LDAPBASE###/$LDAPBASE/" /usr/share/cranix/setup/templates/sssd.conf /etc/sssd/sssd.conf
+    sed -i "s/###WORKGROUP###/${CRANIX_WORKGROUP}/" /etc/sssd/sssd.conf
+    chmod 600 /etc/sssd/sssd.conf
+
+    ########################################################################
     if [ ! -e /etc/ssl/servercerts/cacert.pem ]; then
 	log "Create Certificates"
 	/usr/share/cranix/tools/create_server_certificates.sh -N CA
