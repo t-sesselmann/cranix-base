@@ -266,6 +266,9 @@ function SetupInternetFilter (){
         log "End SetupProxy"
     else
 	log "Start SetupUnbound"
+	if [ ! -e /usr/share/cranix/tools/unbound/setup.sh ]; then
+		zypper -n install cranix-unbound
+	fi
 	/usr/share/cranix/tools/unbound/setup.sh
 	log "End SetupUnbound"
     fi
