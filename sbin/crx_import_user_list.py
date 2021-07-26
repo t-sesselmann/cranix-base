@@ -85,7 +85,8 @@ for ident in cranix.import_list:
         cranix.log_debug("New user",new_user)
         cranix.log_msg(ident,"New user. Classes:" + new_user['classes'])
         if not args.test:
-             cranix.add_user(new_user,ident)
+            if not cranix.add_user(new_user,ident):
+                continue
     #trate classes
     for cl in new_classes:
         if cl == '' or cl.isspace():
