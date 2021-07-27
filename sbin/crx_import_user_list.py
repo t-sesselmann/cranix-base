@@ -63,7 +63,7 @@ for ident in cranix.import_list:
         cranix.log_debug("Old user",old_user)
         new_user['id']  = old_user['id']
         new_user['uid'] = old_user['uid']
-        old_classes = old_user['classes'].split()
+        old_classes = old_user['classes'].split(',')
         cranix.log_debug("Old user",old_user)
         cranix.log_msg(ident,"Old user. Old classes: " + old_user['classes'] + " New Classes:" + new_user['classes'] )
         if not args.test:
