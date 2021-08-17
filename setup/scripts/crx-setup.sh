@@ -279,7 +279,7 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create base directory"
-    mkdir -m 770 -p $CRANIX_HOME_BASE/all
+    mkdir -m 777 -p $CRANIX_HOME_BASE/all
     mkdir -m 755 -p $CRANIX_HOME_BASE/archiv
     mkdir -m 755 -p $CRANIX_HOME_BASE/groups
     mkdir -m 775 -p $CRANIX_HOME_BASE/software
@@ -287,14 +287,6 @@ function SetupInitialAccounts (){
     if [ $CRANIX_TEACHER_OBSERV_HOME = 'yes' ]; then
 	mkdir -m 750 -p $CRANIX_HOME_BASE/classes
     fi
-
-    if [ "$CRANIX_TYPE" = "cephalix" -o "$CRANIX_TYPE" = "business" -o $CRANIX_TYPE = 'primary' ]; then
-	chmod 1777 $CRANIX_HOME_BASE/all
-    else
-	chmod 1770 $CRANIX_HOME_BASE/all
-    fi
-    chmod 1775 $CRANIX_HOME_BASE/software
-
 
     ########################################################################
     log " - Create internal users"
@@ -379,11 +371,6 @@ function SetupInitialAccounts (){
         setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
 	;;
       *)
-	setfacl -m m::rwx                   $CRANIX_HOME_BASE/all
-	setfacl -m g:$teachers_gn:rwx       $CRANIX_HOME_BASE/all
-	setfacl -m g:$students_gn:rwx       $CRANIX_HOME_BASE/all
-	setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/all
-
 	chgrp        $teachers_gn           $CRANIX_HOME_BASE/software
 	setfacl -m g:$students_gn:rx        $CRANIX_HOME_BASE/software
 	setfacl -m g:$sysadmins_gn:rwx      $CRANIX_HOME_BASE/software
