@@ -514,13 +514,15 @@ function PostSetup (){
 
     ########################################################################
     log "Setup firewalld"
+    systemctl enable firewalld
+    systemctl start  firewalld
     if [ $CRANIX_ISGATE = "yes" ]; then
 	echo "## Enable forwarding."                  >  /etc/sysctl.d/cranix.conf
 	echo "net.ipv4.ip_forward = 1 "              >>  /etc/sysctl.d/cranix.conf
 	echo "net.ipv6.conf.all.forwarding = 1 "     >>  /etc/sysctl.d/cranix.conf
+	extdev=$( grep -l ZONE=external /etc/sysconfig/network/ifcfg* )
+	/usr/bin/firewall-cmd --permanent --zone=external --add-interface ${extdev/*ifcfg-/}
     fi
-    systemctl enable firewalld
-    systemctl start  firewalld
     /usr/bin/firewall-cmd --permanent --new-zone=ANON_DHCP
     /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-description="Zone for ANON_DHCP"
     /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --add-source="$CRANIX_ANON_DHCP_NET"
