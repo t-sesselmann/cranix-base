@@ -470,6 +470,15 @@ chmod 600 /root/.my.cnf
 
     sed -i s/MYSQLPWD/$password/ /opt/cranix-java/conf/cranix-api.properties
     sed -i s/CRANIX_NETBIOSNAME/${CRANIX_NETBIOSNAME}/ /opt/cranix-java/conf/cranix-api.properties
+
+    ########################################################################
+    if [ ! -e /etc/ssl/servercerts/cacert.pem ]; then
+	log "Create Certificates"
+	/usr/share/cranix/tools/create_server_certificates.sh -N CA
+	/usr/share/cranix/tools/create_server_certificates.sh -N admin
+	/usr/share/cranix/tools/create_server_certificates.sh -N cranix
+	/usr/share/cranix/tools/create_server_certificates.sh -N proxy
+    fi
 }
 
 function PostSetup (){
@@ -486,15 +495,6 @@ function PostSetup (){
     sed "s/###LDAPBASE###/$LDAPBASE/" /usr/share/cranix/setup/templates/sssd.conf > /etc/sssd/sssd.conf
     sed -i "s/###WORKGROUP###/${CRANIX_WORKGROUP}/" /etc/sssd/sssd.conf
     chmod 600 /etc/sssd/sssd.conf
-
-    ########################################################################
-    if [ ! -e /etc/ssl/servercerts/cacert.pem ]; then
-	log "Create Certificates"
-	/usr/share/cranix/tools/create_server_certificates.sh -N CA
-	/usr/share/cranix/tools/create_server_certificates.sh -N admin
-	/usr/share/cranix/tools/create_server_certificates.sh -N cranix
-	/usr/share/cranix/tools/create_server_certificates.sh -N proxy
-    fi
 
     ########################################################################
     log "Adapt Apache configuration"
