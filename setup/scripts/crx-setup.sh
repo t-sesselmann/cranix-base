@@ -514,6 +514,9 @@ function PostSetup (){
 
     ########################################################################
     log "Setup firewalld"
+    cp /etc/firewalld/firewalld.conf /etc/firewalld/firewalld.conf.orig
+    sed -i 's/DefaultZone=.*/DefaultZone=external/'         /etc/firewalld/firewalld.conf
+    sed -i 's/FirewallBackend=.*/FirewallBackend=iptables/' /etc/firewalld/firewalld.conf
     systemctl enable firewalld
     systemctl start  firewalld
     if [ $CRANIX_ISGATE = "yes" ]; then
