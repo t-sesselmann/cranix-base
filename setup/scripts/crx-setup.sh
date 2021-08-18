@@ -93,7 +93,7 @@ function SetupSamba (){
 	mv /etc/apparmor.d/usr.sbin.smbd     /etc/apparmor.d/disable/
 	mv /etc/apparmor.d/usr.sbin.nmbd     /etc/apparmor.d/disable/
 	mv /etc/apparmor.d/usr.sbin.winbindd /etc/apparmor.d/disable/
-	systemctl restart apparmor.service
+	/usr/bin/systemctl restart apparmor.service
     fi
 
     ########################################################################
@@ -120,8 +120,8 @@ function SetupSamba (){
 
     ########################################################################
     log " - Start samba service"
-    systemctl enable samba-ad.service
-    systemctl restart samba-ad.service
+    /usr/bin/systemctl enable samba-ad.service
+    /usr/bin/systemctl restart samba-ad.service
 
     ########################################################################
     log " - Setup samba private krbconf to kerberos conf"
@@ -218,7 +218,7 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s/#IPADDR#/$CRANIX_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
 
-    systemctl restart samba-ad
+    /usr/bin/systemctl restart samba-ad
 
     ########################################################################
     log " - Setup ntp signd directory rights."
@@ -244,8 +244,8 @@ function SetupDHCP (){
         if [ -z "$DHCPD_INTERFACE" ]; then
             sed -i 's/^DHCPD_INTERFACE=.*/DHCPD_INTERFACE="ANY"/'   /etc/sysconfig/dhcpd
         fi
-        systemctl enable dhcpd
-        systemctl start  dhcpd
+        /usr/bin/systemctl enable dhcpd
+        /usr/bin/systemctl start  dhcpd
     fi
     log "End SetupDHCP"
 }
@@ -395,8 +395,8 @@ function SetupInitialAccounts (){
     log "End SetupInitialAccounts"
 }
 
-function ApiSetup (){
-    log "Start PostSetup"
+function SetupApi (){
+    log "Start SetupApi"
 
     ########################################################################
     log "Setup ssh key"
@@ -419,8 +419,8 @@ unset _bred _sgr0
     ########################################################################
     log "Start and setup mysql"
     cp /etc/my.cnf.in /etc/my.cnf
-    systemctl start  mysql
-    systemctl enable mysql
+    /usr/bin/systemctl start  mysql
+    /usr/bin/systemctl enable mysql
     sleep 5
     SERVER_NETWORK=$( echo $CRANIX_SERVER_NET | gawk -F '/' '{ print $1 }' )
     SERVER_NETMASK=$( echo $CRANIX_SERVER_NET | gawk -F '/' '{ print $2 }' )
@@ -479,6 +479,12 @@ chmod 600 /root/.my.cnf
 	/usr/share/cranix/tools/create_server_certificates.sh -N cranix
 	/usr/share/cranix/tools/create_server_certificates.sh -N proxy
     fi
+    if [ "$CRANIX_TYPE" = "cephalix"  ]; then
+        /usr/bin/systemctl start cephalix-api
+    else
+        /usr/bin/systemctl start cranix-api
+    fi
+    /usr/share/cranix/tools/wait-for-api.sh
 }
 
 function PostSetup (){
@@ -509,16 +515,16 @@ function PostSetup (){
     fi
     mkdir -p /srv/www/cranix/
     sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/cranix-index.html > /srv/www/cranix/index.html
-    systemctl enable apache2
-    systemctl start  apache2
+    /usr/bin/systemctl enable apache2
+    /usr/bin/systemctl start  apache2
 
     ########################################################################
     log "Setup firewalld"
     cp /etc/firewalld/firewalld.conf /etc/firewalld/firewalld.conf.orig
     sed -i 's/DefaultZone=.*/DefaultZone=external/'         /etc/firewalld/firewalld.conf
     sed -i 's/FirewallBackend=.*/FirewallBackend=iptables/' /etc/firewalld/firewalld.conf
-    systemctl enable firewalld
-    systemctl start  firewalld
+    /usr/bin/systemctl enable firewalld
+    /usr/bin/systemctl start  firewalld
     if [ $CRANIX_ISGATE = "yes" ]; then
 	echo "## Enable forwarding."                  >  /etc/sysctl.d/cranix.conf
 	echo "net.ipv4.ip_forward = 1 "              >>  /etc/sysctl.d/cranix.conf
@@ -552,8 +558,8 @@ function PostSetup (){
     log "Enable some important services"
     /usr/lib/systemd-presets-branding/branding-preset-states save
     if [ "$CRANIX_TYPE" = "cephalix"  ]; then
-        systemctl enable  cephalix-api
-        systemctl disable cranix-api
+        /usr/bin/systemctl enable  cephalix-api
+        /usr/bin/systemctl disable cranix-api
     fi
 
     ########################################################################
@@ -573,9 +579,7 @@ function PostSetup (){
     log "Timeserver setup"
     /usr/share/cranix/setup/scripts/setup-chrony.sh
     log "End PostSetup"
-
 }
-
 
 if [ ! -f $sysconfig ]; then
         echo -e "\033[0;31;1mThis script is for CRANIX only!\033[\0m"
@@ -666,7 +670,7 @@ if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
     SetupInitialAccounts
 fi
 if [ "$all" = "yes" ] || [ "$api" = "yes" ]; then
-    ApiSetup
+    SetupApi
 fi
 if [ "$all" = "yes" ] || [ "$filter" = "yes" ]; then
     SetupInternetFilter
