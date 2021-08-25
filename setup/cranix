@@ -311,7 +311,7 @@ CRANIX_MAIL_TEACHER_QUOTA="25"
 CRANIX_REG_CODE="NOT YET REGISTERED"
 
 ## Type:        string
-## Default:     https://support.cephalix.de/support
+## Default:     https://repo.cephalix.eu/api/tickets/add
 # The support URL of the CEPHALIX or OTRS system the ticket will be sent to via REST-API.
 # If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
 CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
