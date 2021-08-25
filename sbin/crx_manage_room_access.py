@@ -31,7 +31,8 @@ parser.set_defaults(allow=True)
 args = parser.parse_args()
 
 #Global variables
-args
+if args.deny_login:
+    args.deny_printing = True
 allow_printing = not args.deny_printing
 allow_login    = not args.deny_login
 allow_portal   = not args.deny_portal
@@ -59,8 +60,7 @@ def log_debug(msg):
 def set_state():
     global allow_printing, allow_login, allow_portal, allow_direct, allow_proxy
     global args, login_denied_rooms, printing_denied_rooms, rooms, zones
-    global proxy, portal, name, network, room_id
-
+    global proxy, portal, name, network, room_id, smb_changed
     if args.set_defaults:
         access = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/defaultAccess'.format(room_id)))
         log_debug(access)
@@ -70,20 +70,21 @@ def set_state():
             allow_portal   = access['portal']
             allow_proxy    = access['proxy']
             allow_direct   = access['direct']
+
     if allow_printing:
         allow_login = True
         if network in printing_denied_rooms:
             printing_denied_rooms.remove(network)
     elif network not in printing_denied_rooms:
-            printing_denied_rooms.append(network)
+        printing_denied_rooms.append(network)
 
     if allow_login:
         if network in login_denied_rooms:
             smb_changed = True
             login_denied_rooms.remove(network)
     elif network not in login_denied_rooms:
-            smb_changed = True
-            login_denied_rooms.append(network)
+        smb_changed = True
+        login_denied_rooms.append(network)
 
     if allow_portal and portal in zones[name]['rule']:
         fw_changed = True
