@@ -15,17 +15,25 @@ fi
 if [ "${LICENCES}" ]; then
         salt "$MINION" grains.setvals ${LICENCES}
 fi
+#Sync modules
+salt "$MINION" saltutil.sync_modules
 
+#Disable windows update if CRANIX_ALLOW_WINDOWS_UPDATES is set
+if [ "$CRANIX_ALLOW_WINDOWS_UPDATES" == "no" ]; then
+	salt "$MINION" crx_client.disableUpdates
+fi
 #Apply high state
-salt "$MINION" state.apply &> /dev/null
+if [ "$CRANIX_DEBUG" == "yes" ]; then
+	/usr/sbin/crx_apply_states.py "$MINION"
+else
+	/usr/sbin/crx_apply_states.py "$MINION" &> /dev/null
+fi
 
 #Now we can read the installed software on the minion
 /usr/share/cranix/tools/read_installed_software.py $MINION
 
-#Enable or disable windows update if CRANIX_ALLOW_WINDOWS_UPDATES is set
+#Enable windows update if CRANIX_ALLOW_WINDOWS_UPDATES is set
 if [ "$CRANIX_ALLOW_WINDOWS_UPDATES" == "yes" ]; then
 	salt "$MINION" crx_client.enableUpdates
 fi
-if [ "$CRANIX_ALLOW_WINDOWS_UPDATES" == "no" ]; then
-	salt "$MINION" crx_client.disableUpdates
-fi
+

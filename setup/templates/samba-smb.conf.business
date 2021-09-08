@@ -18,6 +18,8 @@
 	ntlm auth = yes
 #cranix-webdav needs it:
         template shell = /bin/bash
+#cranix-vpn and mail services need it
+	ldap server require strong auth = no
 #make print server more performant:
 	printing = CUPS
 	rpc_server:spoolss  = external

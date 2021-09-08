@@ -112,12 +112,12 @@ CRANIX_ANON_DHCP_RANGE="172.28.1.0 172.28.1.31"
 
 ## Type:	string readonly
 ## Default:	172.16.2.0
-# The network address of the first school room.
+# The network address of the first institute room.
 CRANIX_FIRST_ROOM_NET="172.28.2.0"
 
 ## Type:	string readonly
 ## Default:	"/home"
-# Base of the school home directory.
+# Base of the institute home directory.
 CRANIX_HOME_BASE="/home"
 
 ## Type:	yesno readonly
@@ -197,7 +197,7 @@ CRANIX_NETBIOSNAME="admin"
 
 ## Type:	string readonly
 ## Default:	CRANIX
-# The windows domain name of the school.
+# The windows domain name of the institute.
 CRANIX_WORKGROUP="CRANIX"
 
 ## Type:	string readonly
@@ -212,7 +212,7 @@ CRANIX_CCODE="DE"
 
 ## Type:        string readonly
 ## Default:
-# DNS Domain of the school.
+# DNS Domain of the institute.
 CRANIX_DOMAIN="cranix.eu"
 
 ## Type:        string readonly
@@ -242,7 +242,7 @@ CRANIX_TYPE="real"
 
 ## Type:        string
 ## Default:     CRANIX
-# The name of the school.
+# The name of the institute.
 CRANIX_NAME="CRANIX"
 
 ## Type:	yesno
@@ -310,18 +310,8 @@ CRANIX_MAIL_TEACHER_QUOTA="25"
 # The registration code of the CRANIX.
 CRANIX_REG_CODE="NOT YET REGISTERED"
 
-## Type:	yesno
-## Default:	no
-# Students may download at the admin web-site.
-CRANIX_STUDENTS_MAY_DOWNLOAD="no"
-
-## Type:	yesno
-## Default:	no
-# Students may upload at the admin web-site.
-CRANIX_STUDENTS_MAY_UPLOAD="no"
-
 ## Type:        string
-## Default:     https://support.cephalix.de/support
+## Default:     https://repo.cephalix.eu/api/tickets/add
 # The support URL of the CEPHALIX or OTRS system the ticket will be sent to via REST-API.
 # If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
 CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
@@ -330,11 +320,6 @@ CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
 ## Default:     support@cephalix.eu
 # The support email address.
 CRANIX_SUPPORT_MAIL_ADDRESS="support@cephalix.eu"
-
-## Type:	string
-## Default:
-# The default email address of the sender of the support tickets
-CRANIX_SUPPORT_MAIL_FROM=""
 
 ## Type:	yesno
 ## Default:     yes	
@@ -351,11 +336,6 @@ CRANIX_ALLOW_MULTIPLE_LOGIN="yes"
 # If this variable is set to yes, some directories from the windows profiles will be moved to home.
 # Documents Downloads Faworites Pictures Desktop Videos Music
 CRANIX_MOVE_PROFILE_TO_HOME="yes"
-
-## Type:        yesno
-## Default:     no
-# Students may not change password.
-CRANIX_MAY_NOT_CHANGE_PASSWORD="no"
 
 ## Type:        integer(10:16)
 ## Default:     10
@@ -424,3 +404,8 @@ CRANIX_CLASS_ADHOC_NETWORK=""
 # This variable allows or disables windows clients to download updates.
 CRANIX_ALLOW_WINDOWS_UPDATES="no"
 
+## Type:        string
+## Default:
+# DNS Domain of the institute for wich official certificate was created.
+# This can be empty if this is the normal DNS domain
+CRANIX_CERT_DOMAIN=""

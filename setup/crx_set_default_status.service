@@ -1,0 +1,14 @@
+[Unit]
+Description=Set the default access state in the rooms
+DefaultDependencies=no
+After=firewalld.service cranix-api.service cephalix-api.service
+PartOf=firewalld.service
+
+[Service]
+ExecStartPre=/usr/share/cranix/tools/wait-for-api.sh
+ExecStart=/usr/sbin/crx_manage_room_access.py --all --set_defaults
+ExecStartPost=/usr/share/cranix/tools/remove-internal-device-from-firewall.sh
+
+[Install]
+WantedBy=sysinit.target
+
