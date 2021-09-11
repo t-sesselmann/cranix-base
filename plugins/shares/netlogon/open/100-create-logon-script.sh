@@ -8,6 +8,10 @@ R=$5
 
 . /etc/sysconfig/cranix
 
+if [ -z "${CRANIX_PRINTSERVER}" ]; then
+	CRANIX_PRINTSERVER="admin"
+fi
+
 role=$( crx_api_text.sh GET users/byUid/$U/role )
 mkdir -p /var/lib/samba/sysvol/$R/scripts
 setfacl -m g:users:rx /var/lib/samba/sysvol/
