@@ -295,6 +295,11 @@ CRANIX_LOGIN_PREFIX=""
 # The CRANIX login creating scheme. I.e. how many characters will be taken from the Name and from the Givenname and from birth year. Birth year can only be Y4 or Y2.
 CRANIX_LOGIN_SCHEME="N4G4"
 
+## Type:	yesno
+## Default:	default
+# If yes CRANIX creates oe from ö ue from u ae from ä and ss from ß bei creating the login
+CRANIX_LOGIN_TELEX="no"
+
 ## Type:	integer
 ## Default:	5
 # The default mail quota for students in MB.
