@@ -508,7 +508,6 @@ function PostSetup (){
     sed -i 's/^APACHE_SERVER_FLAGS=.*/APACHE_SERVER_FLAGS="SSL"/' /etc/sysconfig/apache2
     sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/admin_include.conf.ini > /etc/apache2/vhosts.d/admin_include.conf
     sed "s/#DOMAIN#/$CRANIX_DOMAIN/g" /usr/share/cranix/setup/templates/cranix_include.conf.ini   > /etc/apache2/vhosts.d/cranix_include.conf
-    mkdir -p /etc/apache2/vhosts.d/{admin,admin-ssl,cranix,cranix-ssl}
     if [ $CRANIX_ISGATE = "yes" ]; then
        sed -i 's/admin:443/admin:443 extip:444/' /etc/apache2/vhosts.d/admin_include.conf
        sed -Ei 's/\s+Listen 443/                Listen 443\n                    Listen 444/' /etc/apache2/listen.conf

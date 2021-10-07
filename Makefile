@@ -17,6 +17,7 @@ install:
 	mkdir -p $(DESTDIR)/$(FILLUPDIR)
 	mkdir -p $(DESTDIR)/$(PYTHONSITEARCH)
 	mkdir -p $(DESTDIR)/etc/YaST2/
+	mkdir -p $(DESTDIR)/etc/apache2/vhosts.d/{admin,admin-ssl,cranix,cranix-ssl}
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
