@@ -74,8 +74,10 @@ def set_state():
     if allow_printing:
         allow_login = True
         if network in printing_denied_rooms:
+            smb_changed = True
             printing_denied_rooms.remove(network)
     elif network not in printing_denied_rooms:
+        smb_changed = True
         printing_denied_rooms.append(network)
 
     if allow_login:

@@ -1,6 +1,5 @@
 #!/bin/bash
-extdev=$( grep -l ZONE=external /etc/sysconfig/network/ifcfg* )
-extdev=${extdev/*ifcfg-/}
+extdev=$( ip route | gawk '/default/ {  print $5 }' )
 for dev in $( firewall-cmd --zone=external --list-interfaces )
 do
         if [ ${dev} != ${extdev} ]; then

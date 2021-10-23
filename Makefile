@@ -22,6 +22,7 @@ install:
 	mkdir -p $(DESTDIR)/srv/salt/_modules/
 	mkdir -p $(DESTDIR)/usr/share/cups/
 	mkdir -p $(DESTDIR)/usr/lib/rpm/gnupg/keys/
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system/firewalld.service.d/
 	mkdir -p $(DESTDIR)/var/adm/cranix/running
 	install -m 644 setup/cranix      $(DESTDIR)/$(FILLUPDIR)/sysconfig.cranix
 	rm -f setup/cranix
@@ -31,7 +32,8 @@ install:
 	rsync -a   plugins/         $(SHARE)/plugins/
 	rsync -a   software/        $(SHARE)/software/
 	rsync -a   setup/           $(SHARE)/setup/
-	mv $(SHARE)/setup/80-default-CRANIX.preset $(DESTDIR)/usr/lib/systemd/system-preset/
+	mv $(SHARE)/setup/80-default-CRANIX.preset     $(DESTDIR)/usr/lib/systemd/system-preset/
+	mv  $(SHARE)/setup/FirewalldExecStartPost.conf $(DESTDIR)/var/adm/cranix/running/ExecStartPost.conf
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   tools/           $(SHARE)/tools/
 	if [ -e updates ]; then rsync -a   updates/         $(SHARE)/updates/; fi
