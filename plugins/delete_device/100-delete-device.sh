@@ -56,3 +56,8 @@ samba-tool computer delete "${name}"
 if [ $? != 0 ]; then
    abort 3
 fi
+# Delete workstation user.
+samba-tool user delete "${name}"
+if [ $? != 0 ]; then
+   abort 4
+fi
