@@ -523,24 +523,24 @@ function PostSetup (){
     sed -i 's/DefaultZone=.*/DefaultZone=external/'         /etc/firewalld/firewalld.conf
     sed -i 's/FirewallBackend=.*/FirewallBackend=iptables/' /etc/firewalld/firewalld.conf
     /usr/bin/systemctl enable firewalld
-    /usr/bin/systemctl start  firewalld
     if [ $CRANIX_ISGATE = "yes" ]; then
 	echo "## Enable forwarding."                  >  /etc/sysctl.d/cranix.conf
 	echo "net.ipv4.ip_forward = 1 "              >>  /etc/sysctl.d/cranix.conf
 	echo "net.ipv6.conf.all.forwarding = 1 "     >>  /etc/sysctl.d/cranix.conf
 	extdev=$( grep -l ZONE=external /etc/sysconfig/network/ifcfg* )
-	/usr/bin/firewall-cmd --permanent --zone=external --add-interface ${extdev/*ifcfg-/}
+	/usr/bin/firewall-offline-cmd --zone=external --add-interface ${extdev/*ifcfg-/}
+	/usr/bin/firewall-offline-cmd --zone=external --remove-masquerade
     fi
-    /usr/bin/firewall-cmd --permanent --new-zone=ANON_DHCP
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-description="Zone for ANON_DHCP"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --add-source="$CRANIX_ANON_DHCP_NET"
-    /usr/bin/firewall-cmd --permanent --zone=ANON_DHCP --set-target=ACCEPT
-    /usr/bin/firewall-cmd --permanent --new-zone=SERVER_NET
-    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-description="Zone for SERVER_NET"
-    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --add-source="$CRANIX_SERVER_NET"
-    /usr/bin/firewall-cmd --permanent --zone=SERVER_NET --set-target=ACCEPT
+    /usr/bin/firewall-offline-cmd --new-zone=ANON_DHCP
+    /usr/bin/firewall-offline-cmd --zone=ANON_DHCP --set-description="Zone for ANON_DHCP"
+    /usr/bin/firewall-offline-cmd --zone=ANON_DHCP --add-source="$CRANIX_ANON_DHCP_NET"
+    /usr/bin/firewall-offline-cmd --zone=ANON_DHCP --set-target=ACCEPT
+    /usr/bin/firewall-offline-cmd --new-zone=SERVER_NET
+    /usr/bin/firewall-offline-cmd --zone=SERVER_NET --set-description="Zone for SERVER_NET"
+    /usr/bin/firewall-offline-cmd --zone=SERVER_NET --add-source="$CRANIX_SERVER_NET"
+    /usr/bin/firewall-offline-cmd --zone=SERVER_NET --set-target=ACCEPT
     if [ ${CRANIX_INTERNET_FILTER} = "dns" ]; then
-        /usr/bin/firewall-cmd --permanent --zone=external --add-rich-rule="rule family=ipv4 source address=$CRANIX_SERVER_NET masquerade"
+        /usr/bin/firewall-offline-cmd --zone=external --add-rich-rule="rule family=ipv4 source address=$CRANIX_SERVER_NET masquerade"
     fi
 
     ########################################################################
