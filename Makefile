@@ -33,7 +33,7 @@ install:
 	rsync -a   software/        $(SHARE)/software/
 	rsync -a   setup/           $(SHARE)/setup/
 	mv $(SHARE)/setup/80-default-CRANIX.preset    $(DESTDIR)/usr/lib/systemd/system-preset/
-	mv $(SHARE)/setup/FirewalldExecStartPost.conf $(DESTDIR)/usr/lib/systemd/system/firewalld.service.d/ExecStartPost.conf
+	mv $(SHARE)/setup/FirewalldExecStart.conf $(DESTDIR)/usr/lib/systemd/system/firewalld.service.d/ExecStart.conf
 	rsync -a   templates/       $(SHARE)/templates/
 	rsync -a   tools/           $(SHARE)/tools/
 	if [ -e updates ]; then rsync -a   updates/         $(SHARE)/updates/; fi
