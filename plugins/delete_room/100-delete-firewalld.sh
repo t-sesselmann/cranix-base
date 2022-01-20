@@ -1,7 +1,7 @@
 #!/bin/bash
 
 abort() {
-        TASK="add_room-$( uuidgen -t )"
+        TASK="delete_room-$( uuidgen -t )"
         mkdir -p /var/adm/cranix/opentasks/
         echo "name: $name" >> /var/adm/cranix/opentasks/$TASK
         echo "start: $start" >> /var/adm/cranix/opentasks/$TASK
@@ -34,5 +34,8 @@ do
   esac
 done
 
-firewall-cmd --permanent --delete-zone=${name}
-firewall-cmd --reload
+/usr/bin/firewall-offline-cmd --delete-zone=${name}
+#We can not remove it but make it inaktive
+/usr/bin/firewall-cmd --zone=${name} --remove-source="${startip}/${netmask}"
+/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address=${startip}/${netmask} masquerade"
+
