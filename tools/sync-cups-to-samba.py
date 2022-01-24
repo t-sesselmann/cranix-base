@@ -25,13 +25,14 @@ config.set('global','load printers','no')
 config.set('global','rpc_server:spoolss','external')
 config.set('global','rpc_daemon:spoolssd','fork')
 
-if not 'print$' in config:
-    config.add_section('print$')
-    config.set('print$','comment','Printer Drivers')
-    config.set('print$','path','/var/lib/samba/drivers')
-    config.set('print$','read only','No')
 if 'printers' in config:
     config.remove_section('printers')
+if not 'print$' in config:
+    config.remove_section('print$')
+config.add_section('print$')
+config.set('print$','comment','Printer Drivers')
+config.set('print$','path','/var/lib/samba/drivers')
+config.set('print$','read only','No')
 
 for line in os.popen('LANG=en_EN lpc status').readlines():
     match = re.search("([\-\w]+):", line)
