@@ -546,6 +546,7 @@ function PostSetup (){
     ########################################################################
     log "Setup Cups"
     cp /etc/cups/cupsd.conf.in /etc/cups/cupsd.conf
+    /usr/share/cranix/tools/sync-cups-to-samba.py
 
     ########################################################################
     log "Prepare roots desktop"

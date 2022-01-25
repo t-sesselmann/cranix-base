@@ -27,7 +27,7 @@ config.set('global','rpc_daemon:spoolssd','fork')
 
 if 'printers' in config:
     config.remove_section('printers')
-if not 'print$' in config:
+if 'print$' in config:
     config.remove_section('print$')
 config.add_section('print$')
 config.set('print$','comment','Printer Drivers')
