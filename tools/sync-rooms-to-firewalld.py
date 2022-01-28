@@ -12,7 +12,7 @@ for line in os.popen('/usr/bin/firewall-offline-cmd --list-all-zones').readlines
         zones.append(match1.group(1))
 
 for room in json.load(os.popen('crx_api.sh GET rooms/all')):
-    if room['name'] not in zones:
+    if room['name'].strip() not in zones:
         os.system('/usr/bin/firewall-offline-cmd --new-zone={0}'.format(room['name']))
         os.system('/usr/bin/firewall-offline-cmd --zone={0} --set-description="Zone for Room {0}"'.format(room['name']))
         os.system('/usr/bin/firewall-offline-cmd --zone={0} --add-source="{1}/{2}"'.format(room['name'],room['startIP'],room['netMask']))

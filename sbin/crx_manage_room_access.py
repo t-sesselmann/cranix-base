@@ -148,7 +148,7 @@ def set_state():
                 os.system('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
                 log_debug('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
     except KeyError:
-        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py')
+        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py &>/dev/null')
 
 def get_state():
     global login_denied_rooms, zones, room
@@ -165,7 +165,7 @@ def get_state():
             'direct':    room['network'] in  zones['external']['rule']
         }
     except KeyError:
-        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py')
+        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py &>/dev/null')
         return {
             'accessType': 'FW',
             'roomId':    0,
@@ -179,6 +179,7 @@ def get_state():
 
 def prepare_room():
     global room
+    room['name'] = room['name'].strip()
     room['network']='{0}/{1}'.format(room['startIP'],room['netMask'])
     room['printers'] = []
     if room['defaultPrinter']:
