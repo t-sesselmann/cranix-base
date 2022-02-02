@@ -45,16 +45,16 @@ case "$3" in
 	;;
 esac
 
-LOCAL=`/sbin/ip addr | grep "$DEST/"`
+LOCAL=`/sbin/ip addr | /usr/bin/grep "$DEST/"`
 
 case "$3" in
    direct)
 	DEV=$( ip route show | gawk '{ if( $1 == "default" ) { print $5; exit; } }' )
 	if test "$1" = "1"; then
 		IFS=$'\n'; i=0; e=0; n=0;
-		for l in $( /usr/sbin/iptables -t filter -S forward_int ); do n=$((n+1)); echo $l | grep -q 'j ACCEPT' && i=$n; done;
+		for l in $( /usr/sbin/iptables -t filter -S forward_int ); do n=$((n+1)); echo $l | /usr/bin/grep -q 'j ACCEPT' && i=$n; done;
 		n=0;
-		for l in $( /usr/sbin/iptables -t filter -S forward_ext ); do n=$((n+1)); echo $l | grep -q 'j ACCEPT' && e=$n; done;
+		for l in $( /usr/sbin/iptables -t filter -S forward_ext ); do n=$((n+1)); echo $l | /usr/bin/grep -q 'j ACCEPT' && e=$n; done;
 		COMMAND="/usr/sbin/iptables -I forward_ext $e -s $2 ! -d $NETWORK -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED"
 		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_ext $e -d $2 -j ACCEPT -m state --state RELATED,ESTABLISHED"
 		COMMAND="$COMMAND; /usr/sbin/iptables -I forward_int $i -s $2 -j ACCEPT -m state --state NEW,RELATED,ESTABLISHED"

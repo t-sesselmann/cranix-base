@@ -10,8 +10,8 @@ if [ "$DATA" ]; then
    DATA=" -d @${DATAFILE}"
 fi
 
-TOKEN=$( grep de.cranix.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.api.auth.localhost=//' )
-curl -s -X $METHOD --header 'Content-Type: application/json' --header 'Accept: text/plain' $DATA --header 'Authorization: Bearer '${TOKEN} "http://localhost:9080/api/$CALL"
+TOKEN=$( /usr/bin/grep de.cranix.api.auth.localhost= /opt/cranix-java/conf/cranix-api.properties | /usr/bin/sed 's/de.cranix.api.auth.localhost=//' )
+/usr/bin/curl -s -X $METHOD --header 'Content-Type: application/json' --header 'Accept: text/plain' $DATA --header 'Authorization: Bearer '${TOKEN} "http://localhost:9080/api/$CALL"
 if [ "${DATAFILE}" ]; then
     rm ${DATAFILE}
 fi

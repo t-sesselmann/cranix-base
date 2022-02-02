@@ -7,10 +7,34 @@ my $printers = {};
 my $drivers  = {};
 foreach my $ppd ( @ppds ) {
   chomp $ppd;
-  if( $ppd =~ /.sim.ppd.gz$/ ) {
+  if( $ppd =~ /.sim.ppd.gz$/i ) {
     next;
   }
-  my @content = `cat $ppd | gunzip`;
+  my @content = `cat "$ppd" | gunzip`;
+  my $Manufacturer = "";
+  my $ModelName    = "";
+  foreach ( @content ) {
+      if( /\*Manufacturer:\s+"(.*)"/ ) {
+        $Manufacturer = $1;
+      }
+      if( /\*ModelName:\s+"(.*)"/ ) {
+        $ModelName = $1;
+      }
+      if( $Manufacturer and $ModelName ) {
+        push @{$printers->{$Manufacturer}}, $ModelName;
+        $drivers->{$ModelName} = $ppd;
+	last;
+      }
+  }
+
+}
+@ppds = `find /usr/share/cups -iname '*ppd'`;
+foreach my $ppd ( @ppds ) {
+  chomp $ppd;
+  if( $ppd =~ /.sim.ppd$/i ) {
+    next;
+  }
+  my @content = `cat "$ppd"`;
   my $Manufacturer = "";
   my $ModelName    = "";
   foreach ( @content ) {

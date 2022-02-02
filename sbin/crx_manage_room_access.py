@@ -39,95 +39,153 @@ allow_portal   = not args.deny_portal
 allow_direct   = not args.deny_direct
 allow_proxy    = not args.deny_proxy
 login_denied_rooms   =[]
-printing_denied_rooms=[]
 room    = {}
 rooms   = []
 zones   = {}
 proxy   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
 portal  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
 debug   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DEBUG').read() == "yes"
-network = ""
-name    = ""
-room_id = 0
-fw_changed = False
-smb_changed = False
+smb_reload  = False #Reload of samba is required
+smb_changed = False #Rewrite of samba is required
 
 def log_debug(msg):
     global debug
     if debug:
         print(msg)
 
+def is_printer_allowed(printer,network):
+    global config
+    if printer in config:
+        if 'hosts allow' in config[printer]:
+            return network in config.get(printer,'hosts allow').split()
+        else:
+            return True
+    else:
+        return False
+
+def is_printing_allowed():
+    global room
+    for printer in room['printers']:
+        if is_printer_allowed(printer,room['network']):
+            return True
+    return False
+
+def enable_printing():
+    global room, config, smb_changed
+    for printer in room['printers']:
+        allowed_rooms = config.get(printer,'hosts allow').split()
+        if room['network'] not in allowed_rooms:
+            allowed_rooms.append(room['network'])
+            config.set(printer,'hosts allow'," ".join(allowed_rooms))
+            smb_changed = True
+
+def disable_printing():
+    global room, config, smb_changed
+    for printer in room['printers']:
+        allowed_rooms = config.get(printer,'hosts allow').split()
+        if not room['network'] not in allowed_rooms:
+            allowed_rooms.remove(room['network'])
+            config.set(printer,'hosts allow'," ".join(allowed_rooms))
+            smb_changed = True
+
 def set_state():
     global allow_printing, allow_login, allow_portal, allow_direct, allow_proxy
-    global args, login_denied_rooms, printing_denied_rooms, rooms, zones
-    global proxy, portal, name, network, room_id, smb_changed
-    if args.set_defaults:
-        access = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/defaultAccess'.format(room_id)))
-        log_debug(access)
-        if 'printing' in access:
-            allow_printing = access['printing']
-            allow_login    = access['login']
-            allow_portal   = access['portal']
-            allow_proxy    = access['proxy']
-            allow_direct   = access['direct']
+    global args, login_denied_rooms, rooms, zones, room
+    global proxy, portal, smb_changed, smb_reload
+    try:
+        name    = room['name']
+        network = room['network']
+        if args.set_defaults:
+            access = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/defaultAccess'.format(room['id'])))
+            log_debug(access)
+            if 'printing' in access:
+                allow_printing = access['printing']
+                allow_login    = access['login']
+                allow_portal   = access['portal']
+                allow_proxy    = access['proxy']
+                allow_direct   = access['direct']
 
-    if allow_printing:
-        allow_login = True
-        if network in printing_denied_rooms:
-            printing_denied_rooms.remove(network)
-    elif network not in printing_denied_rooms:
-        printing_denied_rooms.append(network)
+        if allow_printing:
+            allow_login = True
+            enable_printing()
+        else:
+            disable_printing()
 
-    if allow_login:
-        if network in login_denied_rooms:
-            smb_changed = True
-            login_denied_rooms.remove(network)
-    elif network not in login_denied_rooms:
-        smb_changed = True
-        login_denied_rooms.append(network)
+        if allow_login:
+            if network in login_denied_rooms:
+                smb_reload = True
+                login_denied_rooms.remove(network)
+        elif network not in login_denied_rooms:
+            smb_reload = True
+            login_denied_rooms.append(network)
 
-    if allow_portal and portal in zones[name]['rule']:
-        fw_changed = True
-        os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
-        log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
-    if not allow_portal and portal not in zones[name]['rule']:
-        fw_changed = True
-        os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
-        log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+        if name in zones and 'rule' in zones[name]:
+          if allow_portal and portal in zones[name]['rule']:
+              #fw_changed = True
+              os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+              log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+          if not allow_portal and portal not in zones[name]['rule']:
+              #fw_changed = True
+              os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
+              log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,portal))
 
-    if allow_proxy and proxy in zones[name]['rule']:
-        fw_changed = True
-        os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
-        log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
-    if not allow_proxy and proxy not in zones[name]['rule']:
-        fw_changed = True
-        os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
-        log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+          if allow_proxy and proxy in zones[name]['rule']:
+              #fw_changed = True
+              os.system('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+              log_debug('/usr/bin/firewall-cmd --zone={0} --remove-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+          if not allow_proxy and proxy not in zones[name]['rule']:
+              #fw_changed = True
+              os.system('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
+              log_debug('/usr/bin/firewall-cmd --zone={0} --add-rich-rule="rule family=ipv4 destination address={1} drop" &>/dev/null'.format(name,proxy))
 
-    if not args.let_direct:
-        if allow_direct and network not in zones['external']['rule']:
-            fw_changed = True
-            os.system('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
-            log_debug('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
-        if not allow_direct and  network in zones['external']['rule']:
-            fw_changed = True
-            os.system('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
-            log_debug('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
+        if not args.let_direct:
+            if allow_direct and network not in zones['external']['rule']:
+                #fw_changed = True
+                os.system('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
+                log_debug('/usr/bin/firewall-cmd --zone="external" --add-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
+            if not allow_direct and  network in zones['external']['rule']:
+                #fw_changed = True
+                os.system('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
+                log_debug('/usr/bin/firewall-cmd --zone="external" --remove-rich-rule="rule family=ipv4 source address={0} masquerade" &>/dev/null'.format(network))
+    except KeyError:
+        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py &>/dev/null')
 
 def get_state():
-    global network, proxy, portal, name, room_id
-    global login_denied_rooms, printing_denied_rooms, zones
-    return {
-        'accessType': 'FW',
-        'roomId':    room_id,
-        'roomName':  name,
-        'login':     network not in login_denied_rooms,
-        'printing':  ( network not in printing_denied_rooms ) and ( network not in login_denied_rooms ),
-        'proxy':     proxy  not in zones[name]['rule'],
-        'portal':    portal not in zones[name]['rule'],
-        'direct':    network in zones['external']['rule']
-    }
+    global login_denied_rooms, zones, room
+    global proxy, portal
+    try:
+        return {
+            'accessType': 'FW',
+            'roomId':    room['id'],
+            'roomName':  room['name'],
+            'login':     room['network'] not in login_denied_rooms,
+            'printing':  is_printing_allowed() and ( room['network'] not in login_denied_rooms ),
+            'proxy':     proxy   not in zones[room['name']]['rule'],
+            'portal':    portal  not in zones[room['name']]['rule'],
+            'direct':    room['network'] in  zones['external']['rule']
+        }
+    except KeyError:
+        os.system('/usr/share/cranix/tools/sync-rooms-to-firewalld.py &>/dev/null')
+        return {
+            'accessType': 'FW',
+            'roomId':    0,
+            'roomName':  'FWERROR',
+            'login':     False,
+            'printing':  False,
+            'proxy':     False,
+            'portal':    False,
+            'direct':    False
+        }
 
+def prepare_room():
+    global room
+    room['name'] = room['name'].strip()
+    room['network']='{0}/{1}'.format(room['startIP'],room['netMask'])
+    room['printers'] = []
+    if room['defaultPrinter']:
+        room['printers'].append(room['defaultPrinter']['name'])
+    for printer in room['availablePrinters']:
+        room['printers'].append(printer['name'])
 
 #Start collecting datas
 config = configparser.ConfigParser(delimiters=('='))
@@ -135,18 +193,14 @@ config.read('/etc/samba/smb.conf')
 
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
-if 'hosts deny' in config['printers']:
-    printing_denied_rooms = config.get('printers','hosts deny').split()
 
 if args.id != "":
     room = json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}'.format(args.id)))
-    name = room['name']
-    room_id = args.id
     if room['roomControl'] == 'no':
         print("This room '{0}' can not be dynamical controlled".format(room['name']))
         sys.exit(-1)
     if 'startIP' in room:
-        network='{0}/{1}'.format(room['startIP'],room['netMask'])
+        prepare_room()
     else:
         print("Can not find the room with id {0}".format(args.id))
         sys.exit(-2)
@@ -180,9 +234,9 @@ if args.get:
     if args.all:
         status = []
         for room in rooms:
-            room_id = room['id']
-            name    = room['name']
-            network ='{0}/{1}'.format(room['startIP'],room['netMask'])
+            if room['roomControl'] == 'no' or 'startIP' not in room:
+                continue
+            prepare_room()
             status.append(get_state())
         print(json.dumps(status))
     else:
@@ -191,29 +245,22 @@ else:
     if args.all:
         status = []
         for room in rooms:
-            if room['roomControl'] != 'no':
-                name    = room['name']
-                room_id = room['id']
-                network ='{0}/{1}'.format(room['startIP'],room['netMask'])
-                set_state()
+            if room['roomControl'] == 'no' or 'startIP' not in room:
+                continue
+            prepare_room()
+            set_state()
     else:
         set_state()
 
-    if smb_changed:
-        if len(printing_denied_rooms) == 0:
-            config.remove_option('printers','hosts deny')
-        else:
-            config.set('printers','hosts deny'," ".join(printing_denied_rooms))
-
+    if smb_reload:
         if len(login_denied_rooms) == 0:
             config.remove_option('global','hosts deny')
         else:
             config.set('global','hosts deny'," ".join(login_denied_rooms))
-
         with open('/etc/samba/smb.conf','wt') as f:
             config.write(f)
         os.system("/usr/bin/systemctl reload samba-ad.service")
-
-    if fw_changed:
-        os.system("/usr/bin/systemctl reload firewalld.service")
+    elif smb_changed:
+        with open('/etc/samba/smb.conf','wt') as f:
+            config.write(f)
 

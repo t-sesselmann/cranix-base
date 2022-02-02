@@ -10,7 +10,7 @@ if [ -z ${NEWIP} -o -z ${CLIENT} ]; then
    echo 
    exit 1
 fi
-passwd=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
+passwd=$( /usr/bin/grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | /usr/bin/sed 's/de.cranix.dao.User.Register.Password=//' )
 
 if [ -z $OLDIP ]; then
 	OLDIP=$( host $CLIENT | gawk '{ print $4 }' )

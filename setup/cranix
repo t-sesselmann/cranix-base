@@ -263,7 +263,7 @@ CRANIX_RESET_REGISTER_PASSWORD="no"
 ## Type:	string
 ## Default:
 # This services have be monitored.
-CRANIX_MONITOR_SERVICES="amavis apache2 cups chronyd cranix-api crx_salt_event_watcher dhcpd mysql salt-master samba-ad samba-printserver squid vsftpd xinetd"
+CRANIX_MONITOR_SERVICES="amavis apache2 cups chronyd cranix-api crx_salt_event_watcher dhcpd firewalld mysql salt-master samba-ad samba-printserver squid vsftpd xinetd"
 
 ## Type:	yesno
 ## Default:	no
@@ -294,6 +294,11 @@ CRANIX_LOGIN_PREFIX=""
 ## Default:	N4G4
 # The CRANIX login creating scheme. I.e. how many characters will be taken from the Name and from the Givenname and from birth year. Birth year can only be Y4 or Y2.
 CRANIX_LOGIN_SCHEME="N4G4"
+
+## Type:	yesno
+## Default:	default
+# If yes CRANIX creates oe from ö ue from u ae from ä and ss from ß bei creating the login
+CRANIX_LOGIN_TELEX="no"
 
 ## Type:	integer
 ## Default:	5
@@ -409,3 +414,9 @@ CRANIX_ALLOW_WINDOWS_UPDATES="no"
 # DNS Domain of the institute for wich official certificate was created.
 # This can be empty if this is the normal DNS domain
 CRANIX_CERT_DOMAIN=""
+
+## Type:        yesno
+## Default:     yes
+# This is the default setting for must change in the change password interface.
+CRANIX_DEFAULT_MUST_CHANGE="yes"
+

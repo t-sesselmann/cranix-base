@@ -34,7 +34,7 @@ case "$2" in
         ;;
 esac
 
-LOCAL=`ip addr | grep "$DEST/"`
+LOCAL=`ip addr | /usr/bin/grep "$DEST/"`
 
 case "$2" in
    direct)
@@ -43,9 +43,9 @@ case "$2" in
 #E.m. if only some ports or server are enabled
 	if [ "$LOCAL" ]
 	then
-		STATUS=`/usr/sbin/iptables -L -t nat -v -n | grep "MASQUERADE.*all.*$1" | grep -P "0.0.0.0/0|$CRANIX_NETWORK/"`
+		STATUS=`/usr/sbin/iptables -L -t nat -v -n | /usr/bin/grep "MASQUERADE.*all.*$1" | grep -P "0.0.0.0/0|$CRANIX_NETWORK/"`
 	else
-		STATUS=`ssh $DEST "/usr/sbin/iptables -L -t nat -v -n | grep 'MASQUERADE.*all.*$1' | grep -P '0.0.0.0/0|$CRANIX_NETWORK/'"`
+		STATUS=`ssh $DEST "/usr/sbin/iptables -L -t nat -v -n | /usr/bin/grep 'MASQUERADE.*all.*$1' | grep -P '0.0.0.0/0|$CRANIX_NETWORK/'"`
 	fi
 	if test "$STATUS"
 	then
@@ -58,9 +58,9 @@ case "$2" in
    *)
 	if [ "$LOCAL" ]
 	then
-		STATUS=`/usr/sbin/iptables -L -n -v | grep $2-$1`
+		STATUS=`/usr/sbin/iptables -L -n -v | /usr/bin/grep $2-$1`
 	else
-		STATUS=`ssh $DEST "/usr/sbin/iptables -L -n -v | grep $2-$1"`
+		STATUS=`ssh $DEST "/usr/sbin/iptables -L -n -v | /usr/bin/grep $2-$1"`
 	fi
 	;;
 esac

@@ -34,9 +34,8 @@ do
   esac
 done
 
-firewall-cmd --permanent --new-zone=${name}
-firewall-cmd --permanent --zone=${name} --set-description="Zone for Room ${name}"
-firewall-cmd --permanent --zone=${name} --add-source="${startip}/${netmask}"
-firewall-cmd --permanent --zone=${name} --set-target=ACCEPT
-firewall-cmd --reload
-
+/usr/bin/firewall-offline-cmd --new-zone=${name}
+/usr/bin/firewall-offline-cmd --zone=${name} --set-description="Zone for Room ${name}"
+/usr/bin/firewall-offline-cmd --zone=${name} --add-source="${startip}/${netmask}"
+/usr/bin/firewall-offline-cmd --zone=${name} --set-target=ACCEPT
+/usr/bin/systemctl restart firewalld
