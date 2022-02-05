@@ -10,6 +10,17 @@ import json
 import cranixconfig
 from configobj import ConfigObj
 
+yesno = {
+        'Yes': True,
+        'yes': True,
+        'on': True,
+        'On': True,
+        'No': False,
+        'no': False,
+        'off': False,
+        'Off': False,
+        }
+
 domain = cranixconfig.CRANIX_WORKGROUP
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
@@ -34,6 +45,13 @@ config.set('print$','comment','Printer Drivers')
 config.set('print$','path','/var/lib/samba/drivers')
 config.set('print$','read only','No')
 
+#Remove all printer sections
+for section in config.sections():
+    print(section)
+    if config.get(section,'printable', vars=yesno, fallback=False):
+        config.remove_section(section)
+
+#Add printer sections
 for line in os.popen('LANG=en_EN lpc status').readlines():
     match = re.search("([\-\w]+):", line)
     if match:
