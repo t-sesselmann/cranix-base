@@ -35,8 +35,8 @@ install:
 	mv $(SHARE)/setup/80-default-CRANIX.preset    $(DESTDIR)/usr/lib/systemd/system-preset/
 	mv $(SHARE)/setup/FirewalldExecStart.conf $(DESTDIR)/usr/lib/systemd/system/firewalld.service.d/ExecStart.conf
 	rsync -a   templates/       $(SHARE)/templates/
-	rsync -a   tools/           $(SHARE)/tools/
-	if [ -e updates ]; then rsync -a   updates/         $(SHARE)/updates/; fi
+	install -m 755   tools/*    $(SHARE)/tools/
+	install -m 755   updates/*  $(SHARE)/updates/
 	rsync -a   salt/            $(DESTDIR)/srv/salt/
 	rsync -a   cups/            $(DESTDIR)/usr/share/cups/
 	rsync -a   python/          $(DESTDIR)/$(PYTHONSITEARCH)/cranix/
