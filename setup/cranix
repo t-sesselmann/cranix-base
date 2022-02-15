@@ -379,6 +379,11 @@ CRANIX_CLEAN_UP_PRINTERS="yes"
 
 ## Type:        yesno
 ## Default:     yes
+# Should the logon script make the printer connections
+CRANIX_LOGON_CONNECT_PRINTERS="no"
+
+## Type:        yesno
+## Default:     yes
 # If this variable is yes the admin website allows the browser to use the saved passwords.
 CRANIX_ALLOW_SAVE_PASSWORD="no"
 

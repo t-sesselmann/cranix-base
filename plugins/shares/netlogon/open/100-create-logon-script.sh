@@ -51,15 +51,17 @@ else
 	cat /usr/share/cranix/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
-defaultPrinter=$( crx_api.sh GET devices/byIP/$I/defaultPrinter )
-if [ "$defaultPrinter" ]; then
-        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
-        printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+if [ "${CRANIX_LOGON_CONNECT_PRINTERS,,}" != "no" ]; then
+	defaultPrinter=$( crx_api.sh GET devices/byIP/$I/defaultPrinter )
+	if [ "$defaultPrinter" ]; then
+		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+		printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+	fi
+	for printer in $( crx_api.sh GET devices/byIP/$I/availablePrinters )
+	do
+		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+	done
 fi
-for printer in $( crx_api.sh GET devices/byIP/$I/availablePrinters )
-do
-        printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
-done
 
 chown ${U} /var/lib/samba/sysvol/$R/scripts/${U}.bat
 setfacl -m m::rwx /var/lib/samba/sysvol/$R/scripts/${U}.bat
