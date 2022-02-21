@@ -380,7 +380,7 @@ CRANIX_CLEAN_UP_PRINTERS="yes"
 ## Type:        yesno
 ## Default:     yes
 # Should the logon script make the printer connections
-CRANIX_LOGON_CONNECT_PRINTERS="no"
+CRANIX_LOGON_CONNECT_PRINTERS="yes"
 
 ## Type:        yesno
 ## Default:     yes
