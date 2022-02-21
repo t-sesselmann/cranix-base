@@ -48,7 +48,7 @@ config.set('print$','read only','No')
 #Remove all printer sections
 for section in config.sections():
     print(section)
-    if config.get(section,'printable', vars=yesno, fallback=False):
+    if config.getboolean(section,'printable', vars=yesno, fallback=False):
         config.remove_section(section)
 
 #Add printer sections
