@@ -5,6 +5,7 @@ import json
 import os
 import re
 import sys
+from datetime import datetime
 from argparse import ArgumentParser
 
 #Parse arguments
@@ -47,11 +48,17 @@ portal  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVE
 debug   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DEBUG').read() == "yes"
 smb_reload  = False #Reload of samba is required
 smb_changed = False #Rewrite of samba is required
+debug_file  = '/var/log/cranix-manage-room.log'
 
 def log_debug(msg):
     global debug
     if debug:
-        print(msg)
+        with open(debug_file,"a") as log:
+            log.write('DEBUG {0} {1}\n'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),msg))
+
+def log_error(msg):
+    with open(debug_file,"a") as log:
+        log.write('ERROR {0} {1}\n'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),msg))
 
 def is_printer_allowed(printer,network):
     global config
@@ -73,6 +80,9 @@ def is_printing_allowed():
 def enable_printing():
     global room, config, smb_changed
     for printer in room['printers']:
+        if not config.has_section(printer):
+            log_error('There is no section for printer {} in smb.conf'.format(printer))
+            continue
         allowed_rooms = config.get(printer,'hosts allow').split()
         if room['network'] not in allowed_rooms:
             allowed_rooms.append(room['network'])
