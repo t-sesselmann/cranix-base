@@ -10,17 +10,6 @@ import json
 import cranixconfig
 from configobj import ConfigObj
 
-yesno = {
-        'Yes': True,
-        'yes': True,
-        'on': True,
-        'On': True,
-        'No': False,
-        'no': False,
-        'off': False,
-        'Off': False,
-        }
-
 domain = cranixconfig.CRANIX_WORKGROUP
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
@@ -47,8 +36,8 @@ config.set('print$','read only','No')
 
 #Remove all printer sections
 for section in config.sections():
-    print(section)
-    if config.getboolean(section,'printable', vars=yesno, fallback=False):
+    printable=config.get(section,'printable', fallback="no").lower()
+    if printable == "yes" or printable == "on":
         config.remove_section(section)
 
 #Add printer sections
