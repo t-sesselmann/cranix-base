@@ -3,7 +3,7 @@
 
 import configparser
 import json
-import subpocess
+import subprocess
 import sys
 
 printer = {}
