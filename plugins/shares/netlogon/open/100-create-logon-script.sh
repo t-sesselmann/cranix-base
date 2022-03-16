@@ -45,7 +45,7 @@ if [ "${CRANIX_MOVE_PROFILE_TO_HOME}" = "yes" ]; then
                 echo "ERROR create-logon-script: '$U' has not home directory"
         else
 		cat /usr/share/cranix/templates/login-profile-move-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
-	        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music}
+	        install -o ${U} -m 700 -d ${userHome}/{Documents,Downloads,Favorites,Pictures,WinDesktop,Videos,Music,AppData,OneDrive}
 	fi
 else
 	cat /usr/share/cranix/templates/login-profile-move-back-registy-patch >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
