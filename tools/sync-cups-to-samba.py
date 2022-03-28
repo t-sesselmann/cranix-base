@@ -14,7 +14,7 @@ domain = cranixconfig.CRANIX_WORKGROUP
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
 
-os.system('chgrp -R "{0}\Domain Admins" /var/lib/samba/drivers'.format(domain))
+os.system('chgrp -R "{0}\\sysadmins" /var/lib/samba/drivers'.format(domain))
 os.system('chmod -R 2775 /var/lib/samba/drivers')
 os.system('net rpc rights grant "BUILTIN\Administrators" SePrintOperatorPrivilege -U "register%{0}"'.format(passwd))
 config = configparser.ConfigParser(delimiters=('='))
