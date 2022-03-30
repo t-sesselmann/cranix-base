@@ -22,9 +22,6 @@
 	ldap server require strong auth = no
 #make print server more performant:
 	printing = CUPS
-	load printers = no
-	rpc_server:spoolss  = external
-	rpc_daemon:spoolssd = fork
 
 [sysvol]
        path = /var/lib/samba/sysvol
@@ -136,7 +133,3 @@
         writable=yes
 	valid users = @sysadmins
 
-[print$]
-	comment = Printer Drivers
-	path = /var/lib/samba/drivers
-	read only = no

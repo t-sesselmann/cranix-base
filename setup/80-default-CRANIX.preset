@@ -6,9 +6,9 @@ enable freshclam.service
 enable chronyd.service
 enable cranix-api.service
 enable crx_salt_event_watcher.service
-enable crx_set_default_status.service
 enable salt-master.service
 enable samba-ad.service
+enable samba-printserver.service
 enable sshd.service
 enable sssd.service
 enable vsftpd.service

@@ -150,10 +150,15 @@ CRANIX_NETWORK="172.28.0.0"
 # The default gateway for the internal net, not for the server.
 CRANIX_NET_GATEWAY="172.28.0.2"
 
+## Type:        string readonly
+## Default:     "172.16.0.4"
+# IP-address of the print server of the CRANIX.
+CRANIX_PRINTSERVER="172.28.0.4"
+
 ## Type:	string readonly
-## Default:	"172.16.0.4"
+## Default:	"172.16.0.5"
 # IP-address of the proxy server of the CRANIX.
-CRANIX_PROXY="172.28.0.4"
+CRANIX_PROXY="172.28.0.5"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.6"

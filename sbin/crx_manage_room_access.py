@@ -5,6 +5,7 @@ import json
 import os
 import re
 import sys
+import cranixconfig
 from datetime import datetime
 from argparse import ArgumentParser
 
@@ -43,11 +44,14 @@ login_denied_rooms   =[]
 room    = {}
 rooms   = []
 zones   = {}
-proxy   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/PROXY').read()
-portal  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAILSERVER').read()
-debug   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/DEBUG').read() == "yes"
+server_net = cranixconfig.CRANIX_SERVER_NET
+proxy  = cranixconfig.CRANIX_PROXY
+portal = cranixconfig.CRANIX_MAILSERVER
+debug  = cranixconfig.CRANIX_DEBUG == "yes"
+config = configparser.ConfigParser(delimiters=('='))
+printc = configparser.ConfigParser(delimiters=('='))
+printc_changed = False #Rewrite of samba is required
 smb_reload  = False #Reload of samba is required
-smb_changed = False #Rewrite of samba is required
 debug_file  = '/var/log/cranix-manage-room.log'
 
 def log_debug(msg):
@@ -61,10 +65,10 @@ def log_error(msg):
         log.write('ERROR {0} {1}\n'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),msg))
 
 def is_printer_allowed(printer,network):
-    global config
-    if printer in config:
-        if 'hosts allow' in config[printer]:
-            return network in config.get(printer,'hosts allow').split()
+    global printc
+    if printer in printc:
+        if 'hosts allow' in printc[printer]:
+            return network in printc.get(printer,'hosts allow').split()
         else:
             return True
     else:
@@ -78,30 +82,30 @@ def is_printing_allowed():
     return False
 
 def enable_printing():
-    global room, config, smb_changed
+    global room, printc, printc_changed
     for printer in room['printers']:
-        if not config.has_section(printer):
+        if not printc.has_section(printer):
             log_error('There is no section for printer {} in smb.conf'.format(printer))
             continue
-        allowed_rooms = config.get(printer,'hosts allow').split()
+        allowed_rooms = printc.get(printer,'hosts allow').split()
         if room['network'] not in allowed_rooms:
             allowed_rooms.append(room['network'])
-            config.set(printer,'hosts allow'," ".join(allowed_rooms))
-            smb_changed = True
+            printc.set(printer,'hosts allow'," ".join(allowed_rooms))
+            printc_changed = True
 
 def disable_printing():
-    global room, config, smb_changed
+    global room, printc, printc_changed
     for printer in room['printers']:
-        allowed_rooms = config.get(printer,'hosts allow').split()
+        allowed_rooms = printc.get(printer,'hosts allow').split()
         if not room['network'] not in allowed_rooms:
             allowed_rooms.remove(room['network'])
-            config.set(printer,'hosts allow'," ".join(allowed_rooms))
-            smb_changed = True
+            printc.set(printer,'hosts allow'," ".join(allowed_rooms))
+            printc_changed = True
 
 def set_state():
     global allow_printing, allow_login, allow_portal, allow_direct, allow_proxy
     global args, login_denied_rooms, rooms, zones, room
-    global proxy, portal, smb_changed, smb_reload
+    global proxy, portal, smb_reload, printc_changed
     try:
         name    = room['name']
         network = room['network']
@@ -116,7 +120,6 @@ def set_state():
                 allow_direct   = access['direct']
 
         if allow_printing:
-            allow_login = True
             enable_printing()
         else:
             disable_printing()
@@ -198,8 +201,8 @@ def prepare_room():
         room['printers'].append(printer['name'])
 
 #Start collecting datas
-config = configparser.ConfigParser(delimiters=('='))
 config.read('/etc/samba/smb.conf')
+printc.read('/etc/samba/smb-printserver.conf')
 
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
@@ -270,7 +273,7 @@ else:
         with open('/etc/samba/smb.conf','wt') as f:
             config.write(f)
         os.system("/usr/bin/systemctl reload samba-ad.service")
-    elif smb_changed:
-        with open('/etc/samba/smb.conf','wt') as f:
-            config.write(f)
+    if printc_changed:
+        with open('/etc/samba/smb-printserver.conf','wt') as f:
+            printc.write(f)
 

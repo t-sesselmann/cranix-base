@@ -5,7 +5,9 @@ import configparser
 import json
 import subprocess
 import sys
+import cranixconfig
 
+server_net = cranixconfig.CRANIX_SERVER_NET
 printer = {}
 printer = json.loads(sys.stdin.read())
 
@@ -18,7 +20,7 @@ subprocess.run(['/usr/sbin/lpadmin','-p',printer['name'],
 
 #Remove printer to samba
 config = configparser.ConfigParser(delimiters=('='))
-config.read('/etc/samba/smb.conf')
+config.read('/etc/samba/smb-printserver.conf')
 
 if not printer['name'] in config:
     config.add_section(printer['name'])
@@ -26,9 +28,9 @@ if not printer['name'] in config:
 config.set(printer['name'],'path','/var/tmp/')
 config.set(printer['name'],'printable','yes')
 config.set(printer['name'],'printer name',printer['name'])
-config.set(printer['name'],'hosts allow','')
+config.set(printer['name'],'hosts allow',server_net)
 
-with open('/etc/samba/smb.conf','wt') as f:
+with open('/etc/samba/smb-printserver.conf','wt') as f:
     config.write(f)
 
 subprocess.run(['/usr/sbin/cupsenable',printer['name']])

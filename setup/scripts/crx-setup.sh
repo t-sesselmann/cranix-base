@@ -142,6 +142,7 @@ function SetupSamba (){
     log " - Create dns entries "
     samba-tool dns add localhost $CRANIX_DOMAIN mailserver   A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN cranix       A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
+    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN proxy        A $CRANIX_PROXY         -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN backup       A $CRANIX_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN install      A $CRANIX_SERVER        -U Administrator%"$passwd"
@@ -151,7 +152,7 @@ function SetupSamba (){
        samba-tool dns add localhost $CRANIX_DOMAIN admin   A $CRANIX_SERVER        -U Administrator%"$passwd"
     fi
     /usr/share/cranix/setup/scripts/create-revers-domain.py "$passwd" $CRANIX_DOMAIN $CRANIX_NETWORK $CRANIX_NETMASK \
-	   "mailserver:$CRANIX_MAILSERVER,proxy:$CRANIX_PROXY,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY"
+	   "mailserver:$CRANIX_MAILSERVER,printserver:$CRANIX_PRINTSERVER,proxy:$CRANIX_PROXY,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY"
 
     #Add rfc2307 attributes to Administartor
     DN=$( /usr/sbin/crx_get_dn.sh Administrator )
@@ -192,6 +193,23 @@ profilePath: \\\\admin\\profiles\\administrator
 "  > /tmp/rfc2307-Administartor
      ldbmodify  -H /var/lib/samba/private/sam.ldb  /tmp/rfc2307-Administartor
      #rm /tmp/rfc2307-Administartor
+     ########################################################################
+     log " - Setup printserver "
+     cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
+     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
+     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
+     chmod -R 775 /var/lib/printserver/drivers/
+     chgrp -R ntadmin /var/lib/printserver/drivers/
+     mkdir -p /var/log/samba/printserver/
+     sed    "s/#REALM#/$CRANIX_DOMAIN/g"          /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
+     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
+     sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
+     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+     systemctl enable samba-printserver
+     systemctl start  samba-printserver
+     chmod -R 775 /var/lib/printserver/drivers
+     chgrp -R $sysadmins_gn /var/lib/printserver/drivers
+     setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
 
     #########################################################################
     log " - Some additional samba settings -"
@@ -219,6 +237,8 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
 
     /usr/bin/systemctl restart samba-ad
+    sleep 5
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
 
     ########################################################################
     log " - Setup ntp signd directory rights."
@@ -226,8 +246,8 @@ profilePath: \\\\admin\\profiles\\administrator
     chmod 750         /var/lib/samba/ntp_signd/
 
     ########################################################################
-    log " - Add default policy"
-    tar -xf /usr/share/cranix/setup/templates/pol.tar -C /var/lib/samba/sysvol/${CRANIX_DOMAIN}/Policies/
+    #log " - Add default policy"
+    #tar -xf /usr/share/cranix/setup/templates/pol.tar -C /var/lib/samba/sysvol/${CRANIX_DOMAIN}/Policies/
     log "End SetupSamba"
 }
 
@@ -435,6 +455,7 @@ unset _bred _sgr0
 	sed -i "s/#ANON_NETMASK#/${ANON_NETMASK}/g"		$i
 	sed -i "s/#CRANIX_NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g"	$i
 	sed -i "s/#CRANIX_SERVER#/${CRANIX_SERVER}/g"		$i
+	sed -i "s/#CRANIX_PRINTSERVER#/${CRANIX_PRINTSERVER}/g" $i
 	sed -i "s/#CRANIX_MAILSERVER#/${CRANIX_MAILSERVER}/g"	$i
 	sed -i "s/#CRANIX_PROXY#/${CRANIX_PROXY}/g"		$i
 	sed -i "s/#CRANIX_BACKUP_SERVER#/${CRANIX_BACKUP_SERVER}/g" $i

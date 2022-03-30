@@ -10,15 +10,16 @@ import json
 import cranixconfig
 from configobj import ConfigObj
 
-domain = cranixconfig.CRANIX_WORKGROUP
+server_net = cranixconfig.CRANIX_SERVER_NET
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
 
-os.system('chgrp -R "{0}\Domain Admins" /var/lib/samba/drivers'.format(domain))
-os.system('chmod -R 2775 /var/lib/samba/drivers')
+os.system('chgrp -R "SYSADMINS" /var/lib/printserver/drivers')
+os.system('chmod -R 2775 /var/lib/printserver/drivers')
 os.system('net rpc rights grant "BUILTIN\Administrators" SePrintOperatorPrivilege -U "register%{0}"'.format(passwd))
+os.system('net rpc rights grant "SYSADMINS" SePrintOperatorPrivilege -U "register%{0}"'.format(passwd))
 config = configparser.ConfigParser(delimiters=('='))
-config.read('/etc/samba/smb.conf')
+config.read('/etc/samba/smb-printserver.conf')
 
 config.set('global','printing','CUPS')
 config.set('global','load printers','no')
@@ -31,7 +32,7 @@ if 'print$' in config:
     config.remove_section('print$')
 config.add_section('print$')
 config.set('print$','comment','Printer Drivers')
-config.set('print$','path','/var/lib/samba/drivers')
+config.set('print$','path','/var/lib/printserver/drivers')
 config.set('print$','read only','No')
 
 #Remove all printer sections
@@ -51,8 +52,8 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
         config.set(name,'printable','yes')
         config.set(name,'printer name',name)
         if 'hosts allow' not in config[name]:
-            config.set(name,'hosts allow','')
+            config.set(name,'hosts allow',server_net)
 
-with open('/etc/samba/smb.conf','wt') as f:
+with open('/etc/samba/smb-printserver.conf','wt') as f:
     config.write(f)
 
