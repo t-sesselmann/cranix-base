@@ -33,5 +33,6 @@ config.set(printer['name'],'hosts allow',server_net)
 with open('/etc/samba/smb-printserver.conf','wt') as f:
     config.write(f)
 
+subprocess.run(['/usr/bin/systemctl','restart','smb-printserver'])
 subprocess.run(['/usr/sbin/cupsenable',printer['name']])
 subprocess.run(['/usr/sbin/cupsaccept',printer['name']])

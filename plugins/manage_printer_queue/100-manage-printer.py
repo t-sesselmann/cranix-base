@@ -10,7 +10,11 @@ import subprocess
 import sys
 import cranixconfig
 
-printserver = cranixconfig.CRANIX_PRINTSERVER
+try:
+    printserver = cranixconfig.CRANIX_PRINTSERVER_NAME
+except AttributeError:
+    printserver = "printserver"
+
 printer = {}
 printer = json.loads(sys.stdin.read())
 
