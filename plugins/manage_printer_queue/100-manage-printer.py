@@ -9,6 +9,7 @@ import json
 import subprocess
 import sys
 import cranixconfig
+import time
 
 try:
     printserver = cranixconfig.CRANIX_PRINTSERVER_NAME
@@ -19,10 +20,17 @@ printer = {}
 printer = json.loads(sys.stdin.read())
 
 if printer['action'] == 'activateWindowsDriver':
-    subprocess.run(["/usr/sbin/cupsaddsmb",
-        "-H",printserver,
-        "-U","register%{0}".format(passwd),
-        printer['name']
+   ret =  subprocess.run(["/usr/sbin/cupsaddsmb",
+            "-H",printserver,
+            "-U","register%{0}".format(passwd),"-v",
+            printer['name']
+          ])
+   if ret.returncode != 0:
+        time.sleep(3)
+        subprocess.run(["/usr/sbin/cupsaddsmb",
+            "-H",printserver,
+            "-U","register%{0}".format(passwd),"-v",
+            printer['name']
         ])
 
 elif printer['action'] == 'enable':
@@ -34,6 +42,7 @@ elif printer['action'] == 'enable':
         config.set(printer['name'],'hosts allow'," ".join(allowed_rooms))
         with open('/etc/samba/smb-printserver.conf','wt') as f:
             config.write(f)
+        subprocess.run(['/usr/bin/systemctl','restart','samba-printserver'])
 
 elif printer['action'] == 'disable':
     config = configparser.ConfigParser(delimiters=('='))
@@ -44,3 +53,4 @@ elif printer['action'] == 'disable':
         config.set(printer['name'],'hosts allow'," ".join(allowed_rooms))
         with open('/etc/samba/smb-printserver.conf','wt') as f:
             config.write(f)
+        subprocess.run(['/usr/bin/systemctl','restart','samba-printserver'])

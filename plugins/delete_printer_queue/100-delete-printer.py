@@ -20,4 +20,4 @@ if printer['name'] in config:
     with open('/etc/samba/smb-printserver.conf','wt') as f:
         config.write(f)
 #Restart samba
-subprocess.run(['/usr/bin/systemctl','restart','smb-printserver'])
+subprocess.run(['/usr/bin/systemctl','restart','samba-printserver'])
