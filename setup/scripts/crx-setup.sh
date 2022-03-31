@@ -14,8 +14,8 @@ windomain=""
 passwdf=""
 all="no"
 samba="no"
+printserver="no"
 dhcp="no"
-#mail="no"
 filter="no"
 api="no"
 postsetup="no"
@@ -23,6 +23,15 @@ accounts="no"
 verbose="yes"
 cephalixpw=""
 registerpw=""
+
+########################################################################
+# Fixed gids
+sysadmins_gn=4000000
+workstations_gn=4000001
+administration_ng=4000002
+templates_gn=4000003
+students_gn=4000004
+teachers_gn=4000005
 
 
 function usage (){
@@ -36,6 +45,7 @@ function usage (){
 	echo "          -h,   --help              Display the help."
 	echo "                --all               Setup all services and create the initial groups and user accounts."
 	echo "                --samba             Setup the AD-DC samba server."
+	echo "                --printserver       Setup the printserver."
 	echo "                --dhcp              Setup the DHCP server"
 	echo "                --mail              Setup the mail server"
 	echo "                --filter            Setup the internet filter"
@@ -142,7 +152,6 @@ function SetupSamba (){
     log " - Create dns entries "
     samba-tool dns add localhost $CRANIX_DOMAIN mailserver   A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN cranix       A $CRANIX_MAILSERVER    -U Administrator%"$passwd"
-    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN proxy        A $CRANIX_PROXY         -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN backup       A $CRANIX_BACKUP_SERVER -U Administrator%"$passwd"
     samba-tool dns add localhost $CRANIX_DOMAIN install      A $CRANIX_SERVER        -U Administrator%"$passwd"
@@ -192,25 +201,6 @@ add: profilePath
 profilePath: \\\\admin\\profiles\\administrator
 "  > /tmp/rfc2307-Administartor
      ldbmodify  -H /var/lib/samba/private/sam.ldb  /tmp/rfc2307-Administartor
-     #rm /tmp/rfc2307-Administartor
-     ########################################################################
-     log " - Setup printserver "
-     cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
-     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
-     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
-     chmod -R 775 /var/lib/printserver/drivers/
-     chgrp -R ntadmin /var/lib/printserver/drivers/
-     mkdir -p /var/log/samba/printserver/
-     sed    "s/#REALM#/$CRANIX_DOMAIN/g"          /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
-     sed -i "s/#WORKGROUP#/$windomain/g"          /etc/samba/smb-printserver.conf
-     sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g"    /etc/samba/smb-printserver.conf
-     net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
-     systemctl enable samba-printserver
-     systemctl start  samba-printserver
-     chmod -R 775 /var/lib/printserver/drivers
-     chgrp -R $sysadmins_gn /var/lib/printserver/drivers
-     setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
-
     #########################################################################
     log " - Some additional samba settings -"
     samba-tool domain passwordsettings set --max-pwd-age=365
@@ -236,19 +226,41 @@ profilePath: \\\\admin\\profiles\\administrator
     sed -i "s/#IPADDR#/$CRANIX_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
 
-    /usr/bin/systemctl restart samba-ad
-    sleep 5
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
-
     ########################################################################
     log " - Setup ntp signd directory rights."
     chown root:chrony /var/lib/samba/ntp_signd/
     chmod 750         /var/lib/samba/ntp_signd/
 
+    /usr/bin/systemctl restart samba-ad
+    sleep 5
+
     ########################################################################
-    #log " - Add default policy"
-    #tar -xf /usr/share/cranix/setup/templates/pol.tar -C /var/lib/samba/sysvol/${CRANIX_DOMAIN}/Policies/
     log "End SetupSamba"
+}
+
+function SetupPrintserver () {
+    ########################################################################
+    log " - Setup printserver "
+    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
+    echo -e "name: printserver\nip: $CRANIX_PRINTSERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
+    cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
+    mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
+    mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
+    chgrp -R $sysadmins_gn /var/lib/printserver/drivers/
+    chmod -R 2775 /var/lib/printserver/drivers
+    mkdir -p /var/log/samba/printserver/
+    sed    "s/#REALM#/$REALM/g"               /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-printserver.conf
+    sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g" /etc/samba/smb-printserver.conf
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    systemctl enable samba-printserver
+    systemctl start  samba-printserver
+    chgrp -R $sysadmins_gn /var/lib/printserver/drivers
+    setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
+    registerPW=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerPW"
+    ########################################################################
+    log "End Setup Printserver"
 }
 
 function SetupDHCP (){
@@ -327,14 +339,6 @@ function SetupInitialAccounts (){
     samba-tool user setexpiry --noexpiry ossreader
 
     ########################################################################
-    sysadmins_gn=4000000
-    workstations_gn=4000001
-    administration_ng=4000002
-    templates_gn=4000003
-    students_gn=4000004
-    teachers_gn=4000005
-
-    ########################################################################
     log " - Create base roles"
     /usr/share/cranix/setup/scripts/crx-add-group.sh --name="SYSADMINS"      --description="Sysadmins"      --type="primary" --mail="sysadmins@$CRANIX_DOMAIN"      --gid-number=$sysadmins_gn
     samba-tool ou create OU=sysadmins
@@ -362,7 +366,7 @@ function SetupInitialAccounts (){
     samba-tool group addmembers "Domain Admins" "SYSADMINS"
     log " - add to Domain Admins group SePrintOperatorPrivilege"
     net rpc rights grant "$windomain\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
-    #net rpc rights grant "$windomain\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
+    net rpc rights grant "$windomain\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
 
     ########################################################################
@@ -640,6 +644,9 @@ while [ "$1" != "" ]; do
 	--samba )
 				samba="yes"
         ;;
+	--printserver )
+				printserver="yes"
+        ;;
 	--dhcp )
                                 dhcp="yes"
         ;;
@@ -680,6 +687,9 @@ done
 InitGlobalVariable
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ]; then
     SetupSamba
+fi
+if [ "$all" = "yes" ] || [ "$samba" = "yes" ] || [ "$printserver" = "yes" ]; then
+    SetupPrintserver
 fi
 if [ "$all" = "yes" ] || [ "$dhcp" = "yes" ]; then
     SetupDHCP
