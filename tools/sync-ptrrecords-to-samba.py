@@ -2,6 +2,7 @@
 import json
 import os
 import os.path
+import socket
 from configobj import ConfigObj
 
 devices=json.load(os.popen('crx_api.sh GET devices/all'))
@@ -19,21 +20,26 @@ elif netmask > 7 and netmask < 16:
 
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
-os.system("samba-tool dns zonecreate localhost " + revdomain + " -U register%" + passwd)
+res = os.system("samba-tool dns zoneinfo localhost " + revdomain + " -U register%" + passwd + " &>/dev/null")
+if res != 0:
+    os.system("samba-tool dns zonecreate localhost " + revdomain + " -U register%" + passwd)
 for device in devices:
-  ip   = device["ip"].split('.')
-  name = device["name"]
-  if netmask > 23:
-    if ip[0] != network[0] or ip[1] != network[1] or ip[2] != network[2]:
-      next
-    rdomain = ip[3]
-  elif netmask > 15:
-    if ip[0] != network[0] or ip[1] != network[1]:
-      next
-    rdomain = ip[3]+'.'+ip[2]
-  elif netmask > 7:
-    if ip[0] != network[0]:
-      next
-    rdomain = ip[3]+'.'+ip[2]+'.'+ip[1]
-  os.system("samba-tool dns add localhost " + revdomain + " " + rdomain + " PTR " + name + "." + domain + "  -U register%" + passwd )
+    ip   = device["ip"].split('.')
+    try:
+        socket.gethostbyaddr(device["ip"])
+    except:
+        name = device["name"]
+        if netmask > 23:
+          if ip[0] != network[0] or ip[1] != network[1] or ip[2] != network[2]:
+            next
+          rdomain = ip[3]
+        elif netmask > 15:
+          if ip[0] != network[0] or ip[1] != network[1]:
+            next
+          rdomain = ip[3]+'.'+ip[2]
+        elif netmask > 7:
+          if ip[0] != network[0]:
+            next
+          rdomain = ip[3]+'.'+ip[2]+'.'+ip[1]
+        os.system("samba-tool dns add localhost " + revdomain + " " + rdomain + " PTR " + name + "." + domain + "  -U register%" + passwd )
 
