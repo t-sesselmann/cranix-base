@@ -53,6 +53,11 @@ printc = configparser.ConfigParser(delimiters=('='))
 printc_changed = False #Rewrite of samba is required
 smb_reload  = False #Reload of samba is required
 debug_file  = '/var/log/cranix-manage-room.log'
+try:
+    print_config_file = cranixconfig.CRANIX_PRINTSERVER_CONFIG
+except AttributeError:
+    print_config_file = "/etc/samba/smb-printserver.conf"
+
 
 def log_debug(msg):
     global debug
@@ -81,25 +86,33 @@ def is_printing_allowed():
             return True
     return False
 
+def get_allowed_nets(printer):
+    allowed_nets = []
+    if 'hosts allow' in printc[printer]:
+        allowed_nets = printc.get(printer,'hosts allow').split()
+    if server_net not in allowed_nets:
+        allowed_nets.append(server_net)
+    return allowed_nets
+
 def enable_printing():
     global room, printc, printc_changed
     for printer in room['printers']:
         if not printc.has_section(printer):
             log_error('There is no section for printer {} in smb.conf'.format(printer))
             continue
-        allowed_rooms = printc.get(printer,'hosts allow').split()
-        if room['network'] not in allowed_rooms:
-            allowed_rooms.append(room['network'])
-            printc.set(printer,'hosts allow'," ".join(allowed_rooms))
+        allowed_nets = get_allowed_nets(printer)
+        if room['network'] not in allowed_nets:
+            allowed_nets.append(room['network'])
+            printc.set(printer,'hosts allow'," ".join(allowed_nets))
             printc_changed = True
 
 def disable_printing():
     global room, printc, printc_changed
     for printer in room['printers']:
-        allowed_rooms = printc.get(printer,'hosts allow').split()
-        if not room['network'] not in allowed_rooms:
-            allowed_rooms.remove(room['network'])
-            printc.set(printer,'hosts allow'," ".join(allowed_rooms))
+        allowed_nets = get_allowed_nets(printer)
+        if room['network'] in allowed_nets:
+            allowed_nets.remove(room['network'])
+            printc.set(printer,'hosts allow'," ".join(allowed_nets))
             printc_changed = True
 
 def set_state():
@@ -202,7 +215,7 @@ def prepare_room():
 
 #Start collecting datas
 config.read('/etc/samba/smb.conf')
-printc.read('/etc/samba/smb-printserver.conf')
+printc.read(print_config_file)
 
 if 'hosts deny' in config['global']:
     login_denied_rooms    = config.get('global','hosts deny').split()
@@ -274,6 +287,6 @@ else:
             config.write(f)
         os.system("/usr/bin/systemctl reload samba-ad.service")
     if printc_changed:
-        with open('/etc/samba/smb-printserver.conf','wt') as f:
+        with open(print_config_file,'wt') as f:
             printc.write(f)
 

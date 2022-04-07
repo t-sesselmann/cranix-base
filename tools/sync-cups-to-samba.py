@@ -10,6 +10,11 @@ import json
 import cranixconfig
 from configobj import ConfigObj
 
+try:
+    print_config_file = cranixconfig.CRANIX_PRINTSERVER_CONFIG
+except AttributeError:
+    print_config_file = "/etc/samba/smb-printserver.conf"
+
 server_net = cranixconfig.CRANIX_SERVER_NET
 config = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 passwd = config['de.cranix.dao.User.Register.Password']
@@ -19,10 +24,11 @@ os.system('chmod -R 2775 /var/lib/printserver/drivers')
 os.system('net rpc rights grant "BUILTIN\Administrators" SePrintOperatorPrivilege -U "register%{0}"'.format(passwd))
 os.system('net rpc rights grant "SYSADMINS" SePrintOperatorPrivilege -U "register%{0}"'.format(passwd))
 config = configparser.ConfigParser(delimiters=('='))
-config.read('/etc/samba/smb-printserver.conf')
+config.read(print_config_file)
 
 config.set('global','printing','CUPS')
 config.set('global','load printers','no')
+config.set('global','min domain uid','0')
 config.set('global','rpc_server:spoolss','external')
 config.set('global','rpc_daemon:spoolssd','fork')
 
@@ -54,6 +60,6 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
         if 'hosts allow' not in config[name]:
             config.set(name,'hosts allow',server_net)
 
-with open('/etc/samba/smb-printserver.conf','wt') as f:
+with open(print_config_file,'wt') as f:
     config.write(f)
 
