@@ -46,7 +46,6 @@ home_base = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/HOME_BA
 check_pw  = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CHECK_PASSWORD_QUALITY').read().lower() == 'yes'
 class_adhoc = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/MAINTAIN_ADHOC_ROOM_FOR_CLASSES').read().lower() == 'yes'
 roles  = []
-devices_move = []
 for role in os.popen('/usr/sbin/crx_api_text.sh GET groups/text/byType/primary').readlines():
   roles.append(role.strip())
 
@@ -384,13 +383,6 @@ def move_user(uid,old_classes,new_classes):
            if debug:
                print(result)
 
-    if class_adhoc and 0 in old_classes and 0 in new_classes and old_classes[0] != new_classes[0]:
-        movement = {}
-        movement['uid'] = uid
-        movement['old'] = old_classes[0]
-        movement['new'] = new_classes[0]
-        devices_move.append(movement)
-
 def delete_user(uid):
     cmd = '/usr/sbin/crx_api_text.sh DELETE "users/text/{0}"'.format(uid)
     if debug:
@@ -441,7 +433,5 @@ def write_user_list():
 
     #Now we handle AdHocRooms:
     if class_adhoc:
-        with open(import_dir +'/devices_move.json','w') as f:
-            json.dump(devices_move,f,ensure_ascii=False)
-        os.system('/usr/share/cranix/tools/move_devices.py {0}/devices_move.json'.format(import_dir))
+        os.system('/usr/sbin/crx_api.sh PATCH users/moveStudentsDevices')
 
