@@ -22,8 +22,12 @@ postsetup="no"
 accounts="no"
 verbose="yes"
 cephalixpw=""
-registerpw=""
-
+registerpw=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
+# New installation or called in an installed system
+if [ "${registerpw}" = "REGISTERPW" ]; then
+    registerpw=`mktemp XXXXXXXXXX`
+    sed -i s/REGISTERPW/$registerpw/ /opt/cranix-java/conf/cranix-api.properties
+fi
 ########################################################################
 # Fixed gids
 sysadmins_gn=4000000
@@ -241,7 +245,7 @@ profilePath: \\\\admin\\profiles\\administrator
 function SetupPrintserver () {
     ########################################################################
     log " - Setup printserver "
-    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%"$passwd"
+    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U register%"$registerpw"
     echo -e "name: printserver\nip: $CRANIX_PRINTSERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
     cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
@@ -252,9 +256,7 @@ function SetupPrintserver () {
     sed    "s/#REALM#/$REALM/g"               /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g" /etc/samba/smb-printserver.conf
-    /usr/bin/systemctl restart samba-ad
-    registerPW=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerPW"
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerpw"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
     chgrp -R $sysadmins_gn /var/lib/printserver/drivers
@@ -322,7 +324,6 @@ function SetupInitialAccounts (){
 
     ########################################################################
     log " - Create internal users"
-    registerpw=`mktemp XXXXXXXXXX`
     if [ -z "$cephalixpw" ]; then
 	cephalixpw=`mktemp XXXXXXXXXX`
     fi
@@ -330,7 +331,6 @@ function SetupInitialAccounts (){
     samba-tool domain passwordsettings set --complexity=off
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
-    sed -i s/REGISTERPW/$registerpw/ /opt/cranix-java/conf/cranix-api.properties
     samba-tool user setexpiry --noexpiry cephalix
     samba-tool user create register "$registerpw"
     samba-tool user setexpiry --noexpiry register
@@ -688,6 +688,9 @@ InitGlobalVariable
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ]; then
     SetupSamba
 fi
+if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
+    SetupInitialAccounts
+fi
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ] || [ "$printserver" = "yes" ]; then
     SetupPrintserver
 fi
@@ -696,9 +699,6 @@ if [ "$all" = "yes" ] || [ "$dhcp" = "yes" ]; then
 fi
 if [ "$all" = "yes" ] || [ "$mail" = "yes" ]; then
     SetupMail
-fi
-if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
-    SetupInitialAccounts
 fi
 if [ "$all" = "yes" ] || [ "$api" = "yes" ]; then
     SetupApi
