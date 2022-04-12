@@ -4,6 +4,9 @@
 
 source /etc/sysconfig/cranix
 
-if [ "${CRANIX_MONITOR_SERVICES/firewalld/}" = "${CRANIX_MONITOR_SERVICES} ]; then
+if [ "${CRANIX_MONITOR_SERVICES/firewalld/}" = "${CRANIX_MONITOR_SERVICES}" ]; then
 	sed -i "s/CRANIX_MONITOR_SERVICES=.*/CRANIX_MONITOR_SERVICES=\"${CRANIX_MONITOR_SERVICES} firewalld\"/" /etc/sysconfig/cranix
+fi
+if [ "${CRANIX_MONITOR_SERVICES/samba-printserver/}" = "${CRANIX_MONITOR_SERVICES}" ]; then
+	sed -i "s/CRANIX_MONITOR_SERVICES=.*/CRANIX_MONITOR_SERVICES=\"${CRANIX_MONITOR_SERVICES} samba-printserver\"/" /etc/sysconfig/cranix
 fi

@@ -252,13 +252,13 @@ function SetupPrintserver () {
     sed    "s/#REALM#/$REALM/g"               /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g" /etc/samba/smb-printserver.conf
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    /usr/bin/systemctl restart samba-ad
+    registerPW=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
+    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerPW"
     systemctl enable samba-printserver
     systemctl start  samba-printserver
     chgrp -R $sysadmins_gn /var/lib/printserver/drivers
     setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
-    registerPW=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerPW"
     ########################################################################
     log "End Setup Printserver"
 }
