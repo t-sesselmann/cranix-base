@@ -18,7 +18,7 @@ then
         echo "INSERT INTO Devices VALUES(4,1,1,NULL,'printserver','${NEXTIP}',NULL,'','',0,0,'','','',0);" | mysql CRX
         /usr/bin/systemctl restart cranix-api.service
 	sleep 3
-        sed -i "s/CRANIX_PRINTSERVER=.*/CRANIX_PRINTSERVER=\"${NEXTIP}\"/" /etc/sysconfig/cranix
+        sed -i "s/CRANIX_PRINTSERVER=.*$/CRANIX_PRINTSERVER=\"${NEXTIP}\"/" /etc/sysconfig/cranix
         echo "${NEXTIP} printserver.${CRANIX_DOMAIN} printserver" >> /etc/hosts
         echo "IPADDR_print='${NEXTIP}/${CRANIX_NETMASK}'
 LABEL_print='print'" >> ${DEVINT}
@@ -27,7 +27,7 @@ LABEL_print='print'" >> ${DEVINT}
 elif [ "${IPPRINTSERVER}" = ${CRANIX_SERVER} ]
 then
         /usr/sbin/crx_update_host.sh printserver ${IPPRINTSERVER} ${IPPRSQL}
-        sed -i "s/CRANIX_PRINTSERVER=.$/CRANIX_PRINTSERVER=\"${IPPRSQL}\"/" /etc/sysconfig/cranix
+        sed -i "s/CRANIX_PRINTSERVER=.*$/CRANIX_PRINTSERVER=\"${IPPRSQL}\"/" /etc/sysconfig/cranix
         echo "IPADDR_print='${IPPRSQL}/${CRANIX_NETMASK}'
 LABEL_print='print'" >> ${DEVINT}
         echo "${IPPRSQL} printserver.${CRANIX_DOMAIN} printserver" >> /etc/hosts
@@ -37,6 +37,8 @@ else
         curl -s -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d "${SUPPORT}" ${CRANIX_SUPPORT_URL}
         exit 1
 fi
+cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/
+/usr/bin/systemctl daemon-reload
 /usr/share/cranix/tools/sync-ptrrecords-to-samba.py
 /usr/share/cranix/tools/sync-cups-to-samba.py
 /usr/sbin/crx_manage_room_access.py --all --set_defaults
