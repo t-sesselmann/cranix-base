@@ -33,9 +33,13 @@ LABEL_print='print'" >> ${DEVINT}
         echo "${IPPRSQL} printserver.${CRANIX_DOMAIN} printserver" >> /etc/hosts
         ip addr add ${IPPRSQL}/${CRANIX_NETMASK} dev ${DEVINT/*ifcfg-/}
 else
-        SUPPORT='{"email":"noreply@cephalix.eu","subject":"Can not fix printserver configuration","description":"Can not fix printserver configuration","regcode":"'${CRANIX_REG_CODE}'"}'
-        curl -s -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d "${SUPPORT}" ${CRANIX_SUPPORT_URL}
-        exit 1
+	registerpw=$( grep de.cranix.dao.User.Register.Password= /opt/cranix-java/conf/cranix-api.properties | sed 's/de.cranix.dao.User.Register.Password=//' )
+        smbclient -L printserver -U register%${registerpw}
+        if [ $? ! -eq 0 ];
+        then
+                SUPPORT='{"email":"noreply@cephalix.eu","subject":"Can not fix printserver configuration","description":"Can not fix printserver configuration","regcode":"'${CRANIX_REG_CODE}'"}'
+                curl -s -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d "${SUPPORT}" ${CRANIX_SUPPORT_URL}
+        fi
 fi
 cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/
 /usr/bin/systemctl daemon-reload
