@@ -43,7 +43,6 @@ install:
 	mv $(SHARE)/setup/gpg-pubkey-*.asc.key $(DESTDIR)/usr/lib/rpm/gnupg/keys/
 	find $(SHARE)/plugins/ $(SHARE)/tools/ -type f -exec chmod 755 {} \;	
 	install -m 644 setup/cranix-firstboot.xml $(DESTDIR)/etc/YaST2/
-	install -m 644 setup/crx_*.service $(DESTDIR)/usr/lib/systemd/system/
 
 dist: 
 	xterm -e git log --raw  &
