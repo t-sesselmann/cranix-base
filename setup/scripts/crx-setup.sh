@@ -15,6 +15,7 @@ passwdf=""
 all="no"
 samba="no"
 printserver="no"
+fileserver="no"
 dhcp="no"
 filter="no"
 api="no"
@@ -50,6 +51,7 @@ function usage (){
 	echo "                --all               Setup all services and create the initial groups and user accounts."
 	echo "                --samba             Setup the AD-DC samba server."
 	echo "                --printserver       Setup the printserver."
+	echo "                --fileserver        Setup the fileserver."
 	echo "                --dhcp              Setup the DHCP server"
 	echo "                --mail              Setup the mail server"
 	echo "                --filter            Setup the internet filter"
@@ -165,7 +167,7 @@ function SetupSamba (){
        samba-tool dns add localhost $CRANIX_DOMAIN admin   A $CRANIX_SERVER        -U Administrator%"$passwd"
     fi
     /usr/share/cranix/setup/scripts/create-revers-domain.py "$passwd" $CRANIX_DOMAIN $CRANIX_NETWORK $CRANIX_NETMASK \
-	   "mailserver:$CRANIX_MAILSERVER,printserver:$CRANIX_PRINTSERVER,proxy:$CRANIX_PROXY,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY"
+	   "mailserver:$CRANIX_MAILSERVER,printserver:$CRANIX_PRINTSERVER,fileserver:$CRANIX_FILESERVER,proxy:$CRANIX_PROXY,backup:$CRANIX_BACKUP_SERVER,admin:$CRANIX_SERVER,router:$CRANIX_NET_GATEWAY"
 
     #Add rfc2307 attributes to Administartor
     DN=$( /usr/sbin/crx_get_dn.sh Administrator )
@@ -193,7 +195,7 @@ add: msSFU30Name
 msSFU30Name: administrator
 -
 add: homeDirectory
-homeDirectory: \\\\admin\\administrator
+homeDirectory: \\\\fileserver\\administrator
 -
 add: homeDrive
 homeDrive: Z:
@@ -202,7 +204,7 @@ add: scriptPath
 scriptPath: administrator.bat
 -
 add: profilePath
-profilePath: \\\\admin\\profiles\\administrator
+profilePath: \\\\fileserver\\profiles\\administrator
 "  > /tmp/rfc2307-Administartor
      ldbmodify  -H /var/lib/samba/private/sam.ldb  /tmp/rfc2307-Administartor
     #########################################################################
@@ -218,11 +220,7 @@ profilePath: \\\\admin\\profiles\\administrator
     ########################################################################
     log " - Setup our smb.conf file"
     cp /etc/samba/smb.conf /etc/samba/smb.conf-orig
-    if [ "$CRANIX_TYPE" != "business" ]; then
-        sed    "s/#NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g" /usr/share/cranix/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
-    else
-        sed    "s/#NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g" /usr/share/cranix/setup/templates/samba-smb.conf.business > /etc/samba/smb.conf
-    fi
+    sed    "s/#NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g" /usr/share/cranix/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
     sed -i "s/#REALM#/$REALM/g"                      /etc/samba/smb.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g"      /etc/samba/smb.conf
     sed -i "s/#WORKGROUP#/$windomain/g"              /etc/samba/smb.conf
@@ -245,8 +243,12 @@ profilePath: \\\\admin\\profiles\\administrator
 function SetupPrintserver () {
     ########################################################################
     log " - Setup printserver "
-    samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U register%"$registerpw"
-    echo -e "name: printserver\nip: $CRANIX_PRINTSERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
+    if [ "$passwd" ]; then
+        samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U Administrator%$passwd
+    else
+    	samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U register%"$registerpw"
+        echo -e "name: printserver\nip: $CRANIX_PRINTSERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
+    fi
     cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
@@ -256,13 +258,48 @@ function SetupPrintserver () {
     sed    "s/#REALM#/$REALM/g"               /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
     sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-printserver.conf
     sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g" /etc/samba/smb-printserver.conf
-    net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerpw"
+    if [ "$passwd" ]; then
+        net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
+    else
+        net ADS JOIN -s /etc/samba/smb-printserver.conf -U register%"$registerpw"
+    fi
     systemctl enable samba-printserver
     systemctl start  samba-printserver
     chgrp -R $sysadmins_gn /var/lib/printserver/drivers
     setfacl -Rdm g:$sysadmins_gn:rwx /var/lib/printserver/drivers
     ########################################################################
     log "End Setup Printserver"
+}
+
+function SetupFileserver () {
+    log " - Setup fileserver "
+    if [ "$CRANIX_TYPE" != "business" ]; then
+        sed    "s/#REALM#/$REALM/g" /usr/share/cranix/setup/templates/samba-fileserver.conf.ini      > /etc/samba/smb-fileserver.conf
+    else
+        sed    "s/#REALM#/$REALM/g" /usr/share/cranix/setup/templates/samba-fileserver.conf.business.ini > /etc/samba/smb-fileserver.conf
+    fi
+    if [ "$passwd" ]; then
+        samba-tool dns add localhost $CRANIX_DOMAIN fileserver  A $CRANIX_FILESERVER   -U Administrator%$passwd
+    else
+    	samba-tool dns add localhost $CRANIX_DOMAIN fileserver  A $CRANIX_FILESERVER   -U register%"$registerpw"
+        echo -e "name: fileserver\nip: $CRANIX_FILESERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
+    fi
+    cp /usr/share/cranix/setup/templates/samba-fileserver.service /usr/lib/systemd/system/samba-fileserver.service
+    mkdir -p /var/lib/fileserver/{drivers,lock,printing,private}
+    mkdir -p /var/lib/fileserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
+    chgrp -R $sysadmins_gn /var/lib/fileserver/drivers/
+    chmod -R 2775 /var/lib/fileserver/drivers
+    mkdir -p /var/log/samba/fileserver/
+    sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-fileserver.conf
+    sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g" /etc/samba/smb-fileserver.conf
+    if [ "$passwd" ]; then
+        net ADS JOIN -s /etc/samba/smb-fileserver.conf -U Administrator%"$passwd"
+    else
+        net ADS JOIN -s /etc/samba/smb-fileserver.conf -U register%"$registerpw"
+    fi
+    systemctl enable samba-fileserver
+    systemctl start  samba-fileserver
+    log "End Setup Fileserver"
 }
 
 function SetupDHCP (){
@@ -460,6 +497,7 @@ unset _bred _sgr0
 	sed -i "s/#CRANIX_NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g"	$i
 	sed -i "s/#CRANIX_SERVER#/${CRANIX_SERVER}/g"		$i
 	sed -i "s/#CRANIX_PRINTSERVER#/${CRANIX_PRINTSERVER}/g" $i
+	sed -i "s/#CRANIX_FILESERVER#/${CRANIX_FILESERVER}/g" $i
 	sed -i "s/#CRANIX_MAILSERVER#/${CRANIX_MAILSERVER}/g"	$i
 	sed -i "s/#CRANIX_PROXY#/${CRANIX_PROXY}/g"		$i
 	sed -i "s/#CRANIX_BACKUP_SERVER#/${CRANIX_BACKUP_SERVER}/g" $i
@@ -693,6 +731,9 @@ if [ "$all" = "yes" ] || [ "$accounts" = "yes" ]; then
 fi
 if [ "$all" = "yes" ] || [ "$samba" = "yes" ] || [ "$printserver" = "yes" ]; then
     SetupPrintserver
+fi
+if [ "$all" = "yes" ] || [ "$samba" = "yes" ] || [ "$fileserver" = "yes" ]; then
+    SetupFileserver
 fi
 if [ "$all" = "yes" ] || [ "$dhcp" = "yes" ]; then
     SetupDHCP

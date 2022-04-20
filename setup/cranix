@@ -155,20 +155,40 @@ CRANIX_NET_GATEWAY="172.28.0.2"
 # IP-address of the print server of the CRANIX.
 CRANIX_PRINTSERVER="172.28.0.4"
 
+## Type:        string readonly
+## Default:     "printserver"
+# Name of the print server of the CRANIX.
+CRANIX_PRINTSERVER_NETBIOSNAME="printserver"
+
 ## Type:	string readonly
 ## Default:	"172.16.0.5"
 # IP-address of the proxy server of the CRANIX.
 CRANIX_PROXY="172.28.0.5"
 
+## Type:        string readonly
+## Default:     "172.16.0.6"
+# IP-address of the file server of the CRANIX.
+CRANIX_FILESERVER="172.28.0.6"
+
+## Type:        string readonly
+## Default:     "fileserver"
+# Name of the file server of the CRANIX.
+CRANIX_FILESERVER_NETBIOSNAME="fileserver"
+
 ## Type:	string readonly
 ## Default:	"172.16.0.6"
 # IP-address of the backup server of the CRANIX.
-CRANIX_BACKUP_SERVER="172.28.0.6"
+CRANIX_BACKUP_SERVER="172.28.0.7"
 
 ## Type:	string readonly
 ## Default:	"172.16.0.2"
 # IP-address of the admin server of the CRANIX.
 CRANIX_SERVER="172.28.0.2"
+
+## Type:        string readonly
+## Default:     admin
+# The windows netbios name of the CRANIX.
+CRANIX_NETBIOSNAME="admin"
 
 ## Type:	string readonly
 ## Default:	
@@ -194,11 +214,6 @@ CRANIX_SERVER_NET="172.16.0.0/24"
 ## Default:	no
 # The CRANIX is the DHCP server in the internal network.
 CRANIX_USE_DHCP="yes"
-
-## Type:        string readonly
-## Default:     admin
-# The windows netbios name of the CRANIX.
-CRANIX_NETBIOSNAME="admin"
 
 ## Type:	string readonly
 ## Default:	CRANIX

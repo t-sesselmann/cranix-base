@@ -99,8 +99,8 @@ done
 
 skel="/etc/skel"
 
-winprofile="\\\\${CRANIX_NETBIOSNAME}\\profiles\\$uid"
-winhome="\\\\${CRANIX_NETBIOSNAME}\\$uid"
+winprofile="\\\\${CRANIX_FILESERVER_NETBIOSNAME}\\profiles\\$uid"
+winhome="\\\\${CRANIX_FILESERVER_NETBIOSNAME}\\$uid"
 unixhome=${CRANIX_HOME_BASE}/$role/$uid
 
 echo "uid:       $uid"

@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import glob
 import configparser
 import json
 import os
@@ -44,7 +45,7 @@ api_config  = ConfigObj("/opt/cranix-java/conf/cranix-api.properties")
 register_pw = api_config['de.cranix.dao.User.Register.Password']
 
 #Create backup directory
-backup_dir = '/var/adm/cranix/backup/{0}'.format(os.popen('/usr/share/cranix/tools/crx_date.sh').read())
+backup_dir = '/var/adm/cranix/backup/{0}'.format(os.popen('/usr/share/cranix/tools/crx_date.sh').read()).strip()
 os.system('mkdir -p {0}'.format(backup_dir))
 os.system('cp {0} {1}'.format(samba_config_file,backup_dir))
 modify_ldif_file = "{0}/modify_ldif_fileserver-{1}.ldif"
@@ -122,6 +123,11 @@ os.system('net ADS JOIN -s {0} -U register%{1}'.format(files_config_file,registe
 os.system('/usr/bin/systemctl enable samba-fileserver')
 os.system('/usr/bin/systemctl start samba-fileserver')
 
+print('Adapt the login templates')
+for i in glob.glob('/usr/share/cranix/templates/login*bat'):
+    os.system("sed -i 's#\\\\admin\\\\#\\\\fileserver\\\\#g' {0}".format(i))
+os.system("sed -i 's#\\\\admin\\\\#\\\\fileserver\\\\#g' /usr/share/cranix/templates/copy_and_run_rem_printers")
+
 print('Adapt the accounts')
 for line in os.popen('ldbsearch -H /var/lib/samba/private/sam.ldb  profilePath=* dn').readlines():
     if line.startswith('dn: '):
@@ -132,3 +138,9 @@ for line in os.popen('ldbsearch -H /var/lib/samba/private/sam.ldb  profilePath=*
             with open(modify_ldif_file.format(backup_dir,user),'w') as f:
                 f.write(modify_ldif.format(line.strip(),user))
             os.system('ldbmodify  -H /var/lib/samba/private/sam.ldb {0}'.format(modify_ldif_file.format(backup_dir,user)))
+
+print('Adapt new cranix config file')
+crx_config  = ConfigObj("/etc/sysconfig/cranix")
+crx_config['CRANIX_FILESERVER'] = next_ip
+crx_config.write()
+
