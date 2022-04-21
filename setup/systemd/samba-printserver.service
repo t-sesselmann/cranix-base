@@ -12,7 +12,7 @@ LimitNOFILE=16384
 ExecStartPre=/usr/bin/mkdir -p /run/sambaprintserver/
 ExecStart=/usr/sbin/smbd --foreground --no-process-group $SAMBAOPTIONS -s /etc/samba/smb-printserver.conf -l /var/log/samba/printserver/
 ExecReload=/bin/kill -HUP $MAINPID
-
+ExecStartPost=/usr/share/cranix/tools/poststart-samba-instant.sh printserver
 
 [Install]
 WantedBy=multi-user.target
