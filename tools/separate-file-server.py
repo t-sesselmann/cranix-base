@@ -27,6 +27,8 @@ cache directory = /var/lib/fileserver
 lock  directory = /var/lib/fileserver/lock
 state directory = /var/lib/fileserver
 private directory = /var/lib/fileserver/private
+wide links = Yes
+unix extensions = No
 load printers = no
 min domain uid = 0
 """
