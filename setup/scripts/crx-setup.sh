@@ -290,8 +290,9 @@ function SetupFileserver () {
     chgrp -R $sysadmins_gn /var/lib/fileserver/drivers/
     chmod -R 2775 /var/lib/fileserver/drivers
     mkdir -p /var/log/samba/fileserver/
-    sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-fileserver.conf
-    sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g" /etc/samba/smb-fileserver.conf
+    sed -i "s/#WORKGROUP#/$windomain/g"         /etc/samba/smb-fileserver.conf
+    sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g"    /etc/samba/smb-fileserver.conf
+    sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g" /etc/samba/smb-fileserver.conf
     if [ "$passwd" ]; then
         net ADS JOIN -s /etc/samba/smb-fileserver.conf -U Administrator%"$passwd"
     else
