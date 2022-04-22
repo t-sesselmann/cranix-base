@@ -214,7 +214,7 @@ profilePath: \\\\fileserver\\profiles\\administrator
     for i in /usr/share/cranix/templates/*.ini
     do
         b=$( basename $i .ini )
-        sed "s/#PDC-SERVER#/${CRANIX_NETBIOSNAME}/g" $i > /usr/share/cranix/templates/$b
+        cp $i > /usr/share/cranix/templates/$b
     done
 
     ########################################################################

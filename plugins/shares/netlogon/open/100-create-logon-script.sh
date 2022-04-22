@@ -8,8 +8,12 @@ R=$5
 
 . /etc/sysconfig/cranix
 
-if [ -z "${CRANIX_PRINTSERVER}" ]; then
-	CRANIX_PRINTSERVER="admin"
+if [ -z "${CRANIX_PRINTSERVER_NETBIOSNAME}" ]; then
+	CRANIX_PRINTSERVER_NETBIOSNAME="printserver"
+fi
+
+if [ -z "${CRANIX_FILESERVER_NETBIOSNAME}" ]; then
+	CRANIX_FILESERVER_NETBIOSNAME="${CRANIX_NETBIOSNAME}"
 fi
 
 role=$( crx_api_text.sh GET users/byUid/$U/role )
@@ -18,9 +22,9 @@ setfacl -m g:users:rx /var/lib/samba/sysvol/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/scripts/
 if [ -e /usr/share/cranix/templates/login-${role}.bat ]; then
-	cp /usr/share/cranix/templates/login-${role}.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	sed "s/#FILE-SERVER#/${CRANIX_FILESERVER_NETBIOSNAME}/" /usr/share/cranix/templates/login-${role}.bat > /var/lib/samba/sysvol/$R/scripts/${U}.bat
 else
-	cp /usr/share/cranix/templates/login-default.bat /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	sed "s/#FILE-SERVER#/${CRANIX_FILESERVER_NETBIOSNAME}/" /usr/share/cranix/templates/login-default.bat > /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
 if [ -x /usr/share/cranix/tools/custom_create_logon_script.sh ]; then
@@ -54,12 +58,12 @@ fi
 if [ "${CRANIX_LOGON_CONNECT_PRINTERS,,}" != "no" ]; then
 	defaultPrinter=$( crx_api.sh GET devices/byIP/$I/defaultPrinter )
 	if [ "$defaultPrinter" ]; then
-		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
-		printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+		printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 	fi
 	for printer in $( crx_api.sh GET devices/byIP/$I/availablePrinters )
 	do
-		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
+		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 	done
 fi
 
