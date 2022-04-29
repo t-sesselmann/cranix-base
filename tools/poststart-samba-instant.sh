@@ -7,6 +7,7 @@ registerpw=$( /usr/bin/grep de.cranix.dao.User.Register.Password= /opt/cranix-ja
 sleep 3
 /usr/bin/smbclient -L ${instant} -U register%"${registerpw}"
 if [ "$?" -ne 0 ]; then
-         /usr/bin/net ADS JOIN -s /etc/samba/smb-${instant}.conf -U Administrator%"${registerpw}"
+	/usr/bin/systemctl restart samba-ad
+	/usr/bin/net ADS JOIN -s /etc/samba/smb-${instant}.conf -U register%"${registerpw}"
 fi
 

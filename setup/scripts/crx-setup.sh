@@ -249,7 +249,6 @@ function SetupPrintserver () {
     	samba-tool dns add localhost $CRANIX_DOMAIN printserver  A $CRANIX_PRINTSERVER   -U register%"$registerpw"
         echo -e "name: printserver\nip: $CRANIX_PRINTSERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
     fi
-    cp /usr/share/cranix/setup/templates/samba-printserver.service /usr/lib/systemd/system/samba-printserver.service
     mkdir -p /var/lib/printserver/{drivers,lock,printing,private}
     mkdir -p /var/lib/printserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
     chgrp -R $sysadmins_gn /var/lib/printserver/drivers/
@@ -284,7 +283,6 @@ function SetupFileserver () {
     	samba-tool dns add localhost $CRANIX_DOMAIN fileserver  A $CRANIX_FILESERVER   -U register%"$registerpw"
         echo -e "name: fileserver\nip: $CRANIX_FILESERVER" | /usr/share/cranix/plugins/add_device/101-add-device.py
     fi
-    cp /usr/share/cranix/setup/templates/samba-fileserver.service /usr/lib/systemd/system/samba-fileserver.service
     mkdir -p /var/lib/fileserver/{drivers,lock,printing,private}
     mkdir -p /var/lib/fileserver/drivers/{IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64}
     chgrp -R $sysadmins_gn /var/lib/fileserver/drivers/
@@ -293,6 +291,8 @@ function SetupFileserver () {
     sed -i "s/#WORKGROUP#/$windomain/g"         /etc/samba/smb-fileserver.conf
     sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g"    /etc/samba/smb-fileserver.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g" /etc/samba/smb-fileserver.conf
+    systemctl restart samba-ad
+    sleep 1
     if [ "$passwd" ]; then
         net ADS JOIN -s /etc/samba/smb-fileserver.conf -U Administrator%"$passwd"
     else
