@@ -145,7 +145,7 @@ for line in os.popen('ldbsearch -H /var/lib/samba/private/sam.ldb  profilePath=*
             os.system('ldbmodify  -H /var/lib/samba/private/sam.ldb {0}'.format(modify_ldif_file.format(backup_dir,user)))
 
 print('Adapt new cranix config file')
-crx_config  = ConfigObj("/etc/sysconfig/cranix")
+crx_config  = ConfigObj("/etc/sysconfig/cranix",list_values=False,encoding='utf-8',unrepr=True)
 crx_config['CRANIX_FILESERVER'] = next_ip
 crx_config['CRANIX_FILESERVER_NETBIOSNAME'] = 'fileserver'
 crx_config.write()
