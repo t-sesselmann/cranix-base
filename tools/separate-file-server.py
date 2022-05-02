@@ -29,8 +29,11 @@ state directory = /var/lib/fileserver
 private directory = /var/lib/fileserver/private
 wide links = Yes
 unix extensions = No
-load printers = no
 min domain uid = 0
+#disable printing
+load printers = no
+printcap name = /dev/null
+disable spoolss = yes
 """
 
 modify_ldif = """{0}
