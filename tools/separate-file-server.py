@@ -56,7 +56,13 @@ os.system('cp {0} {1}'.format(samba_config_file,backup_dir))
 modify_ldif_file = "{0}/modify_ldif_fileserver-{1}.ldif"
 
 #Get internal device
-device_file = os.popen('grep -l {0} /etc/sysconfig/network/ifcfg-*'.format(cranixconfig.CRANIX_SERVER)).read().strip()
+device_files = os.popen('grep -l {0} /etc/sysconfig/network/ifcfg-*'.format(cranixconfig.CRANIX_SERVER)).readlines()
+if len(device_files) > 1:
+    print("Can not determine internal device")
+    print("There is more then one device configuration with the server ip address")
+    print(device_files)
+    sys.exit(1)
+device_file=device_files[0].strip()
 device=""
 match = re.search("ifcfg-(.*)",device_file)
 if match:
