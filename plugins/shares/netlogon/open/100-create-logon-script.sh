@@ -6,6 +6,8 @@ a=$3
 m=$4
 R=$5
 
+id ${U} &>/dev/null || exit
+
 . /etc/sysconfig/cranix
 
 if [ -z "${CRANIX_PRINTSERVER_NETBIOSNAME}" ]; then

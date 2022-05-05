@@ -6,6 +6,7 @@ a=$3
 m=$4
 R=$5
 
+id ${U} &>/dev/null || exit
 
 crx_api.sh PUT devices/loggedInUsers/$I/$U
 

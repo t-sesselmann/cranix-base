@@ -1,9 +1,11 @@
 #!/bin/bash
 # (c) Péter Varkoly <peter@varkoly.de> - all rights reserved
 
+user=$1
+id ${user} &>/dev/null || exit
+
 . /etc/sysconfig/cranix
 
-user=$1
 mkdir -m 500 -p $CRANIX_HOME_BASE/groups/LINKED/$user/
 chown $user $CRANIX_HOME_BASE/groups/LINKED/$user/
 rm -f $CRANIX_HOME_BASE/groups/LINKED/$user/*
