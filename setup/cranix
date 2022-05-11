@@ -118,12 +118,12 @@ CRANIX_USE_DHCP="yes"
 ## Type:        string readonly
 ## Default:
 # DNS Domain of the institute.
-CRANIX_DOMAIN="cranix.eu"
+CRANIX_DOMAIN=""
 
 ## Type:	string readonly
-## Default:	CRANIX
+## Default:
 # The windows domain name of the institute.
-CRANIX_WORKGROUP="CRANIX"
+CRANIX_WORKGROUP=""
 
 ## Type:        string readonly
 ## Default:     "172.28.1.0/24"

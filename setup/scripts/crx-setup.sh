@@ -90,8 +90,14 @@ function InitGlobalVariable (){
 
     ########################################################################
     log " - Set windomain variable"
-    windomain=`echo "$CRANIX_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
-    log "   windomain = $windomain"
+    if [ "$CRANIX_WORKGROUP" ]; then
+        windomain=${CRANIX_WORKGROUP^^}
+    else
+        windomain=`echo "$CRANIX_DOMAIN" | awk -F"." '{print $1 }' | tr "[:lower:]" "[:upper:]"`
+    fi
+    CRANIX_WORKGROUP=${windomain:0:14}
+    log "   windomain = $CRANIX_WORKGROUP"
+    sed -i s/^CRANIX_WORKGROUP=.*/CRANIX_WORKGROUP=\"$CRANIX_WORKGROUP\"/ $sysconfig
     CRANIX_DOMAIN=${CRANIX_DOMAIN,,}
     sed -i s/^CRANIX_DOMAIN=.*/CRANIX_DOMAIN=\"$CRANIX_DOMAIN\"/ $sysconfig
     REALM=${CRANIX_DOMAIN^^}
@@ -121,8 +127,8 @@ function SetupSamba (){
 
     ########################################################################
     log " - Install domain provision"
-    samba-tool domain provision --realm="$CRANIX_DOMAIN" \
-				--domain="$windomain" \
+    samba-tool domain provision --realm="$CRANIX_REALM" \
+				--domain="$CRANIX_WORKGROUP" \
 				--adminpass="$passwd" \
 				--server-role=dc \
 				--use-rfc2307 \
@@ -150,9 +156,9 @@ function SetupSamba (){
     ########################################################################
     log " - Create linked groups directory "
     mkdir -p -m 755 $CRANIX_HOME_BASE/groups/LINKED/
-    mkdir -p -m 755 $CRANIX_HOME_BASE/${windomain}
+    mkdir -p -m 755 $CRANIX_HOME_BASE/${CRANIX_WORKGROUP}
     mkdir -p /home/sysadmins/administrator
-    ln -s /home/sysadmins/administrator /home/${windomain}/administrator
+    ln -s /home/sysadmins/administrator /home/${CRANIX_WORKGROUP}/administrator
 
     ########################################################################
     log " - Create dns entries "
@@ -223,7 +229,7 @@ profilePath: \\\\fileserver\\profiles\\administrator
     sed    "s/#NETBIOSNAME#/${CRANIX_NETBIOSNAME}/g" /usr/share/cranix/setup/templates/samba-smb.conf.ini      > /etc/samba/smb.conf
     sed -i "s/#REALM#/$REALM/g"                      /etc/samba/smb.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g"      /etc/samba/smb.conf
-    sed -i "s/#WORKGROUP#/$windomain/g"              /etc/samba/smb.conf
+    sed -i "s/#WORKGROUP#/$CRANIX_WORKGROUP/g"       /etc/samba/smb.conf
     sed -i "s/#GATEWAY#/$CRANIX_SERVER_EXT_GW/g"     /etc/samba/smb.conf
     sed -i "s/#IPADDR#/$CRANIX_SERVER/g"             /etc/samba/smb.conf
     sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"          /etc/samba/smb.conf
@@ -254,9 +260,9 @@ function SetupPrintserver () {
     chgrp -R $sysadmins_gn /var/lib/printserver/drivers/
     chmod -R 2775 /var/lib/printserver/drivers
     mkdir -p /var/log/samba/printserver/
-    sed    "s/#REALM#/$REALM/g"               /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
-    sed -i "s/#WORKGROUP#/$windomain/g"       /etc/samba/smb-printserver.conf
-    sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g" /etc/samba/smb-printserver.conf
+    sed    "s/#REALM#/$REALM/g"                /usr/share/cranix/setup/templates/samba-printserver.conf.ini > /etc/samba/smb-printserver.conf
+    sed -i "s/#WORKGROUP#/$CRANIX_WORKGROUP/g" /etc/samba/smb-printserver.conf
+    sed -i "s/#IPADDR#/$CRANIX_PRINTSERVER/g"  /etc/samba/smb-printserver.conf
     if [ "$passwd" ]; then
         net ADS JOIN -s /etc/samba/smb-printserver.conf -U Administrator%"$passwd"
     else
@@ -288,7 +294,7 @@ function SetupFileserver () {
     chgrp -R $sysadmins_gn /var/lib/fileserver/drivers/
     chmod -R 2775 /var/lib/fileserver/drivers
     mkdir -p /var/log/samba/fileserver/
-    sed -i "s/#WORKGROUP#/$windomain/g"         /etc/samba/smb-fileserver.conf
+    sed -i "s/#WORKGROUP#/$CRANIX_WORKGROUP/g"  /etc/samba/smb-fileserver.conf
     sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g"    /etc/samba/smb-fileserver.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g" /etc/samba/smb-fileserver.conf
     systemctl restart samba-ad
@@ -403,8 +409,8 @@ function SetupInitialAccounts (){
     log " - sysadmins primary group add to Domain Admins group"
     samba-tool group addmembers "Domain Admins" "SYSADMINS"
     log " - add to Domain Admins group SePrintOperatorPrivilege"
-    net rpc rights grant "$windomain\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
-    net rpc rights grant "$windomain\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
+    net rpc rights grant "$CRANIX_WORKGROUP\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
+    net rpc rights grant "$CRANIX_WORKGROUP\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
 
     ########################################################################
