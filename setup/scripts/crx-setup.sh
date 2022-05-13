@@ -127,7 +127,7 @@ function SetupSamba (){
 
     ########################################################################
     log " - Install domain provision"
-    samba-tool domain provision --realm="$CRANIX_REALM" \
+    samba-tool domain provision --realm="$REALM" \
 				--domain="$CRANIX_WORKGROUP" \
 				--adminpass="$passwd" \
 				--server-role=dc \
