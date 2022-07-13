@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (c) 2021 Peter Varkoly <pvarkoly@cephalix.eu> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2020-2022 Peter Varkoly <pvarkoly@cephalix.eu> Nürnberg, Germany.  All rights reserved.
+# Copyright (c) 2003-2020 Peter Varkoly <peter@varkoly.de> Nürnberg, Germany.  All rights reserved.
 # cranix-backup
 #
 #
@@ -104,6 +105,9 @@ fi
 if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_OWNER" = "yes" ]; then
         RSYNCPARS=" -r --delete --size-only "
 fi
+if [ "$CRANIX_BACKUP_RSYNCPARS" ]; then
+        RSYNCPARS="${CRANIX_BACKUP_RSYNCPARS}"
+fi
 
 if [ "${CRANIX_BACKUP_DAYS/$DAY_OF_WEEK/}" = $CRANIX_BACKUP_DAYS -a "$FORCE" != "yes" ]; then
         LOG "********** No backup needed today **********"
@@ -180,11 +184,11 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
     fi
 
     LOG "Syncing samba"
+    mkdir -p $BACKUP_DIR/var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
        test -e $CRANIX_BACKUP_FULL_DIR/samba_facls.gz && mv $CRANIX_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
        getfacl --absolute-names -R /var/lib/samba/ | gzip > $CRANIX_BACKUP_FULL_DIR/samba_facls.gz
     fi
-    mkdir -p $BACKUP_DIR/var/lib/samba/
     rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ $? != 0 ]; then
         LOG "CAN_NOT_MAKE_BACKUP from samba"
