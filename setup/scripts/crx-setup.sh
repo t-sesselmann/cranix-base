@@ -195,7 +195,7 @@ add: loginShell
 loginShell: /bin/bash
 -
 add: msSFU30NisDomain
-msSFU30NisDomain: iqondns
+msSFU30NisDomain: $CRANIX_WORKGROUP
 -
 add: msSFU30Name
 msSFU30Name: administrator
@@ -376,7 +376,8 @@ function SetupInitialAccounts (){
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
     samba-tool user setexpiry --noexpiry cephalix
-    samba-tool user create register "$registerpw"
+    /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="register" --givenname="Register" --surname="Register" --role="sysadmins" --password="$registerpw" --groups="" --uid-number=4000015
+    #samba-tool user create register "$registerpw"
     samba-tool user setexpiry --noexpiry register
     samba-tool group addmembers "Administrators" register
     samba-tool user create ossreader ossreader
@@ -408,9 +409,9 @@ function SetupInitialAccounts (){
     ########################################################################
     log " - sysadmins primary group add to Domain Admins group"
     samba-tool group addmembers "Domain Admins" "SYSADMINS"
-    log " - add to Domain Admins group SePrintOperatorPrivilege"
     net rpc rights grant "$CRANIX_WORKGROUP\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
     net rpc rights grant "$CRANIX_WORKGROUP\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
+    net rpc rights grant "$CRANIX_WORKGROUP\\register" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
 
     ########################################################################
