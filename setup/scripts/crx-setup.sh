@@ -376,10 +376,6 @@ function SetupInitialAccounts (){
     samba-tool user create cephalix "$cephalixpw"
     samba-tool group addmembers "Domain Admins" cephalix
     samba-tool user setexpiry --noexpiry cephalix
-    /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="register" --givenname="Register" --surname="Register" --role="sysadmins" --password="$registerpw" --groups="" --uid-number=4000015
-    #samba-tool user create register "$registerpw"
-    samba-tool user setexpiry --noexpiry register
-    samba-tool group addmembers "Administrators" register
     samba-tool user create ossreader ossreader
     samba-tool user setexpiry --noexpiry ossreader
 
@@ -400,7 +396,6 @@ function SetupInitialAccounts (){
         /usr/share/cranix/setup/scripts/crx-add-group.sh --name="TEACHERS"       --description="Teachers"       --type="primary" --mail="teachers@$CRANIX_DOMAIN"   --gid-number=$teachers_gn
         samba-tool ou create OU=teachers
     fi
-    samba-tool group addmembers "Sysadmins" register
     ########################################################################
     #log " - Create primary group type and add base role to primary group"
     #samba-tool group add "primary" --description="Primary group for role"
@@ -411,7 +406,6 @@ function SetupInitialAccounts (){
     samba-tool group addmembers "Domain Admins" "SYSADMINS"
     net rpc rights grant "$CRANIX_WORKGROUP\\Domain Admins" SePrintOperatorPrivilege -U Administrator%"$passwd"
     net rpc rights grant "$CRANIX_WORKGROUP\\Sysadmins" SePrintOperatorPrivilege -U Administrator%"$passwd"
-    net rpc rights grant "$CRANIX_WORKGROUP\\register" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
 
     ########################################################################
@@ -422,6 +416,11 @@ function SetupInitialAccounts (){
         /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tteachers"       --givenname="Default profile" --surname="for teachers"       --role="templates" --password="$passwd" --groups="" --uid-number=4000013
         /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="tworkstations"   --givenname="Default profile" --surname="for workstations"   --role="templates" --password="$passwd" --groups="" --uid-number=4000014
     fi
+    /usr/share/cranix/setup/scripts/crx-add-user.sh --uid="register" --givenname="Register" --surname="Register" --role="sysadmins" --password="$registerpw" --groups="" --uid-number=4000015
+    samba-tool user setexpiry --noexpiry register
+    samba-tool group addmembers "Administrators" register
+    samba-tool group addmembers "Sysadmins" register
+    net rpc rights grant "$CRANIX_WORKGROUP\\register" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
     samba-tool domain passwordsettings set --complexity=on
 
