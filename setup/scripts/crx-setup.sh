@@ -424,7 +424,6 @@ function SetupInitialAccounts (){
 
     samba-tool domain passwordsettings set --complexity=on
 
-
     ########################################################################
     log " - Create base directory rights"
     case $CRANIX_TYPE in
