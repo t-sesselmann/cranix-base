@@ -100,49 +100,40 @@ CRANIX_BACKUP_WITH_HARDLINK="no"
 ########################################################################
 
 ## Type:	string readonly
-## Default:	"172.16.0.0"
 # Network Address of the internal network.
-CRANIX_NETWORK="172.28.0.0"
+CRANIX_NETWORK=""
 
 ## Type:	string readonly
-## Default:	"16"
 # Network Mask of the internal network.
-CRANIX_NETMASK="16"
+CRANIX_NETMASK=""
 
 ## Type:	string readonly
-## Default:	"255.255.0.0"
 # Network Mask of the internal network.
-CRANIX_NETMASK_STRING="255.255.0.0"
+CRANIX_NETMASK_STRING=""
 
 ## Type:	yesno readonly
-## Default:	no
 # The CRANIX is the DHCP server in the internal network.
 CRANIX_USE_DHCP="yes"
 
 ## Type:        string readonly
-## Default:
 # DNS Domain of the institute.
 CRANIX_DOMAIN=""
 
 ## Type:	string readonly
-## Default:
 # The windows domain name of the institute.
 CRANIX_WORKGROUP=""
 
 ## Type:        string readonly
-## Default:     "172.28.1.0/24"
 # IP-network for new and not registered clients.
-CRANIX_ANON_DHCP_NET="172.28.1.0/24"
+CRANIX_ANON_DHCP_NET=""
 
 ## Type:	string readonly
-## Default:	"172.16.1.1 172.16.1.25"
 # IP-address range for new and not registered clients.
-CRANIX_ANON_DHCP_RANGE="172.28.1.0 172.28.1.31"
+CRANIX_ANON_DHCP_RANGE=""
 
 ## Type:	string readonly
-## Default:	172.16.2.0
 # The network address of the first institute room.
-CRANIX_FIRST_ROOM_NET="172.28.2.0"
+CRANIX_FIRST_ROOM_NET=""
 
 ## Type:	yesno readonly
 ## Default:	yes
@@ -150,74 +141,61 @@ CRANIX_FIRST_ROOM_NET="172.28.2.0"
 CRANIX_ISGATE="yes"
 
 ## Type:	string readonly
-## Default:
 # The default gateway for the internal net, not for the server.
-CRANIX_NET_GATEWAY="172.28.0.2"
+CRANIX_NET_GATEWAY=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.2"
 # IP-address of the admin server of the CRANIX.
-CRANIX_SERVER="172.28.0.2"
+CRANIX_SERVER=""
 
 ## Type:        string readonly
-## Default:     admin
+# Default:	admin
 # The windows netbios name of the CRANIX.
 CRANIX_NETBIOSNAME="admin"
 
 ## Type:        string readonly
-## Default:     "172.16.0.6"
 # IP-address of the file server of the CRANIX.
-CRANIX_FILESERVER="172.28.0.3"
+CRANIX_FILESERVER=""
 
 ## Type:        string readonly
-## Default:     "fileserver"
 # Name of the file server of the CRANIX.
 CRANIX_FILESERVER_NETBIOSNAME=""
 
 ## Type:        string readonly
-## Default:     "172.16.0.4"
 # IP-address of the print server of the CRANIX.
-CRANIX_PRINTSERVER="172.28.0.4"
+CRANIX_PRINTSERVER=""
 
 ## Type:        string readonly
-## Default:     "printserver"
 # Name of the print server of the CRANIX.
 CRANIX_PRINTSERVER_NETBIOSNAME=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.3"
 # IP-address of the mail server and groupware of the CRANIX.
-CRANIX_MAILSERVER="172.28.0.5"
+CRANIX_MAILSERVER=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.5"
 # IP-address of the proxy server of the CRANIX.
-CRANIX_PROXY="172.28.0.6"
+CRANIX_PROXY=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.6"
 # IP-address of the backup server of the CRANIX.
-CRANIX_BACKUP_SERVER="172.28.0.7"
+CRANIX_BACKUP_SERVER=""
 
 ## Type:	string readonly
-## Default:
 # The default gateway of the server.
-CRANIX_SERVER_EXT_GW="192.168.0.1"
+CRANIX_SERVER_EXT_GW=""
 
 ## Type:	string readonly
-## Default:
 # The external ip address of the server.
-CRANIX_SERVER_EXT_IP="192.168.0.2"
+CRANIX_SERVER_EXT_IP=""
 
 ## Type:	string readonly
-## Default:
 # The netmask of the external ip address of the server.
-CRANIX_SERVER_EXT_NETMASK="24"
+CRANIX_SERVER_EXT_NETMASK=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.0/24"
 # The CRANIX server networks network address.
-CRANIX_SERVER_NET="172.16.0.0/24"
+CRANIX_SERVER_NET=""
 
 ## Type:	string readonly
 ## Default:	"DE"
