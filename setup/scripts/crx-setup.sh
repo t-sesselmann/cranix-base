@@ -420,6 +420,7 @@ function SetupInitialAccounts (){
     samba-tool user setexpiry --noexpiry register
     samba-tool group addmembers "Administrators" register
     samba-tool group addmembers "Sysadmins" register
+    samba-tool group addmembers "Print Operators" register
     net rpc rights grant "$CRANIX_WORKGROUP\\register" SePrintOperatorPrivilege -U Administrator%"$passwd"
 
     samba-tool domain passwordsettings set --complexity=on
