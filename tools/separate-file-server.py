@@ -95,7 +95,7 @@ print('/usr/sbin/crx_add_host.sh {0} {1}'.format('fileserver',next_ip))
 os.system('/usr/sbin/crx_add_host.sh {0} {1}'.format('fileserver',next_ip))
 
 #Remove with spaces from the keys.
-os.system("sed -i -E 's/^[[:space:]]+//g' {0}".format(samba_config_file)
+os.system("sed -i -E 's/^[[:space:]]+//g' {0}".format(samba_config_file))
 config = configparser.ConfigParser(delimiters=('='),interpolation=None,strict=False)
 config.read(samba_config_file)
 filesc = configparser.ConfigParser(delimiters=('='),interpolation=None)
