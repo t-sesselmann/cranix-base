@@ -40,6 +40,10 @@ for i in new_services:
         services.append(i)
 services.sort()
 fillup_template['CRANIX_MONITOR_SERVICES']="'" + ' '.join(services) + "'"
+
+if 'CRANIX_FILESERVER_NETBIOSNAME' in cranix_conf and cranix_conf['CRANIX_FILESERVER_NETBIOSNAME'] == '' or  cranix_conf['CRANIX_FILESERVER_NETBIOSNAME'] == '""':
+    fillup_template['CRANIX_FILESERVER'] = ""
+
 fillup_template.filename = '/etc/sysconfig/cranix'
 fillup_template.write()
 
