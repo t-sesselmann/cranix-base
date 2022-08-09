@@ -18,7 +18,7 @@ for line in os.popen('LANG=en_EN lpc status').readlines():
        printers.append(printer)
      name =  match.group(1)
      printer = { "name": name }
-     if os.path.isfile("/var/lib/samba/drivers/x64/3/"+name+".ppd"):
+     if os.path.isfile("/var/lib/printserver/drivers/x64/3/"+name+".ppd"):
        printer["windowsDriver"] = True
      else:
        printer["windowsDriver"] = False

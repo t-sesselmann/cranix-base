@@ -3,7 +3,7 @@
 
 import configparser
 import json
-import subpocess
+import subprocess
 import sys
 
 printer = {}
@@ -14,8 +14,10 @@ subprocess.run(['/usr/sbin/lpadmin','-x',printer['name']])
 
 #Remove printer from samba
 config = configparser.ConfigParser(delimiters=('='))
-config.read('/etc/samba/smb.conf')
+config.read('/etc/samba/smb-printserver.conf')
 if printer['name'] in config:
     config.remove_section(printer['name'])
-    with open('/etc/samba/smb.conf','wt') as f:
+    with open('/etc/samba/smb-printserver.conf','wt') as f:
         config.write(f)
+#Restart samba
+subprocess.run(['/usr/bin/systemctl','restart','samba-printserver'])

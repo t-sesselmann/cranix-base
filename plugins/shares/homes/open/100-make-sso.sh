@@ -6,6 +6,7 @@ a=$3
 m=$4
 R=$5
 
+id ${U} &>/dev/null || exit
 
 crx_api.sh PUT devices/loggedInUsers/$I/$U
 
@@ -27,11 +28,17 @@ case "${role}" in
 esac
 
 if [ "${DN}" ]; then
+	if [ -z "${CRANIX_FILESERVER_NETBIOSNAME}" ]; then
+		userWorkstations="${CRANIX_NETBIOSNAME},${m}"
+	else
+		userWorkstations="${CRANIX_NETBIOSNAME},${CRANIX_FILESERVER_NETBIOSNAME},${m}"
+	fi
+
 	tmpldif=$( mktemp /tmp/XXXXXXXX )
 	echo "${DN}" > ${tmpldif};
 	echo "changetype: modify
 add: userWorkstations
-userWorkstations: ${m}" >> ${tmpldif}
+userWorkstations: ${userWorkstations}" >> ${tmpldif}
         ldbmodify  -H /var/lib/samba/private/sam.ldb ${tmpldif}
         rm -f ${tmpldif}
 

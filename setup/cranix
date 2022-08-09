@@ -49,7 +49,7 @@ CRANIX_BACKUP_CTOOL="yes"
 CRANIX_BACKUP_DB="yes"
 
 ## Type:	string
-## Default:	
+## Default:
 # The path to the directory of the full backup.
 CRANIX_BACKUP_FULL_DIR="/mnt/backup"
 
@@ -59,7 +59,7 @@ CRANIX_BACKUP_FULL_DIR="/mnt/backup"
 CRANIX_BACKUP_HOME="yes"
 
 ## Type:	string
-## Default:	
+## Default:
 # The path to the directory of the incremental backups.
 CRANIX_BACKUP_INC_DIR="/mnt/backup"
 
@@ -70,6 +70,11 @@ CRANIX_BACKUP_MAIL="yes"
 
 ## Type:        string
 ## Default:
+# Custom parameter for rsync. This will override all standard parameter.
+CRANIX_BACKUP_RSYNCPARS=""
+
+## Type:        string
+## Default:
 # Shell command to execut the backup is started.
 CRANIX_BACKUP_START_CMD="mount -o rw,acl backup:/backup /mnt/backup"
 
@@ -77,7 +82,6 @@ CRANIX_BACKUP_START_CMD="mount -o rw,acl backup:/backup /mnt/backup"
 ## Default:
 # Shell command to execute after the backup is stoped.
 CRANIX_BACKUP_STOP_CMD="umount /mnt/backup"
-
 
 ## Type:        integer
 ## Default:     80
@@ -95,30 +99,41 @@ CRANIX_BACKUP_WITH_HARDLINK="no"
 ## Description: Configuration of the CRANIX: Basic
 ########################################################################
 
-## Type:        yesno readonly
-## Default:     yes
-# If the home directories should be sorted into role directories.
-CRANIX_SORT_HOMES="yes"
+## Type:	string readonly
+# Network Address of the internal network.
+CRANIX_NETWORK=""
+
+## Type:	string readonly
+# Network Mask of the internal network.
+CRANIX_NETMASK=""
+
+## Type:	string readonly
+# Network Mask of the internal network.
+CRANIX_NETMASK_STRING=""
+
+## Type:	yesno readonly
+# The CRANIX is the DHCP server in the internal network.
+CRANIX_USE_DHCP="yes"
 
 ## Type:        string readonly
-## Default:     "172.28.1.0/24"
+# DNS Domain of the institute.
+CRANIX_DOMAIN=""
+
+## Type:	string readonly
+# The windows domain name of the institute.
+CRANIX_WORKGROUP=""
+
+## Type:        string readonly
 # IP-network for new and not registered clients.
-CRANIX_ANON_DHCP_NET="172.28.1.0/24"
+CRANIX_ANON_DHCP_NET=""
 
 ## Type:	string readonly
-## Default:	"172.16.1.1 172.16.1.25"
 # IP-address range for new and not registered clients.
-CRANIX_ANON_DHCP_RANGE="172.28.1.0 172.28.1.31"
+CRANIX_ANON_DHCP_RANGE=""
 
 ## Type:	string readonly
-## Default:	172.16.2.0
 # The network address of the first institute room.
-CRANIX_FIRST_ROOM_NET="172.28.2.0"
-
-## Type:	string readonly
-## Default:	"/home"
-# Base of the institute home directory.
-CRANIX_HOME_BASE="/home"
+CRANIX_FIRST_ROOM_NET=""
 
 ## Type:	yesno readonly
 ## Default:	yes
@@ -126,79 +141,61 @@ CRANIX_HOME_BASE="/home"
 CRANIX_ISGATE="yes"
 
 ## Type:	string readonly
-## Default:	"172.16.0.3"
-# IP-address of the mail server and groupware of the CRANIX.
-CRANIX_MAILSERVER="172.28.0.3"
-
-## Type:	string readonly
-## Default:	"16"
-# Network Mask of the internal network.
-CRANIX_NETMASK="16"
-
-## Type:	string readonly
-## Default:	"255.255.0.0"
-# Network Mask of the internal network.
-CRANIX_NETMASK_STRING="255.255.0.0"
-
-## Type:	string readonly
-## Default:	"172.16.0.0"
-# Network Address of the internal network.
-CRANIX_NETWORK="172.28.0.0"
-
-## Type:	string readonly
-## Default:	
 # The default gateway for the internal net, not for the server.
-CRANIX_NET_GATEWAY="172.28.0.2"
+CRANIX_NET_GATEWAY=""
 
 ## Type:	string readonly
-## Default:	"172.16.0.4"
-# IP-address of the proxy server of the CRANIX.
-CRANIX_PROXY="172.28.0.4"
-
-## Type:	string readonly
-## Default:	"172.16.0.6"
-# IP-address of the backup server of the CRANIX.
-CRANIX_BACKUP_SERVER="172.28.0.6"
-
-## Type:	string readonly
-## Default:	"172.16.0.2"
 # IP-address of the admin server of the CRANIX.
-CRANIX_SERVER="172.28.0.2"
-
-## Type:	string readonly
-## Default:	
-# The default gateway of the server.
-CRANIX_SERVER_EXT_GW="192.168.0.1"
-
-## Type:	string readonly
-## Default:	
-# The external ip address of the server.
-CRANIX_SERVER_EXT_IP="192.168.0.2"
-
-## Type:	string readonly
-## Default:	
-# The netmask of the external ip address of the server.
-CRANIX_SERVER_EXT_NETMASK="24"
-
-## Type:	string readonly
-## Default:	"172.16.0.0/24"
-# The CRANIX server networks network address.
-CRANIX_SERVER_NET="172.16.0.0/24"
-
-## Type:	yesno readonly
-## Default:	no
-# The CRANIX is the DHCP server in the internal network.
-CRANIX_USE_DHCP="yes"
+CRANIX_SERVER=""
 
 ## Type:        string readonly
-## Default:     admin
+# Default:	admin
 # The windows netbios name of the CRANIX.
 CRANIX_NETBIOSNAME="admin"
 
+## Type:        string readonly
+# IP-address of the file server of the CRANIX.
+CRANIX_FILESERVER=""
+
+## Type:        string readonly
+# Name of the file server of the CRANIX.
+CRANIX_FILESERVER_NETBIOSNAME=""
+
+## Type:        string readonly
+# IP-address of the print server of the CRANIX.
+CRANIX_PRINTSERVER=""
+
+## Type:        string readonly
+# Name of the print server of the CRANIX.
+CRANIX_PRINTSERVER_NETBIOSNAME=""
+
 ## Type:	string readonly
-## Default:	CRANIX
-# The windows domain name of the institute.
-CRANIX_WORKGROUP="CRANIX"
+# IP-address of the mail server and groupware of the CRANIX.
+CRANIX_MAILSERVER=""
+
+## Type:	string readonly
+# IP-address of the proxy server of the CRANIX.
+CRANIX_PROXY=""
+
+## Type:	string readonly
+# IP-address of the backup server of the CRANIX.
+CRANIX_BACKUP_SERVER=""
+
+## Type:	string readonly
+# The default gateway of the server.
+CRANIX_SERVER_EXT_GW=""
+
+## Type:	string readonly
+# The external ip address of the server.
+CRANIX_SERVER_EXT_IP=""
+
+## Type:	string readonly
+# The netmask of the external ip address of the server.
+CRANIX_SERVER_EXT_NETMASK=""
+
+## Type:	string readonly
+# The CRANIX server networks network address.
+CRANIX_SERVER_NET=""
 
 ## Type:	string readonly
 ## Default:	"DE"
@@ -210,10 +207,31 @@ CRANIX_LANGUAGE="DE"
 # Default country code.
 CRANIX_CCODE="DE"
 
-## Type:        string readonly
-## Default:
-# DNS Domain of the institute.
-CRANIX_DOMAIN="cranix.eu"
+## Type:        string(dns,proxy)
+## Default:     dns
+# The type of the internet filter.
+CRANIX_INTERNET_FILTER="dns"
+
+## Type:	string readonly
+## Default:	"/home"
+# Base of the institute home directory.
+CRANIX_HOME_BASE="/home"
+
+## Type:        yesno readonly
+## Default:     yes
+# If the home directories should be sorted into role directories.
+CRANIX_SORT_HOMES="yes"
+
+## Type:        string
+## Default:     https://repo.cephalix.eu/api/tickets/add
+# The support URL of the CEPHALIX or OTRS system the ticket will be sent to via REST-API.
+# If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
+CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
+
+## Type:	string
+## Default:     support@cephalix.eu
+# The support email address.
+CRANIX_SUPPORT_MAIL_ADDRESS="support@cephalix.eu"
 
 ## Type:        string readonly
 ## Default:	http://repo.cephalix.eu/salt-packages
@@ -224,11 +242,6 @@ CRANIX_SALT_PKG_URL="http://repo.cephalix.eu/salt-packages"
 ## Default:     http://repo.cephalix.eu/CRANIX
 # Url to the updates
 CRANIX_UPDATE_URL="http://repo.cephalix.eu"
-
-## Type:        string(dns,proxy)
-## Default:     dns
-# The type of the internet filter.
-CRANIX_INTERNET_FILTER="dns"
 
 ########################################################################
 ## Path:        Network/Server/Settings
@@ -256,14 +269,14 @@ CRANIX_TEACHER_OBSERV_HOME="no"
 CRANIX_DEBUG="no"
 
 ## Type:	yesno
-## Default:     no	
+## Default:     no
 # To increase security you can reset the password for register every day.
 CRANIX_RESET_REGISTER_PASSWORD="no"
 
 ## Type:	string
 ## Default:
 # This services have be monitored.
-CRANIX_MONITOR_SERVICES="amavis apache2 cups chronyd cranix-api crx_salt_event_watcher dhcpd firewalld mysql salt-master samba-ad samba-printserver squid vsftpd xinetd"
+CRANIX_MONITOR_SERVICES="amavis apache2 cups chronyd cranix-api crx_salt_event_watcher dhcpd firewalld mariadb salt-master samba-ad samba-printserver squid vsftpd xinetd"
 
 ## Type:	yesno
 ## Default:	no
@@ -281,12 +294,12 @@ CRANIX_FILE_QUOTA="250"
 CRANIX_FILE_TEACHER_QUOTA="1000"
 
 ## Type:	string
-## Default:	
+## Default:
 # The CRANIX group prefix. This charactes will be set for all group names.
 CRANIX_GROUP_PREFIX=""
 
 ## Type:	string
-## Default:	
+## Default:
 # The CRANIX login prefix. This charactes will be set for all login names.
 CRANIX_LOGIN_PREFIX=""
 
@@ -311,28 +324,17 @@ CRANIX_MAIL_QUOTA="5"
 CRANIX_MAIL_TEACHER_QUOTA="25"
 
 ## Type:        string
-## Default:     
+## Default:
 # The registration code of the CRANIX.
 CRANIX_REG_CODE="NOT YET REGISTERED"
 
-## Type:        string
-## Default:     https://repo.cephalix.eu/api/tickets/add
-# The support URL of the CEPHALIX or OTRS system the ticket will be sent to via REST-API.
-# If the value is 'MAIL' the tickets will be sent via mail to SUPPORT_MAIL_ADDRESS
-CRANIX_SUPPORT_URL="https://repo.cephalix.eu/api/tickets/add"
-
-## Type:	string
-## Default:     support@cephalix.eu
-# The support email address.
-CRANIX_SUPPORT_MAIL_ADDRESS="support@cephalix.eu"
-
 ## Type:	yesno
-## Default:     yes	
+## Default:     yes
 # If this variable is set to yes, students may login on more than one workstation.
 CRANIX_ALLOW_STUDENTS_MULTIPLE_LOGIN="yes"
 
 ## Type:	yesno
-## Default:     yes	
+## Default:     yes
 # If this variable is set to yes, users which are not students users may login on more than one workstation.
 CRANIX_ALLOW_MULTIPLE_LOGIN="yes"
 
@@ -376,6 +378,11 @@ CRANIX_SESSION_TIMEOUT="90"
 ## Default:     yes
 # Remove all network printers from the users profile by the login process
 CRANIX_CLEAN_UP_PRINTERS="yes"
+
+## Type:        yesno
+## Default:     yes
+# Should the logon script make the printer connections
+CRANIX_LOGON_CONNECT_PRINTERS="yes"
 
 ## Type:        yesno
 ## Default:     yes

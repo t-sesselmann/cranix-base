@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 import json
 import os
+import cranixconfig
 
 all_classes = {}
 adhoc_rooms = {}
 all_devices = []
-dev_pro_user = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_PRO_USER').read()
-dev_count = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CLASS_ADHOC_DEVICE_COUNT').read()
-network   = os.popen('/usr/sbin/crx_api_text.sh GET system/configuration/CLASS_ADHOC_NETWORK').read()
+dev_pro_user = cranixconfig.CRANIX_CLASS_ADHOC_DEVICE_PRO_USER
+dev_count = cranixconfig.CRANIX_CLASS_ADHOC_DEVICE_COUNT
+network   = cranixconfig.CRANIX_CLASS_ADHOC_NETWORK
+
 print(dev_pro_user,dev_count)
 def collect_datas():
     #Collect all classess
@@ -16,10 +18,13 @@ def collect_datas():
     #Collect all adhoc rooms for classess
     for a in json.load(os.popen('/usr/sbin/crx_api.sh GET adhocrooms/all')):
         if a['studentsOnly'] and a['roomType'] == 'AdHocAccess':
-            c_id = a['groupIds'][0]
-            if c_id in all_classes:
-                adhoc_rooms[c_id] = a['id']
-    #Collect the devices
+            try:
+                c_id = a['groupIds'][0]
+                if c_id in all_classes:
+                    adhoc_rooms[c_id] = a['id'] #Collect the devices
+            except IndexError:
+                print('Category has no group')
+                print(a)
     for a in adhoc_rooms:
         for dev in json.load(os.popen('/usr/sbin/crx_api.sh GET rooms/{0}/devices'.format(adhoc_rooms[a]))):
             all_devices.append(dev)
@@ -40,7 +45,7 @@ def create_adhocroom(c_id):
         adhocroom['network'] = network
     with open(fname, 'w') as fp:
         json.dump(adhocroom, fp, ensure_ascii=False)
-    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh adhocrooms/add '+fname))
+    result = json.load(os.popen('/usr/sbin/crx_api_post_file.sh adhocrooms/add {0}'.format(fname)))
     print(result)
 
 collect_datas()

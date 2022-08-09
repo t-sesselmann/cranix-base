@@ -1,0 +1,25 @@
+#!/bin/bash
+# Copyright 2022 Dipl. Ing. Peter Varkoly <pvarkoly@cephalix.eu>. All rights reserved.
+# Script to provide a login for CRANX/CEPHALIX api
+# In case of error the script reports an samba style NT_STATUS error:
+# NT_STATUS_PASSWORD_MUST_CHANGE
+# NT_STATUS_LOGON_FAILURE
+# If the respons does not contains one of these strings the login was successfull
+credentials=$1
+
+if [ -z "${credentials}" ]; then
+        echo "You have to provide a credentials file."
+        exit 255
+fi
+
+if [ ! -e "${credentials}" ]; then
+        echo "The credentials file you have provided does not exist."
+        exit 254
+fi
+
+if [ -x /usr/share/cranix/tools/custom-login ]; then
+        /usr/share/cranix/tools/custom-login "${credentials}"
+else
+        /usr/bin/smbclient -L admin -A "${credentials}"
+fi
+

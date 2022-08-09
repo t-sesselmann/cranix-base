@@ -84,8 +84,15 @@ done
 
 skel="/etc/skel"
 
-winprofile="\\\\${CRANIX_NETBIOSNAME}\\profiles\\$uid"
-winhome="\\\\${CRANIX_NETBIOSNAME}\\$uid"
+if [ -z "${CRANIX_FILESERVER_NETBIOSNAME}" ]; then
+	CRANIX_FILESERVER_NETBIOSNAME=${CRANIX_NETBIOSNAME}
+	userWorkstations="${CRANIX_NETBIOSNAME}"
+else
+	userWorkstations="${CRANIX_NETBIOSNAME},${CRANIX_FILESERVER_NETBIOSNAME}"
+fi
+
+winprofile="\\\\${CRANIX_FILESERVER_NETBIOSNAME}\\profiles\\$uid"
+winhome="\\\\${CRANIX_FILESERVER_NETBIOSNAME}\\$uid"
 
 if [ $CRANIX_SORT_HOMES = "yes" ]; then
         unixhome=${CRANIX_HOME_BASE}/$role/$uid
@@ -154,7 +161,7 @@ if [ "$role" = "workstations" ]; then
 	/usr/sbin/crx_get_dn.sh $uid > $tmpldif
 	echo "changetype: modify
 add: userWorkstations
-userWorkstations: ${CRANIX_NETBIOSNAME},$uid" >> $tmpldif
+userWorkstations: ${userWorkstations},$uid" >> $tmpldif
 	ldbmodify  -H /var/lib/samba/private/sam.ldb $tmpldif
 	samba-tool user setexpiry  --noexpiry $uid
 	rm -f $tmpldif
