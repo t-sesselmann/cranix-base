@@ -175,7 +175,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
        LOG "Syncing custom squidGuard database"
        mkdir -p $CRANIX_BACKUP_FULL_DIR/var/lib/squidGuard/db/custom/
        mkdir -p $BACKUP_DIR/var/lib/squidGuard/db/custom/
-       rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/squidGuard/db/custom/ \
+       /usr/bin/rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/var/lib/squidGuard/db/custom/ \
                    /var/lib/squidGuard/db/custom/ \
                    $CRANIX_BACKUP_FULL_DIR/var/lib/squidGuard/db/custom/
        if [ $? != 0 ]; then
@@ -183,15 +183,24 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
        fi
     fi
 
-    LOG "Syncing samba"
+    LOG "Syncing samba ad"
     mkdir -p $BACKUP_DIR/var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
        test -e $CRANIX_BACKUP_FULL_DIR/samba_facls.gz && mv $CRANIX_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
        getfacl --absolute-names -R /var/lib/samba/ | gzip > $CRANIX_BACKUP_FULL_DIR/samba_facls.gz
     fi
-    rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
+    /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ $? != 0 ]; then
         LOG "CAN_NOT_MAKE_BACKUP from samba"
+    fi
+
+    if [ -d /var/lib/fileserver/ ]; then
+       LOG "Syncing samba fileserver"
+       /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/fileserver/ /var/lib/fileserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/fileserver/
+    fi
+    if [ -d /var/lib/printserver/ ]; then
+       LOG "Syncing samba printserver"
+       /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/printserver/ /var/lib/printserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/printserver/
     fi
 
     # save /etc - must run after samba-backup otherwise secrets.tdb.bak is not saved
@@ -204,7 +213,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
     fi
     LOG "Syncing /etc/"
     mkdir -p $BACKUP_DIR/etc/
-    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/etc/ /etc/ $CRANIX_BACKUP_FULL_DIR/etc/
+    /usr/bin/rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/etc/ /etc/ $CRANIX_BACKUP_FULL_DIR/etc/
     if [ $? != 0 ]; then
         LOG "CAN_NOT_MAKE_BACKUP from /etc"
     fi
@@ -212,7 +221,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
     # save /root (needed already for ssh-key files)
     LOG "Syncing /root/"
     mkdir -p $BACKUP_DIR/root/
-    rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/root/ /root/ $CRANIX_BACKUP_FULL_DIR/root/
+    /usr/bin/rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/root/ /root/ $CRANIX_BACKUP_FULL_DIR/root/
 
     if [ "$CRANIX_BACKUP_HOME" = "yes" ]; then
         if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
@@ -231,13 +240,13 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
             else
                     mkdir -p $BACKUP_DIR/home/
             fi
-            rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup --link-dest=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/
+            /usr/bin/rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup --link-dest=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/
             if [ $? != 0 ]; then
                 LOG "CAN_NOT_MAKE_BACKUP from home"
             fi
         else
             mkdir -p $BACKUP_DIR/home/
-            rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup -b --backup-dir=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/ >> $LOGFILE 2>&1
+            /usr/bin/rsync $RSYNCPARS --exclude-from=/usr/share/cranix/templates/exclude-from-home-backup -b --backup-dir=$BACKUP_DIR/home/ /home/ $CRANIX_BACKUP_FULL_DIR/home/ >> $LOGFILE 2>&1
             echo "EXIT: $?" >>  $LOGFILE
             if [ $? != 0 ]; then
                 LOG "CAN_NOT_MAKE_BACKUP from home"
@@ -249,7 +258,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
             LOG "Syncing itool"
             mkdir -p $CRANIX_BACKUP_FULL_DIR/srv/itool
             mkdir -p $BACKUP_DIR/srv/itool
-            rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/srv/itool/ /srv/itool/ $CRANIX_BACKUP_FULL_DIR/srv/itool/
+            /usr/bin/rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/srv/itool/ /srv/itool/ $CRANIX_BACKUP_FULL_DIR/srv/itool/
         if [ $? != 0 ]; then
             LOG "CAN_NOT_MAKE_BACKUP from itool"
         fi
@@ -268,7 +277,7 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
         for i in var/spool/imap/ var/lib/imap/; do
             mkdir -p $CRANIX_BACKUP_FULL_DIR/$i
             mkdir -p $BACKUP_DIR/$i
-            rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/$i /$i $CRANIX_BACKUP_FULL_DIR/$i
+            /usr/bin/rsync $RSYNCPARS -b --backup-dir=$BACKUP_DIR/$i /$i $CRANIX_BACKUP_FULL_DIR/$i
             if [ $? != 0 ]; then
                 LOG " CAN_NOT_MAKE_BACKUP from mail"
             fi
