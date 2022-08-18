@@ -184,23 +184,30 @@ if [ "$CRANIX_BACKUP" = "yes" ] || [ "$FORCE" = "yes" ]; then
     fi
 
     LOG "Syncing samba ad"
-    mkdir -p $BACKUP_DIR/var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
+    test -d $CRANIX_BACKUP_FULL_DIR/var/lib/samba/ && mv $CRANIX_BACKUP_FULL_DIR/var/lib/samba $BACKUP_DIR/var/lib/samba
+    mkdir -p $BACKUP_DIR/var/lib/samba/
     if [ "$CRANIX_BACKUP_CAN_NOT_SAVE_ACL" = "yes" ]; then
        test -e $CRANIX_BACKUP_FULL_DIR/samba_facls.gz && mv $CRANIX_BACKUP_FULL_DIR/samba_facls.gz $BACKUP_DIR
        getfacl --absolute-names -R /var/lib/samba/ | gzip > $CRANIX_BACKUP_FULL_DIR/samba_facls.gz
+       /usr/bin/rsync -a --exclude lock/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
+    else
+       /usr/bin/rsync -aA --exclude lock/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     fi
-    /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/samba/ /var/lib/samba/ $CRANIX_BACKUP_FULL_DIR/var/lib/samba/
     if [ $? != 0 ]; then
         LOG "CAN_NOT_MAKE_BACKUP from samba"
     fi
 
     if [ -d /var/lib/fileserver/ ]; then
        LOG "Syncing samba fileserver"
-       /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/fileserver/ /var/lib/fileserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/fileserver/
+       test -d $CRANIX_BACKUP_FULL_DIR/var/lib/fileserver/ && mv $CRANIX_BACKUP_FULL_DIR/var/lib/fileserver $BACKUP_DIR/var/lib/fileserver
+       mkdir -p $BACKUP_DIR/var/lib/fileserver/
+       /usr/bin/rsync -aA --exclude lock/ /var/lib/fileserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/fileserver/
     fi
     if [ -d /var/lib/printserver/ ]; then
        LOG "Syncing samba printserver"
-       /usr/bin/rsync $RSYNCPARS --exclude lock/ -b --backup-dir=$BACKUP_DIR/var/lib/printserver/ /var/lib/printserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/printserver/
+       test -d $CRANIX_BACKUP_FULL_DIR/var/lib/printserver/ && mv $CRANIX_BACKUP_FULL_DIR/var/lib/printserver $BACKUP_DIR/var/lib/printserver
+       mkdir -p $BACKUP_DIR/var/lib/printserver/
+       /usr/bin/rsync -aA --exclude lock/ /var/lib/printserver/ $CRANIX_BACKUP_FULL_DIR/var/lib/printserver/
     fi
 
     # save /etc - must run after samba-backup otherwise secrets.tdb.bak is not saved
