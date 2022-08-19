@@ -34,7 +34,7 @@ if [ -x /usr/share/cranix/tools/custom_create_logon_script.sh ]; then
 fi
 
 if [ "${CRANIX_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/cranix/templates/copy_and_run_rem_printers ]; then
-	cat /usr/share/cranix/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	sed "s/#FILE-SERVER#/${CRANIX_FILESERVER_NETBIOSNAME}/" /usr/share/cranix/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
 if [ "$role" = "students" ]; then

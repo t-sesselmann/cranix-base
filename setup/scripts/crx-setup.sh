@@ -297,7 +297,7 @@ function SetupFileserver () {
     sed -i "s/#WORKGROUP#/$CRANIX_WORKGROUP/g"  /etc/samba/smb-fileserver.conf
     sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g"    /etc/samba/smb-fileserver.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g" /etc/samba/smb-fileserver.conf
-    sed -i "s/#HOMEBASE#/$CRANIX_HOME_BASE/g" /etc/samba/smb-fileserver.conf
+    sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"     /etc/samba/smb-fileserver.conf
     systemctl restart samba-ad
     sleep 1
     if [ "$passwd" ]; then

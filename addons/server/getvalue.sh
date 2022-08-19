@@ -2,7 +2,7 @@
 
 case $1 in
         listActions)
-                ACTIONS="update shutdown reboot"
+                ACTIONS="update shutdown reboot check-and-fix"
 		echo -n $ACTIONS
                 ;;
         listKeys)
