@@ -10,7 +10,7 @@ then
  cd /usr/share/cranix/plugins/clients/$what
  for i in `find -mindepth 1 -maxdepth 1 | sort`
  do
-   /usr/share/cranix/plugins/clients/$what/$i $client
+   echo "/usr/share/cranix/plugins/clients/$what/$i $client" | /usr/bin/batch
  done
 fi
 
