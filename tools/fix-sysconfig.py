@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import os.path
 from configobj import ConfigObj
 
 # new services to add
@@ -24,6 +25,9 @@ old_services = (
 backup_dir = '/var/adm/cranix/backup/{0}'.format(os.popen('/usr/share/cranix/tools/crx_date.sh').read()).strip()
 os.system('mkdir -p {0}'.format(backup_dir))
 os.system('cp {0} {1}'.format('/etc/sysconfig/cranix',backup_dir))
+
+if os.path.exists("/usr/share/cranix/templates/radius/RADIUS-SETTINGS"):
+    os.system('/usr/bin/fillup /usr/share/fillup-templates/sysconfig.cranix /usr/share/cranix/templates/radius/RADIUS-SETTINGS /usr/share/fillup-templates/sysconfig.cranix')
 
 fillup_template = ConfigObj('/usr/share/fillup-templates/sysconfig.cranix',list_values=False,encoding='utf-8')
 cranix_conf = ConfigObj('/etc/sysconfig/cranix',list_values=False,encoding='utf-8')
