@@ -132,7 +132,7 @@ def set_state():
                 allow_proxy    = access['proxy']
                 allow_direct   = access['direct']
             else:
-                log_debud("No default access for room {0}".format(name))
+                log_debug("No default access for room {0}".format(name))
                 return
 
         if allow_printing:
