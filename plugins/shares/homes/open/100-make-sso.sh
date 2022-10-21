@@ -8,10 +8,10 @@ R=$5
 
 id ${U} &>/dev/null || exit
 
-crx_api.sh PUT devices/loggedInUsers/$I/$U
+/usr/sbin/crx_api.sh PUT devices/loggedInUsers/$I/$U
 
 . /etc/sysconfig/cranix
-role=$( crx_api_text.sh GET users/byUid/$U/role )
+role=$( /usr/sbin/crx_api_text.sh GET users/byUid/$U/role )
 
 case "${role}" in
 	workstations)
