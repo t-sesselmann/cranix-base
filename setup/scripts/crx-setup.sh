@@ -560,6 +560,10 @@ chmod 600 /root/.my.cnf
 
 function PostSetup (){
     ########################################################################
+    log "Adapt atd"
+    sed -i 's/ATD_OPTIONS=.*/ATD_OPTIONS="-b 20"/' /etc/sysconfig/atd
+
+    ########################################################################
     log "Create profile directory"
     mkdir -p  "$CRANIX_HOME_BASE/profiles"
     chgrp 100 "$CRANIX_HOME_BASE/profiles/"

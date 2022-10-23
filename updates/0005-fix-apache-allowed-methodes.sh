@@ -9,4 +9,7 @@ then
 		/etc/apache2/vhosts.d/cephalix_include.conf
 fi
 
+sed -i 's/Access-Control-Allow-Headers.*/Access-Control-Allow-Headers "X-Requested-With, Content-Type, Origin, Authorization, Accept, Client-Security-Token, Accept-Encoding, timeout"/' \
+	/etc/apache2/vhosts.d/admin_include.conf
+
 /usr/bin/systemctl reload apache2
