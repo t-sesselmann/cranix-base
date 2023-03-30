@@ -18,7 +18,7 @@ if [ -z "${CRANIX_FILESERVER_NETBIOSNAME}" ]; then
 	CRANIX_FILESERVER_NETBIOSNAME="${CRANIX_NETBIOSNAME}"
 fi
 
-role=$( crx_api_text.sh GET users/byUid/$U/role )
+role=$( /usr/sbin/crx_api_text.sh GET users/byUid/$U/role )
 mkdir -p /var/lib/samba/sysvol/$R/scripts
 setfacl -m g:users:rx /var/lib/samba/sysvol/
 setfacl -m g:users:rx /var/lib/samba/sysvol/$R/
@@ -34,7 +34,7 @@ if [ -x /usr/share/cranix/tools/custom_create_logon_script.sh ]; then
 fi
 
 if [ "${CRANIX_CLEAN_UP_PRINTERS}" = "yes"  -a -e /usr/share/cranix/templates/copy_and_run_rem_printers ]; then
-	cat /usr/share/cranix/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
+	sed "s/#FILE-SERVER#/${CRANIX_FILESERVER_NETBIOSNAME}/" /usr/share/cranix/templates/copy_and_run_rem_printers >> /var/lib/samba/sysvol/$R/scripts/${U}.bat
 fi
 
 if [ "$role" = "students" ]; then
@@ -58,12 +58,12 @@ else
 fi
 
 if [ "${CRANIX_LOGON_CONNECT_PRINTERS,,}" != "no" ]; then
-	defaultPrinter=$( crx_api.sh GET devices/byIP/$I/defaultPrinter )
+	defaultPrinter=$( /usr/sbin/crx_api.sh GET devices/byIP/$I/defaultPrinter )
 	if [ "$defaultPrinter" ]; then
 		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 		printf "rundll32 printui.dll,PrintUIEntry /y /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${defaultPrinter} /j\"Default ${defaultPrinter}\"\r\n"     >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 	fi
-	for printer in $( crx_api.sh GET devices/byIP/$I/availablePrinters )
+	for printer in $( /usr/sbin/crx_api.sh GET devices/byIP/$I/availablePrinters )
 	do
 		printf "rundll32 printui.dll,PrintUIEntry /q /in /n \134\134${CRANIX_PRINTSERVER_NETBIOSNAME}\134${printer} /j\"${printer}\"\r\n" >> /var/lib/samba/sysvol/$R/scripts/${U}.bat;
 	done

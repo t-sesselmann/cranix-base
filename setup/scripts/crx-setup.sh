@@ -297,7 +297,7 @@ function SetupFileserver () {
     sed -i "s/#WORKGROUP#/$CRANIX_WORKGROUP/g"  /etc/samba/smb-fileserver.conf
     sed -i "s/#IPADDR#/$CRANIX_FILESERVER/g"    /etc/samba/smb-fileserver.conf
     sed -i "s/#CRANIX_DOMAIN#/$CRANIX_DOMAIN/g" /etc/samba/smb-fileserver.conf
-    sed -i "s/#HOMEBASE#/$CRANIX_HOME_BASE/g" /etc/samba/smb-fileserver.conf
+    sed -i "s#HOMEBASE#$CRANIX_HOME_BASE#g"     /etc/samba/smb-fileserver.conf
     systemctl restart samba-ad
     sleep 1
     if [ "$passwd" ]; then
@@ -559,6 +559,10 @@ chmod 600 /root/.my.cnf
 }
 
 function PostSetup (){
+    ########################################################################
+    log "Adapt atd"
+    sed -i 's/ATD_OPTIONS=.*/ATD_OPTIONS="-b 20"/' /etc/sysconfig/atd
+
     ########################################################################
     log "Create profile directory"
     mkdir -p  "$CRANIX_HOME_BASE/profiles"

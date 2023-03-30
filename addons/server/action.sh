@@ -3,6 +3,9 @@
 ACTION=$1
 
 case $ACTION in
+	check-and-fix)
+		/usr/share/cranix/tools/check-and-fix
+	;;
 	update)
 		/usr/sbin/crx_update.sh
 	;;

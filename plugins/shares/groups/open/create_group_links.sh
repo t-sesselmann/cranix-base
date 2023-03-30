@@ -12,7 +12,7 @@ rm -f $CRANIX_HOME_BASE/groups/LINKED/$user/*
 
 cd "$CRANIX_HOME_BASE/groups/LINKED/$user/"
 IFS=$'\n'
-for GROUP in  $( crx_api_text.sh GET users/byUid/$user/groups )
+for GROUP in  $( /usr/sbin/crx_api_text.sh GET users/byUid/$user/groups )
 do
     g=$( echo $GROUP|tr '[:lower:]' '[:upper:]' )
     if [ -d "$CRANIX_HOME_BASE/groups/$g" ]

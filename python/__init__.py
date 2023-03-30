@@ -156,6 +156,11 @@ def read_csv():
                 except KeyError:
                     log_error('Unknown field "{0}".'.format(key))
                     continue
+                except:
+                    log_error('Unknown error accured in line {0}.'.format(line_count))
+                    print('Unknown error accured in line {0}.'.format(line_count))
+                    print(row)
+                    continue
             try:
                 user['birthDay'] = read_birthday(user['birthDay'])
             except SyntaxError:
